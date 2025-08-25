@@ -1,0 +1,1233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>/*
+Units: m, s, m/s, m/s2
+Distance calculation: always the distance between the points on the vehicles that are closest, 
+e.g,  depending on their relative positions, the longitudinal distance can be rear to head, 
+and lateral distance can be left side to right side.
+*/
+typedef struct{
+    int32_t a;        //acceleration
+    int32_t v;        //velocity
+    int32_t p;        //position
+}ST_STATE;
+
+typedef struct{
+    ST_STATE lon;     //longitudinal state
+    ST_STATE lat;     //lateral state
+    int32_t width;
+    int32_t length;
+}ST_VEHICLE;
+
+typedef struct{
+    int32_t dis_lon_init;       //initial distance between ego and test when lane-change happens
+    int32_t dis_lon_lc;         //distance between ego and test when lane-change happens
+    
+    int tick_lc;                //time duration for lane change, unit: tick
+    int tick_rt;                //reaction time, unit: tick
+    int tick_lcs;               //starting time of lane change, unit: tick
+    int32_t tick_ttc;           //time to collision, unit: tick
+    int32_t tick_safe_ttc;      //safe ttc, default is 2s, unit tick
+    
+    int32_t min_ego_lon_del;    //ego's minimum lon deceleration
+    int32_t max_ego_lon_del;    //ego's maximum lon deceleration
+    int32_t max_ego_lon_jerk;   //ego's maximum lon jerk
+    int32_t max_test_lon_del;   //test's maximum lon deceleration
+    
+    int32_t safe_lat;           //lateral safety distance margin
+}ST_CUTIN;
+
+const uint8_t BASE = 10;
+const uint8_t EXPONENT = 5;
+int32_t d2i(double value) {
+    return fint(value*pow(BASE,EXPONENT));
+}
+
+double i2d(int32_t value) {
+    return value/pow(BASE,EXPONENT);
+}
+
+int32_t kmh2ms(int32_t kmh){
+    return d2i(i2d(kmh)*5.0/18.0);
+}
+const double F = 0.1;        //frequency: 10Hz
+int sec2tick(double time){
+    return fint(time/F);
+}
+
+double tick2sec(int tick){
+    return tick*F;
+}
+
+int32_t lon_dis(ST_VEHICLE v1, ST_VEHICLE v2){
+    int32_t v1_head = v1.lon.p + v1.length/2;
+    int32_t v1_rear = v1.lon.p - v1.length/2;
+    int32_t v2_head = v2.lon.p + v2.length/2;
+    int32_t v2_rear = v2.lon.p - v2.length/2;
+    
+    // case 1: v1 is ahead of v2
+    if(v1_rear &gt;= v2_head){
+        return v1_rear - v2_head;
+    }
+    // case 2: v2 is ahead of v1
+    if(v2_rear &gt;= v1_head){
+        return v1_head - v2_rear;
+    }
+    
+    return 0; //touching or overlaping
+}
+
+int32_t lat_dis(ST_VEHICLE v1, ST_VEHICLE v2){
+    int32_t v1_left = v1.lat.p + v1.width/2;
+    int32_t v1_right = v1.lat.p - v1.width/2;
+    int32_t v2_left = v2.lat.p + v2.width/2;
+    int32_t v2_right = v2.lat.p - v2.width/2;
+    
+    // case 1: v1 is ahead of v2
+    if(v1_right &gt;= v2_left){
+        return v1_right - v2_left;
+    }
+    // case 2: v2 is ahead of v1
+    if(v2_right &gt;= v1_left){
+        return v1_left - v2_right;
+    }
+    
+    return 0; //touching or overlaping
+}
+
+const double lane_width = 3.5;        //a lane's width is 3.5m
+const int SIM = 100;                  //scenario max time is 100s
+clock st;
+int tick_current = 0;
+bool safe = true;
+broadcast chan start, update, fin;
+chan priority fin &lt; update, start;
+
+ST_VEHICLE ego, test; 
+ST_CUTIN para_cutin;
+
+void trapezoidal_integrate(ST_VEHICLE &amp;vehicle_now, ST_VEHICLE vehicle_last){ 
+    double rp_now[2],rp_last[2],rv_now[2],rv_last[2],racc_now[2], racc_last[2];
+    // assign the continuous variables with the discrete variables' values
+    rp_now[0] = i2d(vehicle_now.lon.p);
+    rv_now[0] = i2d(vehicle_now.lon.v);
+    racc_now[0] = i2d(vehicle_now.lon.a);
+    rp_last[0] = i2d(vehicle_last.lon.p);
+    rv_last[0] = i2d(vehicle_last.lon.v);
+    racc_last[0] = i2d(vehicle_last.lon.a);
+    rp_now[1] = i2d(vehicle_now.lat.p);
+    rv_now[1] = i2d(vehicle_now.lat.v);
+    racc_now[1] = i2d(vehicle_now.lat.a);
+    rp_last[1] = i2d(vehicle_last.lat.p);
+    rv_last[1] = i2d(vehicle_last.lat.v);
+    racc_last[1] = i2d(vehicle_last.lat.a);
+    // integration
+    rv_now[0] = rv_last[0] + 0.5 * (racc_last[0] + racc_now[0]) * F;
+    rp_now[0] = rp_last[0] + 0.5 * (rv_last[0] + rv_now[0]) * F;
+    rv_now[1] = rv_last[1] + 0.5 * (racc_last[1] + racc_now[1]) * F;
+    rp_now[1] = rp_last[1] + 0.5 * (rv_last[1] + rv_now[1]) * F;
+    // update discrete variables with the continuous variables' values
+    vehicle_now.lon.v = d2i(fmax(rv_now[0],0)); // longitudinal speed cannot be negative
+    vehicle_now.lon.p = d2i(rp_now[0]);
+    vehicle_now.lat.v = d2i(rv_now[1]);
+    vehicle_now.lat.p = d2i(rp_now[1]);
+}
+
+void numeric_integrate(ST_VEHICLE &amp;vehicle){
+    int i = 0, j = 0;    
+    double rp[2],rv[2],racc[2];
+    double dp[2],dv[2];
+    const double g = 0.1; //granularity
+    const int LEN = fint(1.0/g); // setup the granularity for calculating integration
+    // assign the continuous variables with the discrete variables' values
+    rp[0] = i2d(vehicle.lon.p);
+    rv[0] = i2d(vehicle.lon.v);
+    racc[0] = i2d(vehicle.lon.a);
+    rp[1] = i2d(vehicle.lat.p);
+    rv[1] = i2d(vehicle.lat.v);
+    racc[1] = i2d(vehicle.lat.a);
+    // integration
+    for(i=0;i&lt;LEN;i++) {
+        for(j=0;j&lt;2;j++){     
+            dv[j] = racc[j] * g;
+            rv[j] = rv[j] + dv[j];
+            dp[j] = rv[j] * g;
+            rp[j] = rp[j] + dp[j];
+        }
+    }
+    // update discrete variables with the continuous variables' values
+    vehicle.lon.v = d2i(fmax(rv[0],0)); // longitudinal speed cannot be negative
+    vehicle.lon.p = d2i(rp[0]);
+    vehicle.lat.v = d2i(rv[1]);
+    vehicle.lat.p = d2i(rp[1]);
+}
+
+// acceleration of an easy-in/easy-out lane-change
+int32_t lc_acc(int current){
+    int sign = 0; 
+    double time_lane_change = tick2sec(para_cutin.tick_lc);
+    double time_current = tick2sec(tick_current);
+    double t = fmin(fmax(time_current, 0.0), time_lane_change);
+    
+    if(ego.lat.p - test.lat.p != 0){
+        sign = (ego.lat.p - test.lat.p)/abs(ego.lat.p - test.lat.p);
+    }else{
+        return 0; //cutin's del should be zero
+    }
+    
+    return d2i(sign*lane_width*(6.0/pow(time_lane_change,2.0))*(1.0-2.0*t/time_lane_change));
+}
+
+int cases = 0;
+int32_t g_gap, g_vel;
+int32_t g_braking_tick, g_min_braking_tick;
+bool safety_check_cutin(){
+    double gap, v_rel, del = i2d(para_cutin.max_ego_lon_del);
+    int32_t tick_braking, tick_min_braking; 
+    
+    g_gap = 0;
+    g_vel = 0;
+    g_braking_tick = 0;
+    g_min_braking_tick = 0;
+    
+    para_cutin.tick_ttc = INT32_MAX;
+    // Case 10: Ego is ahead → safe
+    gap = i2d(lon_dis(ego, test));
+    g_gap = d2i(gap);
+    if(gap &gt; 0){
+        cases = 10;
+        return true;
+    }
+    // Case 21: Ego behind
+    else if(gap &lt; 0){ 
+        cases = 21;
+        v_rel = i2d(ego.lon.v - test.lon.v);   // relative speed
+        g_vel = d2i(v_rel);
+        // Case 22: Nearly equal speed → no collision risk
+        if(fabs(v_rel) &lt;= 0.01){
+            cases = 22;
+            return true;
+        }
+        // Only meaningful if ego is faster (closing in)
+        if(v_rel &gt; 0){
+            para_cutin.tick_ttc = sec2tick(fabs(gap/v_rel));
+            if(para_cutin.max_ego_lon_del != 0){
+                cases = 23;
+                // del/2 is for the "easy-in / easy-out deceleration"
+                tick_braking = sec2tick(fabs(v_rel*2 / del));
+                tick_min_braking = tick_braking + para_cutin.tick_rt + sec2tick(0.1);
+            }else{
+                cases = 24;
+                tick_braking = INT32_MAX;
+                tick_min_braking = INT32_MAX;
+            }
+            g_braking_tick = tick_braking;
+            g_min_braking_tick = tick_min_braking;
+            return para_cutin.tick_ttc &gt; tick_min_braking;
+        }
+        // Ego is slower → no collision risk
+        return true;
+    }
+    // Case 30: Lateral safe
+    else if(abs(lat_dis(ego, test)) &gt; para_cutin.safe_lat){
+        cases = 30;
+        return true;
+    }
+    // Case 40: Unsafe
+    cases = 40;
+    return false;
+}
+</declaration>
+	<template>
+		<name>Timer</name>
+		<declaration>clock tick;
+
+void sense(){
+    ST_VEHICLE test_last = test;
+    ST_VEHICLE ego_last = ego;
+    
+    tick=0;
+    tick_current++;
+    test.lat.a = lc_acc(tick_current);
+    trapezoidal_integrate(test, test_last); 
+    trapezoidal_integrate(ego,ego_last);
+}
+
+</declaration>
+		<location id="id0" x="102" y="0">
+			<name x="92" y="-34">F</name>
+		</location>
+		<location id="id1" x="0" y="0">
+			<name x="-8" y="-34">W</name>
+			<label kind="invariant" x="-25" y="17">tick&lt;=1</label>
+		</location>
+		<location id="id2" x="-102" y="0">
+			<name x="-112" y="-34">S</name>
+		</location>
+		<init ref="id2"/>
+		<transition id="id3" controllable="false">
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<label kind="synchronisation" x="34" y="-17">fin?</label>
+		</transition>
+		<transition id="id4" controllable="false">
+			<source ref="id2"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="-76" y="-17">start?</label>
+			<label kind="assignment" x="-84" y="0">tick=0</label>
+		</transition>
+		<transition id="id5" controllable="false">
+			<source ref="id1"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-51" y="-102">tick&gt;=1</label>
+			<label kind="synchronisation" x="-51" y="-68">update!</label>
+			<label kind="assignment" x="-51" y="-85">sense()</label>
+			<nail x="-68" y="-68"/>
+			<nail x="0" y="-68"/>
+		</transition>
+	</template>
+	<template>
+		<name>R157</name>
+		<parameter>const int32_t width, const int32_t length</parameter>
+		<declaration>void set_paras(int32_t s_v_c_lon){
+    ego.width = width;
+    ego.length = length;
+    ego.lon.a = 0;
+    ego.lon.v = kmh2ms(d2i(s_v_c_lon));
+    ego.lon.p = 0;             //ego always starts from 0, longitudinally
+    ego.lat.a = 0;
+    ego.lat.v = 0;
+    ego.lat.p = 0;             //ego always starts from 0, laterally
+    
+    para_cutin.tick_rt = sec2tick(0.35);            //0.35s
+    para_cutin.min_ego_lon_del = d2i(0);            //irrelevant
+    para_cutin.max_ego_lon_del = d2i(-6);           //-6m/s2
+    para_cutin.max_ego_lon_jerk = d2i(0);           //irrelevant 
+    para_cutin.max_test_lon_del = d2i(0.0);         //irrelevant
+    para_cutin.safe_lat = d2i(0.1);                 //lateral safety margin: 0.1m
+    safe = true;
+}
+
+bool unsafe(){
+    int32_t v_rel = abs(ego.lon.v - test.lon.v);   // relative speed
+    // max_ego_lon_del is 6m/s2 and time_rt is 0.35s in R157
+    int32_t tick_safe_ttc = sec2tick(abs(v_rel/(2*para_cutin.max_ego_lon_del)) + para_cutin.tick_rt); 
+    
+    if(para_cutin.tick_ttc &lt;= tick_safe_ttc){
+        return true;
+    }
+    
+    return false;
+}
+
+void sense(){
+    safe = safety_check_cutin();  
+}
+
+void react(){
+    ego.lon.a = para_cutin.max_ego_lon_del;
+}</declaration>
+		<location id="id6" x="34" y="0">
+			<name x="17" y="-34">Start</name>
+			<committed/>
+		</location>
+		<location id="id7" x="238" y="0">
+			<name x="228" y="-34">CP</name>
+		</location>
+		<location id="id8" x="340" y="0">
+			<name x="323" y="-34">R</name>
+			<committed/>
+		</location>
+		<location id="id9" x="408" y="-68">
+			<name x="398" y="-102">W</name>
+		</location>
+		<init ref="id6"/>
+		<transition id="id10" controllable="false">
+			<source ref="id7"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="263" y="-25">start?</label>
+			<label kind="assignment" x="263" y="8">sense()</label>
+		</transition>
+		<transition id="id11" controllable="false">
+			<source ref="id6"/>
+			<target ref="id7"/>
+			<label kind="select" x="51" y="-25">s_v_c_lon:int[80,81]</label>
+			<label kind="assignment" x="51" y="8">set_paras(s_v_c_lon)</label>
+			<label kind="comments" x="17" y="-93">In R157, the reaction time
+and max deceleration are fixed,
+0.35s and -6m/s2, respectively.</label>
+		</transition>
+		<transition id="id12" controllable="false">
+			<source ref="id8"/>
+			<target ref="id9"/>
+			<label kind="guard" x="365" y="-17">unsafe()</label>
+			<label kind="assignment" x="365" y="0">react()</label>
+			<nail x="408" y="0"/>
+		</transition>
+		<transition id="id13" controllable="false">
+			<source ref="id8"/>
+			<target ref="id9"/>
+			<label kind="guard" x="348" y="-42">!unsafe()</label>
+		</transition>
+		<transition id="id14" controllable="false">
+			<source ref="id9"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="331" y="-85">update?</label>
+			<label kind="assignment" x="331" y="-68">sense()</label>
+			<nail x="340" y="-68"/>
+		</transition>
+	</template>
+	<template>
+		<name>CC</name>
+		<parameter>const int32_t width, const int32_t length</parameter>
+		<declaration>void set_paras(int32_t s_v_c_lon){
+    ego.width = width;
+    ego.length = length;
+    ego.lon.a = 0;
+    ego.lon.v = kmh2ms(d2i(s_v_c_lon));
+    ego.lon.p = 0;             //ego always starts from 0, longitudinally
+    ego.lat.a = 0;
+    ego.lat.v = 0;
+    ego.lat.p = 0;             //ego always starts from 0, laterally
+    
+    para_cutin.tick_rt = sec2tick(0.75);            //0.75s
+    para_cutin.min_ego_lon_del = d2i(-4);           //-4m/s2
+    para_cutin.max_ego_lon_del = d2i(-7.59);        //-7.59m/s2
+    para_cutin.max_ego_lon_jerk = d2i(-12.65);      //-12.65m/s3  
+    para_cutin.max_test_lon_del = d2i(0.0);        //irrelevant
+    para_cutin.safe_lat = d2i(0.3);             //lateral safety margin: 0.3m
+    para_cutin.tick_safe_ttc = sec2tick(2);
+    safe = true;
+}
+
+bool unsafe(){
+    int32_t init_test_lat_p = 0 - d2i(lane_width);
+    
+    // the wandering distance is 0.375m
+    // the perception distance is 0.72m
+    if(abs(init_test_lat_p - test.lat.p) &gt; d2i(0.375 + 0.72)){
+        if(para_cutin.tick_ttc &lt; para_cutin.tick_safe_ttc){
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+void sense(){
+    safe = safety_check_cutin(); //this function updates ttc 
+}
+
+void react(){
+    double a = i2d(ego.lon.a);
+    // the deceleration is small within the reaction time
+    if(tick_current - para_cutin.tick_lcs &lt;= para_cutin.tick_rt){
+        ego.lon.a = d2i(-0.4);
+    }else{
+        //jerk is -12.65m/s3, and max_ego_lon_del is -7.59m/s2
+        ego.lon.a = d2i(fmax(a + i2d(para_cutin.max_ego_lon_jerk)/F, i2d(para_cutin.max_ego_lon_del)));
+    }
+}</declaration>
+		<location id="id15" x="238" y="0">
+			<name x="229" y="-42">CP</name>
+		</location>
+		<location id="id16" x="408" y="-68">
+			<name x="391" y="-102">W</name>
+		</location>
+		<location id="id17" x="34" y="0">
+			<name x="17" y="-42">Start</name>
+			<committed/>
+		</location>
+		<location id="id18" x="340" y="0">
+			<name x="323" y="-34">R</name>
+			<committed/>
+		</location>
+		<init ref="id17"/>
+		<transition id="id19" controllable="false">
+			<source ref="id18"/>
+			<target ref="id16"/>
+			<label kind="guard" x="365" y="-17">unsafe()</label>
+			<label kind="assignment" x="365" y="0">react()</label>
+			<nail x="408" y="0"/>
+		</transition>
+		<transition id="id20" controllable="false">
+			<source ref="id18"/>
+			<target ref="id16"/>
+			<label kind="guard" x="348" y="-42">!unsafe()</label>
+		</transition>
+		<transition id="id21" controllable="false">
+			<source ref="id15"/>
+			<target ref="id18"/>
+			<label kind="synchronisation" x="263" y="-17">start?</label>
+			<label kind="assignment" x="263" y="0">sense()</label>
+		</transition>
+		<transition id="id22" controllable="false">
+			<source ref="id16"/>
+			<target ref="id18"/>
+			<label kind="synchronisation" x="331" y="-85">update?</label>
+			<label kind="assignment" x="331" y="-68">sense()</label>
+			<nail x="340" y="-68"/>
+		</transition>
+		<transition id="id23" controllable="false">
+			<source ref="id17"/>
+			<target ref="id15"/>
+			<label kind="select" x="59" y="-25">s_v_c_lon:int[80,80]</label>
+			<label kind="assignment" x="59" y="8">set_paras(s_v_c_lon)</label>
+			<label kind="comments" x="42" y="42">In CC human driver, the reaction time 
+is 0.75s, during which the deceleration
+is -4m/s2. After that the deceleration 
+linearly increases to -7.59m/s2 within 0.6s, 
+which makes the jerk to be -12.65m/s3.</label>
+		</transition>
+	</template>
+	<template>
+		<name>RSS</name>
+		<parameter>const int32_t width, const int32_t length</parameter>
+		<declaration>void set_paras(int32_t s_v_c_lon){
+    ego.width = width;
+    ego.length = length;
+    ego.lon.a = 0;
+    ego.lon.v = kmh2ms(d2i(s_v_c_lon));
+    ego.lon.p = 0;             //ego always starts from 0, longitudinally
+    ego.lat.a = 0;
+    ego.lat.v = 0;
+    ego.lat.p = 0;             //ego always starts from 0, laterally
+    
+    para_cutin.tick_rt = sec2tick(0.75);            //0.75s
+    para_cutin.min_ego_lon_del = d2i(-4);           //-4m/s2
+    para_cutin.max_ego_lon_del = d2i(-7.59);        //-7.59m/s2
+    para_cutin.max_ego_lon_jerk = d2i(-12.65);      //-12.65m/s3  
+    para_cutin.max_test_lon_del = d2i(-6.0);        //-6m/s2
+    para_cutin.safe_lat = d2i(0.3);                 //lateral safety margin: 0.3m
+    para_cutin.tick_safe_ttc = sec2tick(2);
+    safe = true;
+}
+
+void sense(){
+    safe = safety_check_cutin(); //this function updates ttc 
+}
+
+// RSS required safe longitudinal distance (m) given ego's current longitudinal speed.
+double rss_safe_lon_dis(){
+    const double rt = tick2sec(para_cutin.tick_rt);
+    // Distance ego travels during reaction time, including allowed accel.
+    const double ego_react_dis = ego.lon.v * rt + 0.5 * ego.lon.a * pow(rt, 2);
+    // Ego speed after reaction phase (accelerating during RT).
+    const double ego_speed_post_rt = ego.lon.v + ego.lon.a * rt; 
+    // Ego braking distance after reaction. Assume full deceleration.
+    const double ego_brake_dis = fabs(pow(ego_speed_post_rt, 2)/(2*para_cutin.max_ego_lon_del));
+    // Cutin's braking distance. Assume full deceleration.
+    const double cutin_brake_dis = fabs(pow(test.lon.v, 2)/(2*para_cutin.max_test_lon_del));
+    
+    // Required safe distance = ego reaction + ego brake - cut-in brake.
+    return ego_react_dis + ego_brake_dis - cutin_brake_dis;
+}
+
+// RSS required safe lateral distance (m)
+double rss_safe_lat_dis(){
+    const double rt = tick2sec(para_cutin.tick_rt);
+    const double mu = i2d(para_cutin.safe_lat);
+    // Use absolute lateral speed of the cutting-in vehicle.
+    const double v_lat_cutin = fabs(i2d(test.lat.v));
+    // Reaction-time lateral term (triangular motion during RT).
+    const double dis_post_rt = fabs((2.0 * v_lat_cutin + test.lat.a * rt) * rt * 0.5);
+    // ego has no lateral acc or del
+
+    return mu + dis_post_rt;
+}
+
+bool unsafe(){
+    double actual_lon_dis = i2d(lon_dis(ego, test));
+    double actual_lat_dis = 0.0;
+    double brake_lon_dis = 0.0;
+    double brake_lat_dis = 0.0;
+    
+    // if ego is ahead, it is always safe
+    if(actual_lon_dis &gt; 0){
+        return false;
+    }
+    else{
+        brake_lon_dis = rss_safe_lon_dis();
+        if(actual_lon_dis &lt; brake_lon_dis){
+            actual_lat_dis = i2d(lat_dis(ego, test));
+            brake_lat_dis = rss_safe_lat_dis();
+            if(actual_lat_dis &lt; brake_lat_dis){
+                return true;
+            }
+        }
+    }
+    
+    return false;
+}
+
+void react(){
+    double a = i2d(ego.lon.a);
+    // the deceleration is small within the reaction time
+    if(tick_current - para_cutin.tick_lcs &lt;= para_cutin.tick_rt){
+        ego.lon.a = d2i(-0.4);
+    }else{
+        //jerk is -12.65m/s3, and max_ego_lon_del is -7.59m/s2
+        ego.lon.a = d2i(fmax(a + i2d(para_cutin.max_ego_lon_jerk)/F, i2d(para_cutin.max_ego_lon_del)));
+    }
+}</declaration>
+		<location id="id24" x="238" y="0">
+			<name x="229" y="-42">CP</name>
+		</location>
+		<location id="id25" x="408" y="-68">
+			<name x="391" y="-102">W</name>
+		</location>
+		<location id="id26" x="34" y="0">
+			<name x="17" y="-42">Start</name>
+			<committed/>
+		</location>
+		<location id="id27" x="340" y="0">
+			<name x="323" y="-34">R</name>
+			<committed/>
+		</location>
+		<init ref="id26"/>
+		<transition id="id28" controllable="false">
+			<source ref="id27"/>
+			<target ref="id25"/>
+			<label kind="guard" x="365" y="-17">unsafe()</label>
+			<label kind="assignment" x="365" y="0">react()</label>
+			<nail x="408" y="0"/>
+		</transition>
+		<transition id="id29" controllable="false">
+			<source ref="id27"/>
+			<target ref="id25"/>
+			<label kind="guard" x="348" y="-42">!unsafe()</label>
+		</transition>
+		<transition id="id30" controllable="false">
+			<source ref="id24"/>
+			<target ref="id27"/>
+			<label kind="synchronisation" x="263" y="-17">start?</label>
+			<label kind="assignment" x="263" y="0">sense()</label>
+		</transition>
+		<transition id="id31" controllable="false">
+			<source ref="id25"/>
+			<target ref="id27"/>
+			<label kind="synchronisation" x="331" y="-85">update?</label>
+			<label kind="assignment" x="331" y="-68">sense()</label>
+			<nail x="340" y="-68"/>
+		</transition>
+		<transition id="id32" controllable="false">
+			<source ref="id26"/>
+			<target ref="id24"/>
+			<label kind="select" x="59" y="-25">s_v_c_lon:int[80,80]</label>
+			<label kind="assignment" x="59" y="8">set_paras(s_v_c_lon)</label>
+			<label kind="comments" x="34" y="42">In Responsibility Sensitive Safety Model (RSS),
+the reaction time is 0.75s, during which 
+the deceleration is -4m/s2. After that the 
+deceleration linearly increases to -7.59m/s2 
+within 0.6s, which makes the jerk to be -12.65m/s3.
+The test vehicle is assumed to have a lon del -6m/s2</label>
+		</transition>
+	</template>
+	<template>
+		<name>FSM</name>
+		<parameter>const int32_t width, const int32_t length</parameter>
+		<declaration>const double margin_dist = 2.0;        // distance margin (m)
+const double margin_safe_dist = 2.0;   // safety margin (m)
+
+void set_paras(int32_t s_v_c_lon){
+    ego.width = width;
+    ego.length = length;
+    ego.lon.a = 0;
+    ego.lon.v = kmh2ms(d2i(s_v_c_lon));
+    ego.lon.p = 0;             //ego always starts from 0, longitudinally
+    ego.lat.a = 0;
+    ego.lat.v = 0;
+    ego.lat.p = 0;             //ego always starts from 0, laterally
+    
+    para_cutin.tick_rt = sec2tick(0.75);            //0.75s
+    para_cutin.min_ego_lon_del = d2i(-4);           //-4m/s2
+    para_cutin.max_ego_lon_del = d2i(-7.59);        //-7.59m/s2
+    para_cutin.max_ego_lon_jerk = d2i(-12.65);      //-12.65m/s3  
+    para_cutin.max_test_lon_del = d2i(-6.0);        //-6m/s2
+    para_cutin.safe_lat = d2i(0.3);                 //lateral safety margin: 0.3m
+    para_cutin.tick_safe_ttc = sec2tick(2);
+    safe = true;
+}
+
+//--------------------------------------------
+// Safe division helper for fuzzy safety logic
+//--------------------------------------------
+double fuzzy_safety(double num, double den) {
+    if (den != 0.0) {
+        return num / den;           // normal case
+    } else if (num &gt;= 0.0) {
+        return i2d(INT32_MAX);      // safe "infinite" headway
+    }
+    return i2d(INT32_MIN);          // unsafe extreme
+}
+
+//--------------------------------------------
+// Perceived Fuzzy Safety (PFS):
+// Considers ego reaction distance, braking limits, and safety margins.
+//--------------------------------------------
+int32_t g_pfs_dsafe, g_pfs_dunsafe, g_pfs_dist;
+int pfs_case = 0;
+double PFS(double dist, double ur, double ul,
+           double rt, double br_min, double br_max, double bl,
+           double margin_dist, double margin_safe_dist)
+{
+    double dsafe, dunsafe;
+
+    g_pfs_dsafe   = INT32_MAX;
+    g_pfs_dunsafe = INT32_MAX;
+    g_pfs_dist    = d2i(dist);
+    pfs_case      = 0;
+
+    // --- Sanitize inputs to ensure meaningful values ---
+    dist   = fabs(dist);       // distance must be non-negative
+    ur     = fmax(ur, 0.0);    // ego speed non-negative
+    ul     = fmax(ul, 0.0);    // lead/test speed non-negative
+    br_min = fabs(br_min);     // braking magnitudes positive
+    br_max = fabs(br_max);
+    bl     = fabs(bl);
+    margin_dist      = fabs(margin_dist);
+    margin_safe_dist = fabs(margin_safe_dist);
+
+    // Adjust distance by margin (makes it stricter)
+    dist = dist - margin_dist;
+
+    // --- Safe / unsafe thresholds ---
+    dsafe = ur * rt
+            + (ur * ur) / (2.0 * br_min)
+            - (ul * ul) / (2.0 * bl)
+            + margin_safe_dist;
+
+    g_pfs_dsafe = d2i(dsafe);
+
+    if (dist &gt; dsafe) {
+        pfs_case = 1;
+        return 0.0;   // Safe
+    } else {
+        dunsafe = ur * rt
+                  + (ur * ur) / (2.0 * br_max)
+                  - (ul * ul) / (2.0 * bl);
+
+        g_pfs_dunsafe = d2i(dunsafe);
+
+        if (dist &lt; dunsafe) {
+            pfs_case = 2;
+            return 1.0;   // Unsafe
+        } else {
+            pfs_case = 3;
+            return fuzzy_safety(dist - dsafe, dunsafe - dsafe); // Fuzzy safety score
+        }
+    }
+}
+
+//--------------------------------------------
+// Collision Fuzzy Safety (CFS):
+// Considers ego’s acceleration, reaction time, and braking limits.
+//--------------------------------------------
+int32_t g_dsafe, g_dunsafe, g_denom, g_dist;
+int cfs_case = 0;
+double CFS(double dist, double ur, double ul,
+           double rt, double br_min, double br_max, double bl, double ar)
+{
+    double arF, u_new;
+    double rel_after_rt, dsafe, dunsafe, denom;
+    
+    g_dsafe = INT32_MAX;
+    g_dunsafe = INT32_MAX;
+    g_denom = INT32_MAX;
+    g_dist = d2i(dist);
+    cfs_case = 0;
+    
+    // --- Sanitize inputs to avoid negative distances or unsafe math ---
+    dist   = fabs(dist);       // gap must always be positive
+    ur     = fmax(ur, 0.0);    // ego speed non-negative
+    ul     = fmax(ul, 0.0);    // lead/test speed non-negative
+    br_min = fabs(br_min);     // braking values are magnitudes
+    br_max = fabs(br_max);
+    bl     = fabs(bl);
+
+    // Limit ego’s considered accel: don’t assume overly harsh decel
+    arF = fmax(ar, -br_min);
+
+    // Predicted ego speed after reaction time
+    u_new = ur + rt * arF;
+
+    // If ego already slower than intruder → no collision
+    if (ur &lt;= ul) {
+        cfs_case = 1;
+        return 0.0;
+    }
+
+    // Case 1: Ego slows enough during reaction time
+    if (u_new &lt; ul) {
+        denom = fabs(2.0 * ar);
+        if (denom == 0.0) {
+            dsafe = i2d(INT32_MAX); // degenerate case
+        } else {
+            dsafe = ((ur - ul) * (ur - ul)) / denom;
+        }
+        
+        g_dsafe = d2i(dsafe);
+        g_denom = d2i(denom);
+
+        if (dist &lt; dsafe) {
+            cfs_case = 2;
+            return 1.0;  // Unsafe
+        } else {
+            cfs_case = 3;
+            return 0.0;  // Safe
+        }
+    }
+    // Case 2: Ego still faster than intruder after reaction time
+    else {
+        rel_after_rt = (ur + arF * rt) - ul;
+
+        // Safe distance with min braking
+        dsafe = (ur + arF * rt * 0.5 - ul) * rt
+                + (rel_after_rt * rel_after_rt) / (2.0 * br_min);
+                
+        g_dsafe = d2i(dsafe);
+
+        if (dist &gt; dsafe) {
+            cfs_case = 4;
+            return 0.0;  // Safe
+        } else {
+            // Unsafe distance with max braking
+            dunsafe = (ur + arF * rt * 0.5 - ul) * rt
+                      + (rel_after_rt * rel_after_rt) / (2.0 * br_max);
+                      
+            g_dunsafe = d2i(dunsafe);
+
+            if (dist &lt; dunsafe) {
+                cfs_case = 5;
+                return 1.0;  // Unsafe
+            } else {
+                // Fuzzy transition between safe and unsafe
+                cfs_case = 6;
+                return fuzzy_safety(dist - dsafe, dunsafe - dsafe);
+            }
+        }
+    }
+}
+
+int32_t g_cfs, g_pfs;
+int32_t g_headway_lat, g_headway_lon;
+int pc = 0;
+bool compute(){
+    double lat_gap, lon_gap;
+    double headway_lat, headway_lon;
+    double rel_v_long;
+    double ar, dist;
+    double ur, ul, rt;
+    double cfs, pfs;
+    
+    g_cfs = 0;
+    g_pfs = 0;
+    g_headway_lat = INT32_MAX;
+    g_headway_lon = INT32_MAX;
+
+    // 1) Ego already ahead → safe
+    if (ego.lon.p &gt; test.lon.p) {
+        pc = 1;
+        return false;
+    }
+
+    // 2) Lateral clearance check (cut-in handling)
+    lat_gap = i2d(lat_dis(ego, test));
+    if (lat_gap &gt; 0.0) {
+        if (test.lat.v &gt;= 0.0) {
+            pc = 2;
+            // Time to complete cut-in
+            headway_lat = fuzzy_safety(lat_gap, i2d(test.lat.v));
+
+            // Available longitudinal gap
+            lon_gap = i2d(lon_dis(ego, test));
+            rel_v_long = i2d(ego.lon.v - test.lon.v);
+            headway_lon = fuzzy_safety(lon_gap, rel_v_long);
+            
+            g_headway_lat = d2i(headway_lat);
+            g_headway_lon = d2i(headway_lon);
+
+            // If cut-in finishes before longitudinal gap closes → safe
+            if (headway_lat &gt; headway_lon + 0.1) {
+                pc = 3;
+                return false;
+            }
+        } else {
+            pc = 4;
+            // Intruder moving away laterally → safe
+            return false;
+        }
+    }
+    
+    pc = 5;
+    
+    // 3) Longitudinal safety check
+    ar = i2d(ego.lon.a) * F;                 // ego longitudinal accel scaled
+    dist = i2d(lon_dis(ego, test));          // bumper-to-bumper distance
+    ur = i2d(ego.lon.v);                     // ego speed
+    ul = i2d(test.lon.v);                    // intruder speed
+    rt = tick2sec(para_cutin.tick_rt);       // reaction time in sec
+
+    // Compute fuzzy safety values
+    cfs = CFS(dist, ur, ul, rt,
+              i2d(para_cutin.min_ego_lon_del), i2d(para_cutin.max_ego_lon_del),
+              i2d(para_cutin.max_test_lon_del), ar);
+
+    pfs = PFS(dist, ur, ul, rt,
+              i2d(para_cutin.min_ego_lon_del), i2d(para_cutin.max_ego_lon_del),
+              i2d(para_cutin.max_test_lon_del), margin_dist, margin_safe_dist);
+              
+    g_cfs = d2i(cfs);
+    g_pfs = d2i(pfs);
+              
+    return (g_cfs + g_pfs == 0);
+}
+
+//--------------------------------------------
+// Overall Unsafe Check (ego vs test intruder):
+// - Step 1: If ego is already ahead → safe
+// - Step 2: If lateral gap is positive, check cut-in timing
+// - Step 3: Run CFS and PFS
+//--------------------------------------------
+bool unsafe() {
+    // Unsafe if both fuzzy safeties report 0.0 (no buffer left)
+    return (g_cfs + g_pfs != 0);
+}
+
+void sense(){
+    compute();
+    safe = safety_check_cutin(); //this function updates ttc 
+}
+
+void react(){
+    double cfs, pfs;
+    double ar, del, dist;
+    double ur, ul, rt;
+
+    // --- Step 1: Handle reaction time counter ---
+    // the deceleration is zero within the reaction time
+    if(tick_current - para_cutin.tick_lcs &lt;= para_cutin.tick_rt){
+        ego.lon.a = d2i(-0.0);
+    }else{
+        // --- Step 2: Compute desired deceleration ---
+        ar = i2d(ego.lon.a) * F;                 // ego longitudinal accel scaled
+        dist = i2d(lon_dis(ego, test));          // bumper-to-bumper distance
+        ur = i2d(ego.lon.v);                     // ego speed
+        ul = i2d(test.lon.v);                    // intruder speed
+        rt = tick2sec(para_cutin.tick_rt);       // reaction time in sec
+
+        // Compute fuzzy safety values
+        cfs = CFS(dist, ur, ul, rt,
+              i2d(para_cutin.min_ego_lon_del), i2d(para_cutin.max_ego_lon_del),
+              i2d(para_cutin.max_test_lon_del), ar);
+
+        pfs = PFS(dist, ur, ul, rt,
+              i2d(para_cutin.min_ego_lon_del), i2d(para_cutin.max_ego_lon_del),
+              i2d(para_cutin.max_test_lon_del), margin_dist, margin_safe_dist);
+              
+        if (cfs &gt; 0.0) {
+            // Collision Fuzzy Safety (CFS) dominates → scale between min and max braking
+            del = cfs * (i2d(para_cutin.max_ego_lon_del - para_cutin.min_ego_lon_del)) + 
+            i2d(para_cutin.min_ego_lon_del);
+        } else {
+            // Only Perceived Fuzzy Safety (PFS) → softer braking based on minimum
+            del = pfs * i2d(para_cutin.min_ego_lon_del);
+        }
+        if(del &gt;= 0){
+            del = del * -1;
+        }
+
+        // --- Step 3: Apply jerk limitation and clamp deceleration ---
+        // Increase deceleration smoothly with jerk, but don’t exceed limits
+        ego.lon.a = d2i(fmax(fmax(i2d(ego.lon.a) + i2d(para_cutin.max_ego_lon_jerk)/F, 
+        i2d(para_cutin.max_ego_lon_del)), del));
+    }
+}</declaration>
+		<location id="id33" x="238" y="0">
+			<name x="229" y="-42">CP</name>
+		</location>
+		<location id="id34" x="408" y="-68">
+			<name x="391" y="-102">W</name>
+		</location>
+		<location id="id35" x="34" y="0">
+			<name x="17" y="-42">Start</name>
+			<committed/>
+		</location>
+		<location id="id36" x="340" y="0">
+			<name x="323" y="-34">R</name>
+			<committed/>
+		</location>
+		<init ref="id35"/>
+		<transition id="id37" controllable="false">
+			<source ref="id36"/>
+			<target ref="id34"/>
+			<label kind="guard" x="365" y="-17">unsafe()</label>
+			<label kind="assignment" x="365" y="0">react()</label>
+			<nail x="408" y="0"/>
+		</transition>
+		<transition id="id38" controllable="false">
+			<source ref="id36"/>
+			<target ref="id34"/>
+			<label kind="guard" x="348" y="-42">!unsafe()</label>
+		</transition>
+		<transition id="id39" controllable="false">
+			<source ref="id33"/>
+			<target ref="id36"/>
+			<label kind="synchronisation" x="263" y="-17">start?</label>
+			<label kind="assignment" x="263" y="0">sense()</label>
+		</transition>
+		<transition id="id40" controllable="false">
+			<source ref="id34"/>
+			<target ref="id36"/>
+			<label kind="synchronisation" x="331" y="-85">update?</label>
+			<label kind="assignment" x="331" y="-68">sense()</label>
+			<nail x="340" y="-68"/>
+		</transition>
+		<transition id="id41" controllable="false">
+			<source ref="id35"/>
+			<target ref="id33"/>
+			<label kind="select" x="59" y="-25">s_v_c_lon:int[80,80]</label>
+			<label kind="assignment" x="59" y="8">set_paras(s_v_c_lon)</label>
+			<label kind="comments" x="34" y="42">In Fuzzy Safety Model (FSS),</label>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">Cutin1</name>
+		<parameter>const int32_t width, const int32_t length</parameter>
+		<declaration>/*
+*
+* In this scenario, the cutin vehicle starts on the adjacent lane and behind the ego vehicle
+*
+10 -------------------------------------------------------------------------------------------------------------
+
+    &gt;-------&gt;
+    &gt;-cutin-&gt; ---------------------------------------&gt;                                                            Lane 1
+    &gt;-------&gt;                                          -------&gt;
+                                                              -------&gt;
+5  -------------------------------------------------------------------------------------------------------------
+                                                                      -------&gt;    
+                                                                              -------&gt;
+                                --------                                              &gt;-------&gt;
+                                &gt;  ego  &gt;                                             &gt;-cutin-&gt;                   Lane 2
+                                --------                                              &gt;-------&gt;
+
+   -------------------------------------------------------------------------------------------------------------
+ 0                    10                    20        lc_start     30                    40   lc_end               50
+
+v_e_lon, v_c_lon &gt; 0
+dis_lon_init = pos_ego - pos_cutin. 
+When dis_lon_init &gt; 0, ego is ahead. When dis_lon_init &lt; 0, cutin is ahead. For example, dis_lon_init is [0, 10]
+dis_lon = dis_lon_init + time*(v_e_lon-v_c_lon) -&gt; time = (dis_lon-dis_lon_init)/(v_e_lon-v_c_lon)
+lane-change starts when dis_lon is [-10, -20], which means (dis_lon-dis_lon_init) is [-30, -10].
+When v_e_lon-v_c_lon&gt;0, time = (dis_lon-dis_lon_init)/(v_e_lon-v_c_lon)&lt;0. Time can never be negative, so lane-change never starts.
+When v_e_lon-v_c_lon&lt;0, SIM&gt;time = (dis_lon-dis_lon_init)/(v_e_lon-v_c_lon)&gt;0, lane-change starts, where SIM is the scenario max time.
+If the lane-change duration T_lc is defined, lane-change ends at: lc_end = lc_start + T_lc, and v_c_lon += acc_c_lon_lc*T_lc
+
+*/
+
+clock lct;
+
+int lc_start(){
+    int time_to_start_lc = 0;
+    if(ego.lon.v - test.lon.v != 0){
+        time_to_start_lc = (para_cutin.dis_lon_lc - para_cutin.dis_lon_init) / (ego.lon.v - test.lon.v);
+        if(time_to_start_lc &lt; 0){
+            time_to_start_lc = SIM+1; //lct can never be larger than SIM+1
+        }
+    }else if(para_cutin.dis_lon_lc == para_cutin.dis_lon_init){
+        time_to_start_lc = 0; //start immediately
+    }else{
+        time_to_start_lc = SIM+1; //lct can never be larger than SIM+1
+    }
+    return sec2tick(time_to_start_lc);
+}
+
+void set_paras(int32_t s_v_c_lon, int32_t s_dis_lon_init, int32_t s_dis_lon_lc, int32_t s_t_lc){
+    test.width = width;
+    test.length = length;
+    test.lon.a = 0;
+    test.lon.v = kmh2ms(d2i(s_v_c_lon));
+    test.lon.p = 0 - d2i(s_dis_lon_init);         //ego always starts from 0, longitudinally
+    test.lat.a = 0;
+    test.lat.v = 0;
+    test.lat.p = 0 - d2i(lane_width);             //ego always starts from 0, laterally
+    
+    para_cutin.dis_lon_init = d2i(s_dis_lon_init);
+    para_cutin.dis_lon_lc = d2i(s_dis_lon_lc);
+    para_cutin.tick_lc = sec2tick(s_t_lc);
+}
+
+void up_paras(){
+    lct=0;
+    para_cutin.tick_lcs=lc_start();    
+    ego.lon.p += ego.lon.v * para_cutin.tick_lcs;
+    test.lat.a = lc_acc(0);
+    test.lon.p += test.lon.v * para_cutin.tick_lcs;
+}</declaration>
+		<location id="id42" x="68" y="170">
+			<name x="-8" y="178">LaneKeep</name>
+		</location>
+		<location id="id43" x="-204" y="170">
+			<name x="-246" y="128">LaneChange</name>
+			<label kind="invariant" x="-263" y="187">lct&lt;=para_cutin.tick_lc&amp;&amp;
+st&lt;=sec2tick(SIM)</label>
+		</location>
+		<location id="id44" x="-204" y="0">
+			<name x="-229" y="-34">CatchUp</name>
+			<label kind="invariant" x="-255" y="17">lct&lt;=lc_start()&amp;&amp;
+st&lt;=sec2tick(SIM)</label>
+		</location>
+		<location id="id45" x="-476" y="0">
+			<name x="-501" y="-34">Start</name>
+			<committed/>
+		</location>
+		<init ref="id45"/>
+		<transition id="id46">
+			<source ref="id45"/>
+			<target ref="id44"/>
+			<label kind="select" x="-450" y="-68">s_v_c_lon:int[80,81],
+s_dis_lon_init:int[29,30],
+s_dis_lon_lc:int[-6,-5],
+s_t_lc:int[1,2]</label>
+			<label kind="assignment" x="-450" y="0">set_paras(s_v_c_lon, 
+s_dis_lon_init, 
+s_dis_lon_lc, s_t_lc)</label>
+		</transition>
+		<transition id="id47" controllable="false">
+			<source ref="id43"/>
+			<target ref="id42"/>
+			<label kind="guard" x="-161" y="136">lct&gt;=para_cutin.tick_lc</label>
+			<label kind="synchronisation" x="-161" y="153">fin!</label>
+		</transition>
+		<transition id="id48" controllable="false">
+			<source ref="id44"/>
+			<target ref="id43"/>
+			<label kind="guard" x="-255" y="59">lct&gt;=lc_start()</label>
+			<label kind="synchronisation" x="-255" y="76">start!</label>
+			<label kind="assignment" x="-255" y="93">up_paras()</label>
+		</transition>
+	</template>
+	<template>
+		<name>Cutin2</name>
+		<parameter>const int32_t width, const int32_t length</parameter>
+		<declaration>/*
+*
+* In this scenario, the cutin vehicle starts on the adjacent lane and before the ego vehicle. 
+* The cutin vehicle maintains its longitudinal velocity to be slower than the ego vehicle.
+*
+10 -------------------------------------------------------------------------------------------------------------
+
+                                                     &gt;-------&gt;
+                                                     &gt;-cutin-&gt;                                                    Lane 1
+                                                     &gt;-------&gt;                                          
+                                                              -------&gt;
+5  -------------------------------------------------------------------------------------------------------------
+                                                                      -------&gt;    
+                                                                              -------&gt;
+                                --------                                              &gt;-------&gt;
+                                &gt;  ego  &gt;                                             &gt;-cutin-&gt;                   Lane 2
+                                --------                                              &gt;-------&gt;
+
+   -------------------------------------------------------------------------------------------------------------
+ 0                    10                    20           lc_start  30                    40   lc_end               50
+*
+*
+*/
+
+clock lct;
+
+void set_paras(int32_t s_v_c_lon, int32_t s_dis_lon_lc, int32_t s_t_lc){
+    test.width = width;
+    test.length = length;
+    test.lon.a = 0;
+    test.lon.v = kmh2ms(d2i(s_v_c_lon));
+    test.lon.p = 0 - d2i(s_dis_lon_lc);         //ego always starts from 0, longitudinally
+    test.lat.a = 0;
+    test.lat.v = 0;
+    test.lat.p = 0 - d2i(lane_width);             //ego always starts from 0, laterally
+    
+    para_cutin.dis_lon_init = d2i(s_dis_lon_lc);
+    para_cutin.dis_lon_lc = d2i(s_dis_lon_lc);
+    para_cutin.tick_lc = sec2tick(s_t_lc);
+}
+
+void up_paras(){
+    lct=0;
+    para_cutin.tick_lcs=0;
+    test.lat.a = lc_acc(0);
+}</declaration>
+		<location id="id49" x="-102" y="68">
+			<name x="-161" y="85">LaneKeep</name>
+		</location>
+		<location id="id50" x="-340" y="68">
+			<name x="-433" y="42">LaneChange</name>
+			<label kind="invariant" x="-399" y="85">lct&lt;=para_cutin.tick_lc&amp;&amp;
+st&lt;=sec2tick(SIM)</label>
+		</location>
+		<location id="id51" x="-544" y="-68">
+			<name x="-569" y="-102">Start</name>
+			<committed/>
+		</location>
+		<location id="id52" x="-340" y="-68">
+			<name x="-323" y="-85">CatchUp</name>
+			<urgent/>
+		</location>
+		<init ref="id51"/>
+		<transition id="id53" controllable="false">
+			<source ref="id52"/>
+			<target ref="id50"/>
+			<label kind="synchronisation" x="-391" y="-17">start!</label>
+			<label kind="assignment" x="-425" y="0">up_paras()</label>
+		</transition>
+		<transition id="id54">
+			<source ref="id51"/>
+			<target ref="id52"/>
+			<label kind="select" x="-518" y="-127">s_v_c_lon:int[60,61],
+s_dis_lon_lc:int[-30,-15],
+s_t_lc:int[1,2]</label>
+			<label kind="assignment" x="-518" y="-68">set_paras(s_v_c_lon, 
+s_dis_lon_lc, s_t_lc)</label>
+		</transition>
+		<transition id="id55" controllable="false">
+			<source ref="id50"/>
+			<target ref="id49"/>
+			<label kind="guard" x="-323" y="34">lct&gt;=para_cutin.tick_lc</label>
+			<label kind="synchronisation" x="-323" y="51">fin!</label>
+		</transition>
+	</template>
+	<system>// Vehicle width: [1.7, 2.0]m, length: [4.0, 5.0]m
+scenario_cutin = Cutin2(d2i(1.8),d2i(4.5));
+r157 = R157(d2i(1.8),d2i(4.5));
+cc_human_driver = CC(d2i(1.8),d2i(4.5));
+rss = RSS(d2i(1.8),d2i(4.5));
+fsm = FSM(d2i(1.8),d2i(4.5));
+timer = Timer();
+// List one or more processes to be composed into a system.
+system timer, fsm, scenario_cutin;
+</system>
+	<queries>
+		<option key="--diagnostic" value="0"/>
+		<query>
+			<formula>E&lt;&gt; scenario_cutin.LaneKeep</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-08-21 15:38:15 +0200">
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] safe</formula>
+			<comment/>
+			<result outcome="failure" type="quality" timestamp="2025-08-25 08:37:10 +0200">
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+		<query>
+			<formula>strategy safe = control: A[] safe</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-08-25 16:26:38 +0200">
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+	</queries>
+</nta>

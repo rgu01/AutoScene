@@ -1,0 +1,1710 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>// Generated scenario starts
+const int P = 1;
+const uint16_t MAXTIME = 50;
+const int MAXP = 40;
+const int NONE = -1;
+const int MAXL = 3;
+const int MAXSO = 1;
+const int MAXDO = 2;
+const int MAXTP = 50;
+const int MAXPRE = 1;
+const int MAXSUC = 1;
+const double THRESHOLD_COLLISION = 2;
+const double THRESHOLD_REACH = 0.5;
+const double TIMESTEPSIZE = 0.1;
+const double RADAR = 100;
+const uint8_t N1 = 1;
+const uint8_t N2 = 1;
+const uint8_t BASE = 10;
+const uint8_t EXPONENT = 3;
+const uint8_t MAXOBS = 2;
+typedef int[0,MAXOBS-1] obs_id_t;
+
+const uint8_t ACTNUM = 2 * 3;
+
+typedef int[-1,65535] id_t;
+
+typedef struct {
+    int32_t x;
+    int32_t y;
+}ST_IPOINT;
+
+typedef struct {
+    double x;
+    double y;
+}ST_DPOINT;
+
+typedef struct {
+    ST_IPOINT ends[2];
+}ST_DLINE;
+
+typedef struct {
+    ST_IPOINT points[MAXP];
+    bool dashLine;
+}ST_BOUND;
+
+typedef struct {
+    id_t ID;
+    ST_BOUND left;
+    ST_BOUND right;
+    id_t predecessor[MAXPRE];
+    id_t successor[MAXSUC];
+    id_t adjLeft;
+    bool dirLeft;
+    id_t adjRight;
+    bool dirRight;
+}ST_LANE;
+
+typedef struct {
+    ST_DPOINT position;
+    double vel;
+    double head;
+    double acc;
+    double holder1;
+    double holder2;
+}ST_DSTATE;
+
+typedef struct {
+    ST_IPOINT position;
+    int32_t vel;
+    int32_t head;
+    int32_t acc;
+}ST_ISTATE;
+
+typedef struct {
+    hybrid clock x;
+    hybrid clock y;
+    hybrid clock vel;
+}ST_DYNAMICS;
+
+typedef struct {
+    int32_t width;
+    int32_t length;
+}ST_RECTANGLE;
+
+typedef struct {
+    int32_t maxVelocity;
+    int32_t minVelocity;
+    int32_t maxOrientation;
+    int32_t minOrientation;
+}ST_RULES;
+
+typedef struct {
+    ST_IPOINT goal;
+}ST_PLANNING;
+
+typedef struct {
+    int32_t time;
+    ST_DSTATE dState;
+}ST_PAIR;
+const ST_BOUND leftLane1 = {{{-39289, -2153}, {-20817, -1962}, {-20704, -1961}, {-34, -1748}, {78, -1747}, {21383, -1527}, {21496, -1526}, {26728, -1472}, {26744, -1472}, {32025, -1417}, {32183, -1416}, {37340, -1362}, {37548, -1360}, {42917, -1305}, {43030, -1304}, {71898, -1006}, {72010, -1005}, {95114, -767}, {95227, -765}, {120091, -509}, {120204, -508}, {154676, -152}, {154789, -151}, {182083, 130}, {182195, 131}, {207366, 391}, {207479, 392}, {228168, 606}, {228281, 607}, {256799, 901}, {256912, 902}, {286195, 1205}, {286308, 1206}, {310573, 1457}, {310686, 1458}, {334148, 1700}, {334260, 1701}, {363910, 2008}, {364023, 2009}, {387272, 2249}}, false};
+const ST_BOUND rightLane1 = {{{-39137, -5880}, {-20778, -5691}, {-20665, -5690}, {4, -5477}, {116, -5476}, {21421, -5256}, {21534, -5255}, {26766, -5201}, {26783, -5201}, {32063, -5146}, {32221, -5144}, {37378, -5091}, {37586, -5089}, {42956, -5034}, {43069, -5033}, {71936, -4735}, {72049, -4734}, {95152, -4495}, {95265, -4494}, {120130, -4238}, {120243, -4236}, {154715, -3881}, {154828, -3880}, {182121, -3598}, {182234, -3597}, {207405, -3337}, {207517, -3336}, {228206, -3122}, {228319, -3121}, {256838, -2827}, {256951, -2825}, {286234, -2523}, {286346, -2522}, {310611, -2271}, {310724, -2270}, {334186, -2028}, {334299, -2026}, {363948, -1720}, {364061, -1719}, {387424, -1478}}, false};
+const ST_LANE lane1 = {30622, leftLane1, rightLane1, {NONE}, {NONE}, 30624, true, NONE, false};
+
+const ST_BOUND leftLane2 = {{{-39272, 1343}, {-20853, 1533}, {-20800, 1533}, {-70, 1747}, {-18, 1747}, {21347, 1968}, {21399, 1968}, {26708, 2023}, {26835, 2024}, {31989, 2077}, {32226, 2080}, {37304, 2132}, {37354, 2133}, {42881, 2190}, {42934, 2190}, {71862, 2488}, {71914, 2489}, {95078, 2728}, {95130, 2729}, {120055, 2986}, {120108, 2986}, {154640, 3342}, {154693, 3343}, {182046, 3625}, {182099, 3626}, {207330, 3886}, {207382, 3887}, {228132, 4101}, {228184, 4102}, {256763, 4397}, {256816, 4397}, {286159, 4700}, {286211, 4701}, {310537, 4952}, {310589, 4952}, {334112, 5195}, {334164, 5196}, {363874, 5503}, {363926, 5503}, {387288, 5745}}, false};
+const ST_BOUND rightLane2 = {{{-39289, -2153}, {-20817, -1962}, {-20764, -1962}, {-34, -1748}, {18, -1747}, {21383, -1527}, {21435, -1526}, {26744, -1472}, {26871, -1470}, {32025, -1417}, {32262, -1415}, {37340, -1362}, {37390, -1362}, {42917, -1305}, {42970, -1304}, {71898, -1006}, {71950, -1006}, {95114, -767}, {95166, -766}, {120091, -509}, {120144, -508}, {154676, -152}, {154729, -151}, {182083, 130}, {182135, 130}, {207366, 391}, {207418, 391}, {228168, 606}, {228220, 606}, {256799, 901}, {256852, 902}, {286195, 1205}, {286247, 1205}, {310573, 1457}, {310625, 1457}, {334148, 1700}, {334200, 1701}, {363910, 2008}, {363962, 2008}, {387272, 2249}}, false};
+const ST_LANE lane2 = {30624, leftLane2, rightLane2, {NONE}, {NONE}, 30626, true, 30622, true};
+
+const ST_BOUND leftLane3 = {{{-39493, 4874}, {-21021, 5064}, {-20837, 5066}, {-238, 5279}, {-54, 5281}, {21179, 5499}, {21363, 5501}, {26485, 5554}, {26799, 5557}, {31828, 5609}, {32190, 5613}, {37004, 5663}, {37318, 5666}, {42713, 5722}, {42897, 5723}, {71694, 6020}, {71877, 6022}, {94910, 6260}, {95094, 6262}, {119887, 6517}, {120071, 6519}, {154472, 6874}, {154656, 6876}, {181878, 7157}, {182062, 7159}, {207162, 7418}, {207346, 7420}, {227964, 7633}, {228148, 7635}, {256595, 7928}, {256779, 7930}, {285991, 8232}, {286175, 8234}, {310369, 8484}, {310553, 8486}, {333944, 8727}, {334127, 8729}, {363706, 9035}, {363890, 9036}, {387068, 9276}}, false};
+const ST_BOUND rightLane3 = {{{-39272, 1343}, {-20984, 1531}, {-20800, 1533}, {-201, 1745}, {-18, 1747}, {21215, 1966}, {21399, 1968}, {26522, 2021}, {26835, 2024}, {31865, 2076}, {32226, 2080}, {37040, 2129}, {37354, 2133}, {42750, 2188}, {42934, 2190}, {71730, 2487}, {71914, 2489}, {94946, 2727}, {95130, 2729}, {119924, 2984}, {120108, 2986}, {154509, 3341}, {154693, 3343}, {181915, 3624}, {182099, 3626}, {207198, 3885}, {207382, 3887}, {228000, 4100}, {228184, 4102}, {256632, 4395}, {256816, 4397}, {286028, 4699}, {286211, 4701}, {310405, 4951}, {310589, 4952}, {333980, 5194}, {334164, 5196}, {363742, 5502}, {363926, 5503}, {387288, 5745}}, false};
+const ST_LANE lane3 = {30626, leftLane3, rightLane3, {NONE}, {NONE}, NONE, false, 30624, true};
+
+const ST_LANE laneNet[MAXL] = {lane1, lane2, lane3};
+
+const bool dynamicObsExists = true;
+const bool staticObsExists = false;
+const ST_RECTANGLE staticObs[MAXSO] = {{NONE, NONE}};
+
+const ST_PLANNING planning = {{174065, -1816}};
+
+// Generated scenario ends
+const uint8_t M = 77;
+const uint8_t T = 84;
+const uint8_t N = 78;
+const int32_t ALL = -32767;
+
+/** Shielding */
+import "/home/rong/Github/StagedShieldSynthesis/car/shield/libshield.so"
+{
+    bool allow(uint8_t type, int value);
+    int is_state_contained();
+    int set_count_phase(uint8_t v_count, uint8_t v_phase);
+    int get_action(int &amp;type[ACTNUM], int32_t &amp;value[ACTNUM]);
+    int set_cps_state(int32_t x, int32_t y, int32_t velocity, int32_t orientation, int32_t acceleration);
+    int set_obs_state(int32_t id, int32_t x, int32_t y, int32_t velocity, int32_t orientation, int32_t acceleration);
+};
+
+broadcast chan m, a, sense, decide, start, end;
+
+//NOTE: when overflow happens, the sign of the number will be changed
+//but this function has no assertion about overflow
+int32_t d2i(double value) {
+    return fint(value*pow(BASE,EXPONENT));
+}
+
+double i2d(int32_t value) {
+    return value/pow(BASE,EXPONENT);
+}
+
+int32_t min(const int32_t v1, const int32_t v2){
+    return v1 &lt; v2? v1:v2;
+}
+
+int32_t max(const int32_t v1, const int32_t v2){
+    return v1 &gt; v2? v1:v2;
+}
+
+int32_t roundit(int32_t value){
+    int32_t scale = fint(pow(BASE,2));
+    //int32_t scale = 1;
+    return scale*(value/scale);
+}
+
+const int32_t OFFSET = d2i(10.0/pow(BASE,EXPONENT));  // allowed mistake of d2i
+const int32_t MAX_ACC = d2i(1); 
+const int32_t MIN_ACC = d2i(-1); 
+/* cutin and cutout */
+const int32_t MAX_V = d2i(4);  
+const int32_t MIN_V = d2i(3); 
+/**/
+/* deceleration
+const int32_t MAX_V = d2i(2.5);  
+const int32_t MIN_V = d2i(0.5); 
+*/
+const int32_t PI = d2i(M_PI);
+typedef int[-1,1] acc_t; // 3 gears of accelerations
+typedef int[-1,1] head_t; // 3 gears of diretions
+
+/** variables start **/
+uint8_t count = 0;
+uint8_t phase = 1;
+ST_ISTATE cps_state, obs_state[MAXOBS];
+ST_DYNAMICS cps_dyn, obs_dyn[MAXOBS];  
+const ST_RECTANGLE cps_shape = {1000, 4500};
+const ST_RECTANGLE shapeObs0 = {2000, 4800};
+const ST_RECTANGLE shapeObs1 = {2000, 4800};
+const ST_RECTANGLE obs_shape[MAXOBS] = {shapeObs0, shapeObs1};
+const int32_t UNIT = PI/8;
+const bool isShielded = true;
+/** variables end **/
+
+/** test start **/
+
+/** test end **/
+
+double mTimeStep(const double value) {
+    return value*TIMESTEPSIZE;
+}
+
+int32_t getDisP2P(const ST_IPOINT &amp;p1, const ST_IPOINT &amp;p2) {
+    double distance = 0.0;
+    double rx1 = i2d(p1.x), ry1 = i2d(p1.y);
+    double rx2 = i2d(p2.x), ry2 = i2d(p2.y);
+    distance = sqrt(pow(rx1 - rx2, 2) + pow(ry1 - ry2, 2));
+
+    return d2i(distance);
+}
+
+// Function to count non-zero elements in a 2D array
+int check_pts_num(const ST_IPOINT lane_pts[MAXP]) {
+    uint16_t count = 0;
+    // NONE or 0?
+    while (count &lt; MAXP &amp;&amp; (lane_pts[count].x != NONE || lane_pts[count].y != NONE)){
+        count++;
+    }
+    return count;
+}
+
+// Function to calculate the corner points of a rectangle
+void calculateCornerPoints(ST_ISTATE veh_state, ST_RECTANGLE veh_shape, ST_IPOINT &amp;corners[4]) {
+    double halfLength = i2d(veh_shape.length)/2.0;
+    double halfWidth = i2d(veh_shape.width)/2.0;
+    double angle = i2d(veh_state.head);
+
+    // Calculate the coordinates of each corner point based on the center, length, width, and head
+    corners[0].x = d2i(i2d(veh_state.position.x) + halfLength*cos(angle) - halfWidth*sin(angle));
+    corners[0].y = d2i(i2d(veh_state.position.y) + halfLength*sin(angle) + halfWidth*cos(angle));
+
+    corners[1].x = d2i(i2d(veh_state.position.x) + halfLength*cos(angle) + halfWidth*sin(angle));
+    corners[1].y = d2i(i2d(veh_state.position.y) + halfLength*sin(angle) - halfWidth*cos(angle));
+
+    corners[2].x = d2i(i2d(veh_state.position.x) - halfLength*cos(angle) + halfWidth*sin(angle));
+    corners[2].y = d2i(i2d(veh_state.position.y) - halfLength*sin(angle) - halfWidth*cos(angle));
+
+    corners[3].x = d2i(i2d(veh_state.position.x) - halfLength*cos(angle) - halfWidth*sin(angle));
+    corners[3].y = d2i(i2d(veh_state.position.y) - halfLength*sin(angle) + halfWidth*cos(angle));
+}
+
+// Checking if a point is inside a polygon
+bool point_in_polygon(ST_IPOINT point, ST_IPOINT polygon[4])
+{
+    int num_vertices = 4, i = 0;
+    int32_t x = point.x;
+    int32_t y = point.y;
+    double x_intersection;
+    bool inside = false;
+ 
+    // Store the first point in the polygon and initialize
+    // the second point
+    ST_IPOINT p1 = polygon[0], p2;
+ 
+    // Loop through each edge in the polygon
+    for (i = 1; i &lt;= num_vertices; i++) {
+        // Get the next point in the polygon
+        p2 = polygon[i % num_vertices];
+ 
+        // Check if the point is above the minimum y
+        // coordinate of the edge
+        if (y &gt; min(p1.y, p2.y)) {
+            // Check if the point is below the maximum y
+            // coordinate of the edge
+            if (y &lt;= max(p1.y, p2.y)) {
+                // Check if the point is to the left of the
+                // maximum x coordinate of the edge
+                if (x &lt;= max(p1.x, p2.x)) {
+                    // Calculate the x-intersection of the
+                    // line connecting the point to the edge
+                    x_intersection = (y - p1.y) * (p2.x - p1.x)/(p2.y - p1.y) + p1.x;
+ 
+                    // Check if the point is on the same
+                    // line as the edge or to the left of
+                    // the x-intersection
+                    if (p1.x == p2.x || x &lt;= x_intersection) {
+                        // Flip the inside flag
+                        inside = !inside;
+                    }
+                }
+            }
+        }
+ 
+        // Store the current point as the first point for
+        // the next iteration
+        p1 = p2;
+    }
+ 
+    // Return the value of the inside flag
+    return inside;
+}
+
+bool check_masspoint_inlane_lane(const ST_LANE lane, ST_IPOINT massPoint) {
+    uint8_t num_box = 0;
+    uint8_t i_box = 0;
+    uint8_t inlane_pts_num = 0;
+    ST_IPOINT box_corners[4];
+
+    // check the number of points in the lane
+    num_box = check_pts_num(lane.left.points) - 1;
+    for (i_box = 0; i_box &lt; num_box &amp;&amp; inlane_pts_num &lt; 4; i_box++){
+        // define the corner of the road box
+        box_corners[0] = lane.right.points[i_box];
+        box_corners[1] = lane.right.points[i_box + 1];
+        box_corners[2] = lane.left.points[i_box + 1];
+        box_corners[3] = lane.left.points[i_box];
+        // check if the inlane status of the vehicle center point to the current box
+        if(point_in_polygon(massPoint,box_corners)){
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// check if veh_state are not covered by a single lane, or if vehicle rectangle touches the edge of the lane
+uint8_t check_inlane_lane_single(const ST_LANE lane, ST_ISTATE veh_state, ST_RECTANGLE veh_shape) {
+    uint8_t num_box = 0;
+    uint8_t i_box = 0, i_veh = 0;
+    uint8_t inlane_pts_num = 0;
+
+    ST_IPOINT veh_corners[4];
+    ST_IPOINT box_corners[4];
+    // Calculate the corner points
+    calculateCornerPoints(veh_state, veh_shape, veh_corners);
+
+    // check the number of points in the lane
+    num_box = check_pts_num(lane.left.points) - 1;
+    for (i_box = 0; i_box &lt; num_box &amp;&amp; inlane_pts_num &lt; 4; i_box++){
+        // define the corner of the road box
+        box_corners[0] = lane.right.points[i_box];
+        box_corners[1] = lane.right.points[i_box + 1];
+        box_corners[2] = lane.left.points[i_box + 1];
+        box_corners[3] = lane.left.points[i_box];
+        // check if the inlane status of the vehicle box to the current box
+        for(i_veh = 0; i_veh &lt; 4; i_veh++){
+            if(point_in_polygon(veh_corners[i_veh],box_corners)){
+                inlane_pts_num++;
+            }
+        }   
+    }
+
+    return inlane_pts_num;
+}
+
+bool check_inlane_laneNet(ST_ISTATE veh_state, ST_RECTANGLE veh_shape) {
+    uint8_t i_lane = 0, inlane_pts_num = 0;
+    bool inside = false;
+
+    for(i_lane = 0; i_lane &lt; MAXL &amp;&amp; inlane_pts_num&lt;4; i_lane++){
+        inlane_pts_num += check_inlane_lane_single(laneNet[i_lane], veh_state, veh_shape);
+    }
+    
+    if(inlane_pts_num &gt;= 4) {
+        inside = true;
+    }
+    else {
+        inside = false;
+    }
+
+    return inside;
+}
+
+int32_t compute_approximating_circle_radius(int32_t ego_length, int32_t ego_width) {
+    double length = i2d(ego_length);
+    double width = i2d(ego_width);
+    double square_length, diagonal_square, approx_radius;
+
+    if (length &lt;= 0 || width &lt;= 0) {
+        return -1;
+    }
+
+    if (fabs(length) &lt; 1e-6 &amp;&amp; fabs(width) &lt; 1e-6) {
+        return 0;
+    }
+    // Divide rectangle into 3 smaller rectangles
+    square_length = length/3.0;
+    // Calculate minimum radius
+    diagonal_square = sqrt(pow(square_length/2.0, 2) + pow(width/2.0, 2));
+    // Round up value
+    approx_radius = round(diagonal_square*10.0) / 10.0 + 0.1;
+
+    return d2i(approx_radius);
+}
+
+void compute_centers_of_approximation_circles(ST_ISTATE veh_state, ST_RECTANGLE veh_shape, ST_IPOINT &amp;centers[2]) {
+    double disc_radius, distance_centers, veh_cent_x_double, veh_cent_y_double;
+
+    disc_radius = i2d(compute_approximating_circle_radius(veh_shape.length, veh_shape.width));
+    distance_centers = disc_radius/2.0;
+
+    // Compute the center position of first circle (front)
+    veh_cent_x_double = i2d(veh_state.position.x);
+    veh_cent_y_double = i2d(veh_state.position.y);
+    centers[0].x = d2i(veh_cent_x_double + (distance_centers/2.0)*cos(i2d(veh_state.head)));
+    centers[0].y = d2i(veh_cent_y_double + (distance_centers/2.0)*sin(i2d(veh_state.head)));
+
+    // Compute the center position of second circle (rear)
+    centers[1].x = d2i(veh_cent_x_double - (distance_centers/2.0)*cos(i2d(veh_state.head)));
+    centers[1].y = d2i(veh_cent_y_double - (distance_centers/2.0)*sin(i2d(veh_state.head)));
+}
+
+bool check_collision(ST_ISTATE veh_state1, ST_ISTATE veh_state2, ST_RECTANGLE veh_st_rect1, ST_RECTANGLE veh_st_rect2, int32_t dis_thres) {    
+    // define two vehicles' circle tuple (front and rear)
+    ST_IPOINT veh_circle_tuple1[2] = {{0, 0}, {0, 0}};
+    ST_IPOINT veh_circle_tuple2[2] = {{0, 0}, {0, 0}};
+    double min_dis = FLT_MAX, dis = 0;
+    int i, j;    
+    
+    // calculate the centers of the vehicles' circles
+    compute_centers_of_approximation_circles(veh_state1, veh_st_rect1, veh_circle_tuple1);
+    compute_centers_of_approximation_circles(veh_state2, veh_st_rect2, veh_circle_tuple2);
+
+    for (i = 0; i &lt; 2; ++i) {
+        for (j = 0; j &lt; 2; ++j) {
+            dis = sqrt(pow(veh_circle_tuple1[i].x - veh_circle_tuple2[j].x, 2) + pow(veh_circle_tuple1[i].y - veh_circle_tuple2[j].y, 2));
+            min_dis = fmin(min_dis, dis);
+        }
+    }
+    if (dis_thres &gt; min_dis)
+        return true;
+    else
+        return false;
+}
+
+void updateAll(int32_t &amp;vx, int32_t &amp;vy, int32_t &amp;vv, int32_t &amp;vacc, int32_t &amp;vdir, const int8_t times){
+    int i = 0, LEN = 0;    
+    double rx=0,ry=0,rv=0,racc=0,rdir=0;
+    double dx=0,dy=0,dv=0;
+    double step=0;
+    const double granularity = 1.0;
+    // assign the continuous variables with the discrete variables' values
+    rx = i2d(vx);
+    ry = i2d(vy);
+    rv = i2d(vv);
+    racc = i2d(vacc);
+    rdir = i2d(vdir);
+    // setup the granularity for calculating integration
+    step = times*granularity;
+    LEN = fint(1/granularity);
+    // integration
+    for(i=0;i&lt;LEN;i++) {
+        dv = racc * step;
+        rv = rv + dv;
+        dx = rv * cos(rdir) * step;
+        rx = rx + dx;
+        dy = rv * sin(rdir) * step;
+        ry = ry + dy;
+    }
+    /*rv = rv + racc;
+    if(vdir == 0.0){
+        rx = rx + rv;
+        ry = ry + 0;
+    }else if(vdir&gt;0){
+        rx = rx + rv/2;
+        ry = ry + rv/2;
+    }else if(vdir&lt;0){
+        rx = rx + rv/2;
+        ry = ry - rv/2;
+    }*/
+    // update discrete variables with the continuous variables' values
+    // roundit to reduce state space
+    vx = roundit(d2i(rx));
+    vy = roundit(d2i(ry));
+    vv = roundit(d2i(rv));
+}
+
+// lanes could overlap with each other, so a shape with 4 corners can occupy more than 2 lanes
+void detect_lane(ST_ISTATE obj_state, ST_RECTANGLE obj_shape, int32_t&amp; cLane[3]){
+    int index = 0, l = 0;
+
+    for(index = 0; index &lt; 3; index++){
+        cLane[index] = -1;
+    }
+
+    for(index = 0; index&lt;MAXL; index++){
+        //if(check_masspoint_inlane_lane(laneNet[index], obj_shape.center)){ 
+        if(check_inlane_lane_single(laneNet[index], obj_state, obj_shape) &gt; 0){
+            cLane[l++] = laneNet[index].ID;
+        }
+    }
+}
+
+bool offroad(ST_RECTANGLE obj_shape, ST_ISTATE obj_state){
+    //return cps_state.head &gt; PI/4 &amp;&amp; cps_state.head &lt; -PI/4;
+    return !check_inlane_laneNet(obj_state, obj_shape);
+}
+
+/*bool reach(ST_RECTANGLE obj_shape, ST_ISTATE obj_state){
+    return getDisP2P(obj_state.position, planning.goal) &lt;= d2i(THRESHOLD_REACH);
+}
+
+bool collide(ST_RECTANGLE obj_shape, ST_ISTATE obj_state){
+    int32_t i = 0, distance = 0;
+    bool result = false;
+
+    for(i = 0; i &lt; MAXDO &amp;&amp; dynamicObsExists; i++){
+        distance = getDisP2P(obj_state.position, obs_state[i].position);
+        result |= check_collision(obj_state, obs_state[i], obj_shape, obs_shape[i], d2i(THRESHOLD_COLLISION));
+    }
+
+    for(i = MAXDO; i &lt; MAXDO+MAXSO &amp;&amp; staticObsExists; i++) {
+        result |= check_collision(obj_state, obs_state[i], obj_shape, obs_shape[i], d2i(THRESHOLD_COLLISION));
+    }
+
+    return result;
+}*/
+
+bool collide(int obs_id){
+    return check_collision(cps_state, obs_state[obs_id], cps_shape, obs_shape[obs_id], d2i(THRESHOLD_COLLISION));
+}</declaration>
+	<template>
+		<name>Behavior</name>
+		<declaration>// keep in lane2
+bool C1(){
+    bool R1;
+    int32_t cLane[3] = {-1, -1, -1};
+    
+    detect_lane(cps_state, cps_shape, cLane);
+    R1 = cLane[0] == lane2.ID &amp;&amp; cLane[1] == -1 &amp;&amp; cLane[2] == -1; // C1 works
+    
+    return !offroad(cps_shape, cps_state) &amp;&amp; R1;
+}
+
+// change to lane1 or lane3
+bool C2(){
+    bool R2;
+    int32_t cLane[3] = {-1, -1, -1}, relative_position = 0;
+
+    relative_position = cps_state.position.x - obs_state[0].position.x;
+    detect_lane(cps_state, cps_shape, cLane);
+    // R2 = (exists(i:int[0,2]) cLane[i] == lane2.ID) &amp;&amp; (exists(i:int[0,2]) cLane[i] == lane1.ID || cLane[i] == lane3.ID); // C2 starts to work
+    R2 = (exists(i:int[0,2]) cLane[i] == lane2.ID) &amp;&amp; (exists(i:int[0,2]) cLane[i] == lane1.ID);
+    
+    return !offroad(cps_shape, cps_state) &amp;&amp; R2 &amp;&amp; relative_position &gt;= d2i(0.1);
+}
+
+// keep in lane1 or lane3
+bool C3(){
+    bool R3;
+    int32_t cLane[3] = {-1, -1, -1};
+
+    detect_lane(cps_state, cps_shape, cLane);
+    R3 = (cLane[0] == lane1.ID || cLane[0] == lane3.ID) &amp;&amp; cLane[1] == -1 &amp;&amp; cLane[2] == -1; // C3 starts to work
+
+    return !offroad(cps_shape, cps_state) &amp;&amp; R3;
+}
+
+int32_t from = -1;
+void getFrom(){
+    int32_t cLane[3] = {-1, -1, -1};
+    detect_lane(cps_state, cps_shape, cLane);
+    from = cLane[0];
+}
+
+// change back to lane2
+bool C4(){
+    bool R4;
+    int32_t cLane[3] = {-1, -1, -1};
+
+    detect_lane(cps_state, cps_shape, cLane);
+    R4 = (exists(i:int[0,2]) cLane[i] == lane2.ID) &amp;&amp; (exists(i:int[0,2]) cLane[i] == from); // C4 starts to work
+    
+    return !offroad(cps_shape, cps_state) &amp;&amp; R4;
+}
+
+// keep in lane2
+bool C5(){
+    bool R5;
+    int32_t cLane[3] = {-1, -1, -1};
+    
+    detect_lane(cps_state, cps_shape, cLane);
+    R5 = cLane[0] == lane2.ID &amp;&amp; cLane[1] == -1 &amp;&amp; cLane[2] == -1;
+    
+    return !offroad(cps_shape, cps_state) &amp;&amp; R5;
+}
+
+void fin(){
+    count = MAXTIME;
+}</declaration>
+		<location id="id0" x="68" y="-34" color="#000000">
+			<name x="58" y="-68">S5</name>
+		</location>
+		<location id="id1" x="-68" y="-34">
+			<name x="-78" y="-68">S4</name>
+			<committed/>
+		</location>
+		<location id="id2" x="-204" y="-34">
+			<name x="-214" y="-68">S3</name>
+			<committed/>
+		</location>
+		<location id="id3" x="-340" y="-34">
+			<name x="-348" y="-68">S2</name>
+			<committed/>
+		</location>
+		<location id="id4" x="-476" y="-34">
+			<name x="-484" y="-68">S1</name>
+			<committed/>
+		</location>
+		<location id="id5" x="-340" y="102" color="#ff00ff">
+			<name x="-357" y="119">Error</name>
+		</location>
+		<location id="id6" x="-476" y="-170">
+			<name x="-486" y="-204">W1</name>
+		</location>
+		<location id="id7" x="-340" y="-170">
+			<name x="-350" y="-204">W2</name>
+		</location>
+		<location id="id8" x="-204" y="-170">
+			<name x="-214" y="-204">W3</name>
+		</location>
+		<location id="id9" x="-68" y="-170">
+			<name x="-78" y="-204">W4</name>
+		</location>
+		<init ref="id6"/>
+		<transition id="id10" controllable="false">
+			<source ref="id9"/>
+			<target ref="id5"/>
+			<label kind="synchronisation" x="-170" y="-51">end?</label>
+			<nail x="-161" y="-34"/>
+		</transition>
+		<transition id="id11" controllable="false">
+			<source ref="id8"/>
+			<target ref="id5"/>
+			<label kind="synchronisation" x="-272" y="-68">end?</label>
+		</transition>
+		<transition id="id12" controllable="false">
+			<source ref="id7"/>
+			<target ref="id5"/>
+			<label kind="synchronisation" x="-391" y="-51">end?</label>
+			<nail x="-374" y="-34"/>
+		</transition>
+		<transition id="id13" controllable="false">
+			<source ref="id6"/>
+			<target ref="id5"/>
+			<label kind="synchronisation" x="-458" y="-51">end?</label>
+		</transition>
+		<transition id="id14" controllable="false">
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-42" y="-68">C5()</label>
+			<label kind="assignment" x="-42" y="-51">fin(),
+phase++</label>
+		</transition>
+		<transition id="id15" controllable="false">
+			<source ref="id1"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-136" y="68">!C4()&amp;&amp;!C5()</label>
+			<label kind="assignment" x="-110" y="85">fin()</label>
+			<nail x="-68" y="102"/>
+		</transition>
+		<transition id="id16" controllable="false">
+			<source ref="id9"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="-127" y="-110">sense?</label>
+			<nail x="-102" y="-102"/>
+		</transition>
+		<transition id="id17" controllable="false">
+			<source ref="id1"/>
+			<target ref="id9"/>
+			<label kind="guard" x="-68" y="-110">C4()</label>
+		</transition>
+		<transition id="id18" controllable="false">
+			<source ref="id8"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="-263" y="-110">sense?</label>
+			<nail x="-238" y="-102"/>
+		</transition>
+		<transition id="id19" controllable="false">
+			<source ref="id7"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="-399" y="-110">sense?</label>
+			<nail x="-374" y="-102"/>
+		</transition>
+		<transition id="id20" controllable="false">
+			<source ref="id2"/>
+			<target ref="id8"/>
+			<label kind="guard" x="-204" y="-110">C3()</label>
+		</transition>
+		<transition id="id21" controllable="false">
+			<source ref="id3"/>
+			<target ref="id7"/>
+			<label kind="guard" x="-340" y="-110">C2()</label>
+		</transition>
+		<transition id="id22" controllable="false">
+			<source ref="id4"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-476" y="-110">C1()</label>
+		</transition>
+		<transition id="id23" controllable="false">
+			<source ref="id6"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="-535" y="-110">sense?</label>
+			<nail x="-510" y="-102"/>
+		</transition>
+		<transition id="id24" controllable="false">
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-314" y="-68">C3()</label>
+			<label kind="assignment" x="-314" y="-51">getFrom(),
+phase++</label>
+		</transition>
+		<transition id="id25" controllable="false">
+			<source ref="id4"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-433" y="-68">C2()</label>
+			<label kind="assignment" x="-458" y="-34">phase++</label>
+		</transition>
+		<transition id="id26" controllable="false">
+			<source ref="id2"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-161" y="-68">C4()</label>
+			<label kind="assignment" x="-186" y="-34">phase++</label>
+		</transition>
+		<transition id="id27" controllable="false">
+			<source ref="id2"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-246" y="68">!C3()&amp;&amp;!C4()</label>
+			<label kind="assignment" x="-246" y="85">fin()</label>
+			<nail x="-204" y="102"/>
+		</transition>
+		<transition id="id28" controllable="false">
+			<source ref="id3"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-391" y="17">!C2()&amp;&amp;!C3()</label>
+			<label kind="assignment" x="-365" y="34">fin()</label>
+		</transition>
+		<transition id="id29" controllable="false">
+			<source ref="id4"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-476" y="68">!C1()&amp;&amp;!C2()</label>
+			<label kind="assignment" x="-476" y="85">fin()</label>
+			<nail x="-476" y="102"/>
+		</transition>
+	</template>
+	<template>
+		<name>Cutin</name>
+		<declaration>// keep in lane2
+bool C1(){
+    bool R1;
+    int32_t cLane[3] = {-1, -1, -1};
+    
+    detect_lane(cps_state, cps_shape, cLane);
+    R1 = count &lt; MAXTIME &amp;&amp; cLane[0] == lane2.ID &amp;&amp; cLane[1] == -1 &amp;&amp; cLane[2] == -1;
+    
+    return !offroad(cps_shape, cps_state) &amp;&amp; R1;
+}
+
+// change to lane1
+bool C2(){
+    bool R2;
+    int32_t cLane[3] = {-1, -1, -1}, relative_distance = 0;
+
+    relative_distance = cps_state.position.x - obs_state[1].position.x;
+    detect_lane(cps_state, cps_shape, cLane);
+    R2 = count &lt; MAXTIME &amp;&amp; (exists(i:int[0,2]) cLane[i] == lane2.ID) &amp;&amp; (exists(i:int[0,2]) cLane[i] == lane1.ID);
+    
+    return !offroad(cps_shape, cps_state) &amp;&amp; R2 &amp;&amp; relative_distance &gt; d2i(15.0);
+}
+
+// keep in lane1
+bool C3(){
+    bool R3;
+    int32_t cLane[3] = {-1, -1, -1};
+
+    detect_lane(cps_state, cps_shape, cLane);
+    R3 = count &lt; MAXTIME &amp;&amp; cLane[0] == lane1.ID &amp;&amp; cLane[1] == -1 &amp;&amp; cLane[2] == -1;
+
+    return !offroad(cps_shape, cps_state) &amp;&amp; R3;
+}
+
+// keep in lane1 to the end
+bool C4(){
+    bool R4;
+    int32_t cLane[3] = {-1, -1, -1};
+
+    detect_lane(cps_state, cps_shape, cLane);
+    R4 = count == MAXTIME &amp;&amp; cLane[0] == lane1.ID &amp;&amp; cLane[1] == -1 &amp;&amp; cLane[2] == -1;
+    
+    return !offroad(cps_shape, cps_state) &amp;&amp; R4;
+}
+
+void fin(){
+    count = MAXTIME;
+}</declaration>
+		<location id="id30" x="238" y="136" color="#000000">
+			<name x="229" y="153">Goal</name>
+		</location>
+		<location id="id31" x="-34" y="-102">
+			<name x="-51" y="-136">Error</name>
+		</location>
+		<location id="id32" x="136" y="136">
+			<name x="127" y="153">S3</name>
+			<committed/>
+		</location>
+		<location id="id33" x="-34" y="136">
+			<name x="-42" y="153">S2</name>
+			<committed/>
+		</location>
+		<location id="id34" x="-204" y="136">
+			<name x="-212" y="153">S1</name>
+			<committed/>
+		</location>
+		<location id="id35" x="-204" y="0">
+			<name x="-229" y="-25">W</name>
+		</location>
+		<location id="id36" x="-34" y="0">
+			<name x="-59" y="-25">C</name>
+		</location>
+		<location id="id37" x="136" y="0">
+			<name x="110" y="-25">L</name>
+		</location>
+		<init ref="id35"/>
+		<transition id="id38" controllable="false">
+			<source ref="id32"/>
+			<target ref="id30"/>
+			<label kind="guard" x="161" y="110">C4()</label>
+			<label kind="assignment" x="161" y="136">fin()</label>
+		</transition>
+		<transition id="id39" controllable="false">
+			<source ref="id37"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="93" y="-119">end?</label>
+			<nail x="136" y="-102"/>
+		</transition>
+		<transition id="id40" controllable="false">
+			<source ref="id36"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="-51" y="-42">end?</label>
+		</transition>
+		<transition id="id41" controllable="false">
+			<source ref="id35"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="-186" y="-119">end?</label>
+			<nail x="-204" y="-102"/>
+		</transition>
+		<transition id="id42" controllable="false">
+			<source ref="id32"/>
+			<target ref="id37"/>
+			<label kind="guard" x="119" y="59">C3()</label>
+		</transition>
+		<transition id="id43" controllable="false">
+			<source ref="id37"/>
+			<target ref="id32"/>
+			<label kind="synchronisation" x="153" y="59">sense?</label>
+			<nail x="170" y="68"/>
+		</transition>
+		<transition id="id44" controllable="false">
+			<source ref="id33"/>
+			<target ref="id36"/>
+			<label kind="guard" x="-51" y="59">C2()</label>
+		</transition>
+		<transition id="id45" controllable="false">
+			<source ref="id36"/>
+			<target ref="id33"/>
+			<label kind="synchronisation" x="-102" y="59">sense?</label>
+			<nail x="-68" y="68"/>
+		</transition>
+		<transition id="id46" controllable="false">
+			<source ref="id32"/>
+			<target ref="id31"/>
+			<label kind="guard" x="0" y="-42">!C3()&amp;&amp;!C4()</label>
+			<label kind="assignment" x="59" y="-25">fin()</label>
+			<nail x="68" y="-34"/>
+		</transition>
+		<transition id="id47" controllable="false">
+			<source ref="id33"/>
+			<target ref="id31"/>
+			<label kind="guard" x="-25" y="25">!C2()&amp;&amp;!C3()</label>
+			<label kind="assignment" x="-25" y="42">fin()</label>
+			<nail x="0" y="68"/>
+			<nail x="0" y="0"/>
+		</transition>
+		<transition id="id48" controllable="false">
+			<source ref="id34"/>
+			<target ref="id31"/>
+			<label kind="guard" x="-187" y="-42">!C1()&amp;&amp;!C2()</label>
+			<label kind="assignment" x="-127" y="-25">fin()</label>
+			<nail x="-136" y="-34"/>
+		</transition>
+		<transition id="id49" controllable="false">
+			<source ref="id33"/>
+			<target ref="id32"/>
+			<label kind="guard" x="25" y="110">C3()</label>
+			<label kind="assignment" x="25" y="136">phase++</label>
+		</transition>
+		<transition id="id50" controllable="false">
+			<source ref="id34"/>
+			<target ref="id33"/>
+			<label kind="guard" x="-161" y="110">C2()</label>
+			<label kind="assignment" x="-161" y="136">phase++</label>
+		</transition>
+		<transition id="id51" controllable="false">
+			<source ref="id34"/>
+			<target ref="id35"/>
+			<label kind="guard" x="-204" y="59">C1()</label>
+		</transition>
+		<transition id="id52" controllable="false">
+			<source ref="id35"/>
+			<target ref="id34"/>
+			<label kind="synchronisation" x="-263" y="59">sense?</label>
+			<nail x="-238" y="68"/>
+		</transition>
+	</template>
+	<template>
+		<name>Cutout</name>
+		<declaration>// keep in lane1
+bool C1(){
+    bool R1;
+    int32_t cLane[3] = {-1, -1, -1};
+    
+    detect_lane(cps_state, cps_shape, cLane);
+    R1 = count &lt; MAXTIME &amp;&amp; cLane[0] == lane1.ID &amp;&amp; cLane[1] == -1 &amp;&amp; cLane[2] == -1;
+    
+    return !offroad(cps_shape, cps_state) &amp;&amp; R1;
+}
+
+// change to lane2
+bool C2(){
+    bool R1, R2, R3;
+    int32_t cLane[3] = {-1, -1, -1}, relative_distance = 0;
+
+    relative_distance = cps_state.position.x - obs_state[1].position.x;
+    detect_lane(cps_state, cps_shape, cLane);
+    R2 = count &lt; MAXTIME &amp;&amp; (exists(i:int[0,2]) cLane[i] == lane2.ID) &amp;&amp; (exists(i:int[0,2]) cLane[i] == lane1.ID);
+    
+    return !offroad(cps_shape, cps_state) &amp;&amp; R2 &amp;&amp; relative_distance &gt; d2i(10.0);
+}
+
+// keep in lane2
+bool C3(){
+    bool R3;
+    int32_t cLane[3] = {-1, -1, -1};
+
+    detect_lane(cps_state, cps_shape, cLane);
+    R3 = count &lt; MAXTIME &amp;&amp; cLane[0] == lane2.ID &amp;&amp; cLane[1] == -1 &amp;&amp; cLane[2] == -1;
+
+    return !offroad(cps_shape, cps_state) &amp;&amp; R3;
+}
+
+// keep in lane2 to the end
+bool C4(){
+    bool R4;
+    int32_t cLane[3] = {-1, -1, -1};
+
+    detect_lane(cps_state, cps_shape, cLane);
+    R4 = count == MAXTIME &amp;&amp; cLane[0] == lane2.ID &amp;&amp; cLane[1] == -1 &amp;&amp; cLane[2] == -1;
+    
+    return !offroad(cps_shape, cps_state) &amp;&amp; R4;
+}
+
+void fin(){
+    count = MAXTIME;
+}</declaration>
+		<location id="id53" x="238" y="136" color="#000000">
+			<name x="229" y="153">Goal</name>
+		</location>
+		<location id="id54" x="-34" y="-102">
+			<name x="-51" y="-136">Error</name>
+		</location>
+		<location id="id55" x="136" y="136">
+			<name x="127" y="153">S3</name>
+			<committed/>
+		</location>
+		<location id="id56" x="-34" y="136">
+			<name x="-42" y="153">S2</name>
+			<committed/>
+		</location>
+		<location id="id57" x="-204" y="136">
+			<name x="-212" y="153">S1</name>
+			<committed/>
+		</location>
+		<location id="id58" x="-204" y="0">
+			<name x="-229" y="-25">W</name>
+		</location>
+		<location id="id59" x="-34" y="0">
+			<name x="-59" y="-25">C</name>
+		</location>
+		<location id="id60" x="136" y="0">
+			<name x="110" y="-25">L</name>
+		</location>
+		<init ref="id58"/>
+		<transition id="id61" controllable="false">
+			<source ref="id55"/>
+			<target ref="id53"/>
+			<label kind="guard" x="161" y="110">C4()</label>
+			<label kind="assignment" x="161" y="136">fin()</label>
+		</transition>
+		<transition id="id62" controllable="false">
+			<source ref="id60"/>
+			<target ref="id54"/>
+			<label kind="synchronisation" x="93" y="-119">end?</label>
+			<nail x="136" y="-102"/>
+		</transition>
+		<transition id="id63" controllable="false">
+			<source ref="id59"/>
+			<target ref="id54"/>
+			<label kind="synchronisation" x="-51" y="-42">end?</label>
+		</transition>
+		<transition id="id64" controllable="false">
+			<source ref="id58"/>
+			<target ref="id54"/>
+			<label kind="synchronisation" x="-186" y="-119">end?</label>
+			<nail x="-204" y="-102"/>
+		</transition>
+		<transition id="id65" controllable="false">
+			<source ref="id55"/>
+			<target ref="id60"/>
+			<label kind="guard" x="119" y="59">C3()</label>
+		</transition>
+		<transition id="id66" controllable="false">
+			<source ref="id60"/>
+			<target ref="id55"/>
+			<label kind="synchronisation" x="153" y="59">sense?</label>
+			<nail x="170" y="68"/>
+		</transition>
+		<transition id="id67" controllable="false">
+			<source ref="id56"/>
+			<target ref="id59"/>
+			<label kind="guard" x="-51" y="59">C2()</label>
+		</transition>
+		<transition id="id68" controllable="false">
+			<source ref="id59"/>
+			<target ref="id56"/>
+			<label kind="synchronisation" x="-102" y="59">sense?</label>
+			<nail x="-68" y="68"/>
+		</transition>
+		<transition id="id69" controllable="false">
+			<source ref="id55"/>
+			<target ref="id54"/>
+			<label kind="guard" x="0" y="-42">!C3()&amp;&amp;!C4()</label>
+			<label kind="assignment" x="59" y="-25">fin()</label>
+			<nail x="68" y="-34"/>
+		</transition>
+		<transition id="id70" controllable="false">
+			<source ref="id56"/>
+			<target ref="id54"/>
+			<label kind="guard" x="-25" y="25">!C2()&amp;&amp;!C3()</label>
+			<label kind="assignment" x="-25" y="42">fin()</label>
+			<nail x="0" y="68"/>
+			<nail x="0" y="0"/>
+		</transition>
+		<transition id="id71" controllable="false">
+			<source ref="id57"/>
+			<target ref="id54"/>
+			<label kind="guard" x="-187" y="-42">!C1()&amp;&amp;!C2()</label>
+			<label kind="assignment" x="-127" y="-25">fin()</label>
+			<nail x="-136" y="-34"/>
+		</transition>
+		<transition id="id72" controllable="false">
+			<source ref="id56"/>
+			<target ref="id55"/>
+			<label kind="guard" x="25" y="110">C3()</label>
+			<label kind="assignment" x="25" y="136">phase++</label>
+		</transition>
+		<transition id="id73" controllable="false">
+			<source ref="id57"/>
+			<target ref="id56"/>
+			<label kind="guard" x="-161" y="110">C2()</label>
+			<label kind="assignment" x="-161" y="136">phase++</label>
+		</transition>
+		<transition id="id74" controllable="false">
+			<source ref="id57"/>
+			<target ref="id58"/>
+			<label kind="guard" x="-204" y="59">C1()</label>
+		</transition>
+		<transition id="id75" controllable="false">
+			<source ref="id58"/>
+			<target ref="id57"/>
+			<label kind="synchronisation" x="-263" y="59">sense?</label>
+			<nail x="-238" y="68"/>
+		</transition>
+	</template>
+	<template>
+		<name>Deceleration</name>
+		<declaration>// keep in lane1
+bool C1(){
+    bool R1, V;
+    int32_t cLane[3] = {-1, -1, -1};
+    
+    detect_lane(cps_state, cps_shape, cLane);
+    R1 = count &lt; MAXTIME &amp;&amp; cLane[0] == lane1.ID &amp;&amp; cLane[1] == -1 &amp;&amp; cLane[2] == -1;
+    V = cps_state.acc &gt;= d2i(0);
+    
+    return !offroad(cps_shape, cps_state) &amp;&amp; R1 &amp;&amp; V;
+}
+
+// deceleration
+bool C2(){
+    bool R2, V;
+    int32_t cLane[3] = {-1, -1, -1};
+
+    detect_lane(cps_state, cps_shape, cLane);
+    R2 = count &lt; MAXTIME &amp;&amp; cLane[0] == lane1.ID &amp;&amp; cLane[1] == -1 &amp;&amp; cLane[2] == -1;
+    V = cps_state.acc &lt; d2i(0);
+    
+    return !offroad(cps_shape, cps_state) &amp;&amp; R2 &amp;&amp; V;
+}
+
+// keep moving
+bool C3(){
+    bool R3, V;
+    int32_t cLane[3] = {-1, -1, -1};
+
+    detect_lane(cps_state, cps_shape, cLane);
+    R3 = count &lt; MAXTIME &amp;&amp; cLane[0] == lane1.ID &amp;&amp; cLane[1] == -1 &amp;&amp; cLane[2] == -1;
+    V = cps_state.acc == d2i(0) &amp;&amp; cps_state.vel &lt;= d2i(0.5);
+
+    return !offroad(cps_shape, cps_state) &amp;&amp; R3 &amp;&amp; V;
+}
+
+void fin(){
+    count = MAXTIME;
+}</declaration>
+		<location id="id76" x="102" y="136" color="#000000">
+			<name x="93" y="153">Goal</name>
+		</location>
+		<location id="id77" x="-34" y="-102">
+			<name x="-51" y="-136">Error</name>
+		</location>
+		<location id="id78" x="-34" y="136">
+			<name x="-42" y="153">S2</name>
+			<committed/>
+		</location>
+		<location id="id79" x="-204" y="136">
+			<name x="-212" y="153">S1</name>
+			<committed/>
+		</location>
+		<location id="id80" x="-204" y="0">
+			<name x="-229" y="-25">W</name>
+		</location>
+		<location id="id81" x="-34" y="0">
+			<name x="-59" y="-25">C</name>
+		</location>
+		<init ref="id80"/>
+		<transition id="id82" controllable="false">
+			<source ref="id78"/>
+			<target ref="id76"/>
+			<label kind="guard" x="25" y="110">C3()</label>
+			<label kind="assignment" x="17" y="136">fin()</label>
+		</transition>
+		<transition id="id83" controllable="false">
+			<source ref="id81"/>
+			<target ref="id77"/>
+			<label kind="synchronisation" x="-51" y="-42">end?</label>
+		</transition>
+		<transition id="id84" controllable="false">
+			<source ref="id80"/>
+			<target ref="id77"/>
+			<label kind="synchronisation" x="-186" y="-119">end?</label>
+			<nail x="-204" y="-102"/>
+		</transition>
+		<transition id="id85" controllable="false">
+			<source ref="id78"/>
+			<target ref="id81"/>
+			<label kind="guard" x="-51" y="59">C2()</label>
+		</transition>
+		<transition id="id86" controllable="false">
+			<source ref="id81"/>
+			<target ref="id78"/>
+			<label kind="synchronisation" x="-102" y="59">sense?</label>
+			<nail x="-68" y="68"/>
+		</transition>
+		<transition id="id87" controllable="false">
+			<source ref="id78"/>
+			<target ref="id77"/>
+			<label kind="guard" x="-25" y="25">!C2()&amp;&amp;!C3()</label>
+			<label kind="assignment" x="-25" y="42">fin()</label>
+			<nail x="0" y="68"/>
+			<nail x="0" y="0"/>
+		</transition>
+		<transition id="id88" controllable="false">
+			<source ref="id79"/>
+			<target ref="id77"/>
+			<label kind="guard" x="-187" y="-42">!C1()&amp;&amp;!C2()</label>
+			<label kind="assignment" x="-127" y="-25">fin()</label>
+			<nail x="-136" y="-34"/>
+		</transition>
+		<transition id="id89" controllable="false">
+			<source ref="id79"/>
+			<target ref="id78"/>
+			<label kind="guard" x="-161" y="110">C2()</label>
+			<label kind="assignment" x="-161" y="136">phase++</label>
+		</transition>
+		<transition id="id90" controllable="false">
+			<source ref="id79"/>
+			<target ref="id80"/>
+			<label kind="guard" x="-204" y="59">C1()</label>
+		</transition>
+		<transition id="id91" controllable="false">
+			<source ref="id80"/>
+			<target ref="id79"/>
+			<label kind="synchronisation" x="-263" y="59">sense?</label>
+			<nail x="-238" y="68"/>
+		</transition>
+	</template>
+	<template>
+		<name>Game</name>
+		<parameter>const int[0,MAXL] initLane, const ST_ISTATE &amp;initCS</parameter>
+		<declaration>clock t;
+
+void initialize(){
+    int32_t diffX = 0, diffY = 0, i;
+    double xs, ys, xe, ye, angle;
+    ST_IPOINT leftTop = laneNet[initLane].left.points[0];
+    ST_IPOINT rightTop = laneNet[initLane].left.points[1];
+    ST_IPOINT rightDown = laneNet[initLane].right.points[0];
+    ST_IPOINT leftDown = laneNet[initLane].right.points[1];
+    ST_IPOINT middleDStart, middleDEnd;
+    ST_IPOINT start;
+
+    diffX = leftDown.x - leftTop.x;
+    diffY = leftDown.y - leftTop.y;
+    middleDStart.x = leftTop.x + diffX/2;
+    middleDStart.y = leftTop.y + diffY/2;
+    diffX = rightDown.x - rightTop.x;
+    diffY = rightDown.y - rightTop.y;
+    middleDEnd.x = rightTop.x + diffX/2;
+    middleDEnd.y = rightTop.y + diffY/2;
+    
+    xs = i2d(middleDStart.x);
+    ys = i2d(middleDStart.y);
+    xe = i2d(middleDEnd.x);
+    ye = i2d(middleDEnd.y);
+
+    angle = atan2(ys-ye,xs-xe);
+
+    if(initCS.position.x != NONE || initCS.position.y != NONE){
+        start.x = initCS.position.x;
+        start.y = initCS.position.y;
+        angle = i2d(initCS.head);
+    }else{
+        start = middleDStart;
+    }
+
+    cps_state.position = start;
+    cps_state.vel = d2i(mTimeStep(i2d(initCS.vel)));
+    cps_state.acc = d2i(mTimeStep(i2d(initCS.acc)));
+    cps_state.head = d2i(angle);
+
+    cps_dyn.x = i2d(start.x);
+    cps_dyn.y = i2d(start.y);
+    cps_dyn.vel = mTimeStep(i2d(initCS.vel));
+}
+
+void perceive(){
+    t = 0;
+    count++;
+    updateAll(cps_state.position.x, cps_state.position.y, cps_state.vel, cps_state.acc, cps_state.head, P*N1);
+}
+
+bool toEnd(){
+    return count&gt;=MAXTIME || offroad(cps_shape, cps_state);
+}
+
+bool permitGo(acc_t gear){
+    int i = 0;
+    int type[ACTNUM];
+    int32_t value[ACTNUM];
+
+    i = set_cps_state(cps_state.position.x, cps_state.position.y, cps_state.vel, cps_state.head, cps_state.acc);
+    i = set_count_phase(count, phase);
+    get_action(type,value);
+
+    // if the state is in the shield, the model must be shielded
+    if(is_state_contained()){
+        for(i = 0; i &lt; ACTNUM; i++){
+            if(type[i] == M &amp;&amp; value[i] == gear){
+                return true;
+            }
+        }
+        return false;
+    }
+    // if the state is not in the shield, the model can go anywhere
+    return true;
+}
+
+bool canGo(acc_t gear){
+    ST_ISTATE predict;
+    bool result = false;
+    
+    predict.vel = cps_state.vel + d2i(gear);
+    if(predict.vel&lt;=MAX_V+OFFSET &amp;&amp; predict.vel&gt;=MIN_V-OFFSET &amp;&amp; 
+       predict.acc&lt;=MAX_ACC+OFFSET &amp;&amp; predict.acc&gt;=MIN_ACC-OFFSET){
+        if(isShielded){
+            result = permitGo(gear);
+        }else{
+            result = true;
+        }
+    }else{
+        result = false;
+    }
+
+    return result;
+}
+
+void go(acc_t gear){
+    //cps_state.acc = d2i(mTimeStep(gear));
+    cps_state.acc = d2i(gear);
+}
+
+bool permitTurn(acc_t gear){
+    int i = 0;
+    int type[ACTNUM];
+    int32_t value[ACTNUM];
+
+    i = set_cps_state(cps_state.position.x, cps_state.position.y, cps_state.vel, cps_state.head, cps_state.acc);
+    i = set_count_phase(count, phase);
+    get_action(type,value);
+
+    // if the state is in the shield, the model must be shielded
+    if(is_state_contained()){
+        for(i = 0; i &lt; ACTNUM; i++){
+            if(type[i] == T &amp;&amp; value[i] == gear){
+                return true;
+            }
+        }
+        return false;
+    }
+    // if the state is not in the shield, the model can go anywhere
+    return true;
+}
+
+bool canTurn(head_t gear){
+    bool result = false;
+
+    if(cps_state.vel == 0 &amp;&amp; gear != 0){
+        // the vehicle cannot turn without a speed
+        result = false;
+    }
+    else{
+        if(isShielded){
+            result = permitTurn(gear);
+        }else{
+            result = true;
+        }
+    }
+
+    return result;
+}
+
+void turn(head_t gear){
+    cps_state.head += (gear * UNIT);
+    cps_state.head %= 2 * PI;
+}</declaration>
+		<location id="id92" x="-408" y="136">
+			<name x="-418" y="102">Turn</name>
+			<urgent/>
+		</location>
+		<location id="id93" x="-102" y="0">
+			<name x="-112" y="-34">L3</name>
+		</location>
+		<location id="id94" x="-238" y="0">
+			<name x="-248" y="-34">L2</name>
+			<urgent/>
+		</location>
+		<location id="id95" x="-408" y="0">
+			<name x="-418" y="-34">L1</name>
+			<label kind="invariant" x="-450" y="17">t&lt;=P</label>
+		</location>
+		<location id="id96" x="-578" y="0">
+			<name x="-588" y="-34">L0</name>
+			<urgent/>
+		</location>
+		<location id="id97" x="-238" y="136">
+			<name x="-248" y="102">Move</name>
+			<urgent/>
+		</location>
+		<init ref="id96"/>
+		<transition id="id98">
+			<source ref="id92"/>
+			<target ref="id95"/>
+			<label kind="select" x="-433" y="51">h:head_t</label>
+			<label kind="guard" x="-433" y="68">canTurn(h)</label>
+			<label kind="assignment" x="-433" y="85">turn(h)</label>
+		</transition>
+		<transition id="id99">
+			<source ref="id97"/>
+			<target ref="id92"/>
+			<label kind="select" x="-357" y="102">g:acc_t</label>
+			<label kind="guard" x="-357" y="119">canGo(g)</label>
+			<label kind="assignment" x="-356" y="136">go(g)</label>
+		</transition>
+		<transition id="id100" controllable="false">
+			<source ref="id94"/>
+			<target ref="id93"/>
+			<label kind="guard" x="-220" y="-34">toEnd()</label>
+			<label kind="synchronisation" x="-220" y="-17">end!</label>
+		</transition>
+		<transition id="id101" controllable="false">
+			<source ref="id94"/>
+			<target ref="id97"/>
+			<label kind="guard" x="-280" y="34">!toEnd()</label>
+			<label kind="synchronisation" x="-272" y="51">decide!</label>
+		</transition>
+		<transition id="id102" controllable="false">
+			<source ref="id96"/>
+			<target ref="id95"/>
+			<label kind="synchronisation" x="-535" y="-17">start!</label>
+			<label kind="assignment" x="-535" y="0">initialize()</label>
+		</transition>
+		<transition id="id103" controllable="false">
+			<source ref="id95"/>
+			<target ref="id94"/>
+			<label kind="guard" x="-356" y="-34">t&gt;=P</label>
+			<label kind="synchronisation" x="-356" y="-17">sense!</label>
+			<label kind="assignment" x="-356" y="0">perceive()</label>
+		</transition>
+	</template>
+	<template>
+		<name>Dynamics</name>
+		<location id="id104" x="95" y="0">
+			<name x="83" y="-34">S1</name>
+			<label kind="invariant" x="-76" y="127">cps_dyn.x'==0 &amp;&amp;
+cps_dyn.y'==0 &amp;&amp;
+cps_dyn.vel'==0</label>
+		</location>
+		<location id="id105" x="0" y="0">
+			<name x="-10" y="-34">S0</name>
+			<label kind="invariant" x="-76" y="25">cps_dyn.x'==cos(i2d(cps_state.head))*
+cps_dyn.vel &amp;&amp;
+cps_dyn.y'==sin(i2d(cps_state.head))*
+cps_dyn.vel &amp;&amp;
+cps_dyn.vel'==i2d(cps_state.acc)</label>
+		</location>
+		<init ref="id105"/>
+		<transition id="id106" controllable="false">
+			<source ref="id105"/>
+			<target ref="id104"/>
+			<label kind="synchronisation" x="25" y="-25">end?</label>
+		</transition>
+	</template>
+	<template>
+		<name>Obstacle</name>
+		<parameter>const obs_id_t id, const ST_ISTATE &amp;initCS, const ST_PAIR &amp;trajectory[MAXTP]</parameter>
+		<declaration>void initialize() {
+    obs_state[id].position = initCS.position;
+    obs_state[id].vel = d2i(mTimeStep(i2d(initCS.vel)));
+    obs_state[id].acc = d2i(mTimeStep(i2d(initCS.acc)));
+    obs_state[id].head = initCS.head;
+
+    obs_dyn[id].x = i2d(initCS.position.x);
+    obs_dyn[id].y = i2d(initCS.position.x);
+    obs_dyn[id].vel = mTimeStep(i2d(initCS.vel));
+}
+
+void change(){
+    int index = count - 1;
+
+    if(index &gt;= 0 &amp;&amp; count == trajectory[index].time) {
+        // predefined trajectory starts
+        obs_dyn[id].x = trajectory[index].dState.position.x;
+        obs_dyn[id].y = trajectory[index].dState.position.y;
+        obs_dyn[id].vel = mTimeStep(trajectory[index].dState.vel);
+
+        obs_state[id].position.x = d2i(trajectory[index].dState.position.x);
+        obs_state[id].position.y = d2i(trajectory[index].dState.position.y);
+        obs_state[id].vel = d2i(mTimeStep(trajectory[index].dState.vel));
+    }else if(count &gt;= MAXTP - 1) {
+        obs_dyn[id].vel = 0;
+        obs_state[id].vel = 0;
+        obs_state[id].head = 0;
+    }
+}</declaration>
+		<location id="id107" x="119" y="0">
+			<name x="109" y="-34">S1</name>
+			<label kind="invariant" x="-161" y="127">obs_dyn[id].x'==0 &amp;&amp;
+obs_dyn[id].y'==0 &amp;&amp;
+obs_dyn[id].vel'==0</label>
+		</location>
+		<location id="id108" x="0" y="0">
+			<name x="-10" y="-34">S0</name>
+			<label kind="invariant" x="-161" y="25">obs_dyn[id].x'==cos(i2d(obs_state[id].head))*
+i2d(obs_state[id].vel)&amp;&amp;
+obs_dyn[id].y'==sin(i2d(obs_state[id].head))*
+i2d(obs_state[id].vel)&amp;&amp;
+obs_dyn[id].vel'==0</label>
+			<label kind="comments" x="-144" y="-102">Obstacle with a predefined trajectory</label>
+		</location>
+		<init ref="id108"/>
+		<transition id="id109" controllable="false">
+			<source ref="id108"/>
+			<target ref="id107"/>
+			<label kind="synchronisation" x="42" y="-17">end?</label>
+		</transition>
+		<transition id="id110" controllable="false">
+			<source ref="id108"/>
+			<target ref="id108"/>
+			<label kind="synchronisation" x="25" y="-68">sense?</label>
+			<label kind="assignment" x="25" y="-51">change()</label>
+			<nail x="34" y="-34"/>
+			<nail x="68" y="-34"/>
+		</transition>
+		<transition id="id111" controllable="false">
+			<source ref="id108"/>
+			<target ref="id108"/>
+			<label kind="synchronisation" x="-102" y="-68">start?</label>
+			<label kind="assignment" x="-102" y="-51">initialize()</label>
+			<nail x="-34" y="-34"/>
+			<nail x="-68" y="-34"/>
+		</transition>
+	</template>
+	<system>// Generated moving obstacles starts
+const ST_ISTATE initCS0 = {{d2i(21.3813), d2i(3.7352)}, d2i(35.0), d2i(0.0), d2i(0.0)};
+const ST_PAIR PHOLDER = {NONE,{{NONE,NONE},NONE,NONE,NONE,NONE,NONE}};
+const ST_PAIR trajectory0[MAXTP] = {{1, {{24.8812, 3.7713}, 35.0, 0.01031, 0.0, 0.0, 0.0}}, {2, {{28.381, 3.8074}, 35.0, 0.01031, 0.0, 0.0, 0.0}}, {3, {{31.8808, 3.8435}, 35.0, 0.010311, 0.0, 0.0, 0.0}}, 
+{4, {{35.3806, 3.8795}, 35.0, 0.010311, 0.0, 0.0, 0.0}}, {5, {{38.8804, 3.9156}, 35.0, 0.010311, 0.0, 0.0, 0.0}}, {6, {{42.3802, 3.9517}, 35.0, 0.010311, 0.0, 0.0, 0.0}}, {7, {{45.88, 3.9878}, 35.0, 0.010312, 0.0, 0.0, 0.0}}, 
+{8, {{49.3798, 4.0239}, 35.0, 0.010312, 0.0, 0.0, 0.0}}, {9, {{52.8797, 4.06}, 35.0, 0.010312, 0.0, 0.0, 0.0}}, {10, {{56.3795, 4.0961}, 35.0, 0.010312, 0.0, 0.0, 0.0}}, {11, {{59.8793, 4.1322}, 35.0, 0.010312, 0.0, 0.0, 0.0}}, 
+{12, {{63.3791, 4.1683}, 35.0, 0.010312, 0.0, 0.0, 0.0}}, {13, {{66.8789, 4.2044}, 35.0, 0.010312, 0.0, 0.0, 0.0}}, {14, {{70.3787, 4.2405}, 35.0, 0.010312, 0.0, 0.0, 0.0}}, {15, {{73.8785, 4.2766}, 35.0, 0.010314, 0.0, 0.0, 0.0}}, 
+{16, {{77.3784, 4.3127}, 35.0, 0.010314, 0.0, 0.0, 0.0}}, {17, {{80.8782, 4.3488}, 35.0, 0.010314, 0.0, 0.0, 0.0}}, {18, {{84.378, 4.3848}, 35.0, 0.010314, 0.0, 0.0, 0.0}}, {19, {{87.8778, 4.4209}, 35.0, 0.010314, 0.0, 0.0, 0.0}}, 
+{20, {{91.3776, 4.457}, 35.0, 0.010314, 0.0, 0.0, 0.0}}, {21, {{94.8774, 4.4931}, 35.0, 0.010314, 0.0, 0.0, 0.0}}, {22, {{98.3772, 4.5292}, 35.0, 0.010315, 0.0, 0.0, 0.0}}, {23, {{101.8771, 4.5653}, 35.0, 0.010315, 0.0, 0.0, 0.0}}, 
+{24, {{105.3769, 4.6015}, 35.0, 0.010315, 0.0, 0.0, 0.0}}, {25, {{108.8767, 4.6376}, 35.0, 0.010315, 0.0, 0.0, 0.0}}, {26, {{112.3765, 4.6737}, 35.0, 0.010315, 0.0, 0.0, 0.0}}, {27, {{115.8763, 4.7098}, 35.0, 0.010315, 0.0, 0.0, 0.0}}, 
+{28, {{119.3761, 4.7459}, 35.0, 0.010315, 0.0, 0.0, 0.0}}, {29, {{122.8759, 4.782}, 35.0, 0.010317, 0.0, 0.0, 0.0}}, {30, {{126.3758, 4.8181}, 35.0, 0.010317, 0.0, 0.0, 0.0}}, {31, {{129.8756, 4.8542}, 35.0, 0.010317, 0.0, 0.0, 0.0}}, 
+{32, {{133.3754, 4.8903}, 35.0, 0.010317, 0.0, 0.0, 0.0}}, {33, {{136.8752, 4.9264}, 35.0, 0.010317, 0.0, 0.0, 0.0}}, {34, {{140.375, 4.9625}, 35.0, 0.010317, 0.0, 0.0, 0.0}}, {35, {{143.8748, 4.9986}, 35.0, 0.010317, 0.0, 0.0, 0.0}}, 
+{36, {{147.3746, 5.0347}, 35.0, 0.010317, 0.0, 0.0, 0.0}}, {37, {{150.8744, 5.0708}, 35.0, 0.010317, 0.0, 0.0, 0.0}}, {38, {{154.3743, 5.107}, 35.0, 0.010317, 0.0, 0.0, 0.0}}, {39, {{157.8741, 5.1431}, 35.0, 0.010319, 0.0, 0.0, 0.0}}, 
+{40, {{161.3739, 5.1792}, 35.0, 0.010319, 0.0, 0.0, 0.0}}, {41, {{164.8737, 5.2153}, 35.0, 0.010319, 0.0, 0.0, 0.0}}, {42, {{168.3735, 5.2514}, 35.0, 0.010319, 0.0, 0.0, 0.0}}, {43, {{171.8733, 5.2875}, 35.0, 0.010319, 0.0, 0.0, 0.0}}, 
+{44, {{175.3731, 5.3237}, 35.0, 0.010319, 0.0, 0.0, 0.0}}, {45, {{178.873, 5.3598}, 35.0, 0.010319, 0.0, 0.0, 0.0}}, {46, {{182.3728, 5.3959}, 35.0, 0.010321, 0.0, 0.0, 0.0}}, {47, {{185.8726, 5.432}, 35.0, 0.010321, 0.0, 0.0, 0.0}}, 
+{48, {{189.3724, 5.4681}, 35.0, 0.010321, 0.0, 0.0, 0.0}}, {49, {{192.8722, 5.5042}, 35.0, 0.010321, 0.0, 0.0, 0.0}}, {50, {{196.372, 5.5404}, 35.0, 0.010321, 0.0, 0.0, 0.0}}};
+obs0 = Obstacle(0, initCS0, trajectory0);
+const ST_ISTATE initCS1 = {{d2i(26.7473), d2i(-3.3368)}, d2i(27.0), d2i(0.0), d2i(0.0)};
+const ST_PAIR trajectory1[MAXTP] = {{1, {{29.4471, -3.3089}, 27.0, 0.010312, 0.0, 0.0, 0.0}}, {2, {{32.147, -3.2811}, 27.0, 0.010312, 0.0, 0.0, 0.0}}, {3, {{34.8468, -3.2532}, 27.0, 0.010312, 0.0, 0.0, 0.0}}, 
+{4, {{37.5467, -3.2254}, 27.0, 0.010312, 0.0, 0.0, 0.0}}, {5, {{40.2466, -3.1975}, 27.0, 0.010312, 0.0, 0.0, 0.0}}, {6, {{42.9464, -3.1697}, 27.0, 0.010313, 0.0, 0.0, 0.0}}, {7, {{45.6463, -3.1419}, 27.0, 0.010313, 0.0, 0.0, 0.0}}, 
+{8, {{48.3461, -3.114}, 27.0, 0.010313, 0.0, 0.0, 0.0}}, {9, {{51.046, -3.0862}, 27.0, 0.010313, 0.0, 0.0, 0.0}}, {10, {{53.7458, -3.0583}, 27.0, 0.010313, 0.0, 0.0, 0.0}}, {11, {{56.4457, -3.0305}, 27.0, 0.010313, 0.0, 0.0, 0.0}}, 
+{12, {{59.1455, -3.0026}, 27.0, 0.010313, 0.0, 0.0, 0.0}}, {13, {{61.8454, -2.9748}, 27.0, 0.010313, 0.0, 0.0, 0.0}}, {14, {{64.5453, -2.9469}, 27.0, 0.010313, 0.0, 0.0, 0.0}}, {15, {{67.2451, -2.9191}, 27.0, 0.010313, 0.0, 0.0, 0.0}}, 
+{16, {{69.945, -2.8912}, 27.0, 0.010313, 0.0, 0.0, 0.0}}, {17, {{72.6448, -2.8634}, 27.0, 0.010315, 0.0, 0.0, 0.0}}, {18, {{75.3447, -2.8356}, 27.0, 0.010315, 0.0, 0.0, 0.0}}, {19, {{78.0445, -2.8077}, 27.0, 0.010315, 0.0, 0.0, 0.0}}, 
+{20, {{80.7444, -2.7799}, 27.0, 0.010315, 0.0, 0.0, 0.0}}, {21, {{83.4443, -2.752}, 27.0, 0.010315, 0.0, 0.0, 0.0}}, {22, {{86.1441, -2.7242}, 27.0, 0.010315, 0.0, 0.0, 0.0}}, {23, {{88.844, -2.6963}, 27.0, 0.010315, 0.0, 0.0, 0.0}}, 
+{24, {{91.5438, -2.6685}, 27.0, 0.010315, 0.0, 0.0, 0.0}}, {25, {{94.2437, -2.6406}, 27.0, 0.010315, 0.0, 0.0, 0.0}}, {26, {{96.9435, -2.6127}, 27.0, 0.010316, 0.0, 0.0, 0.0}}, {27, {{99.6434, -2.5849}, 27.0, 0.010316, 0.0, 0.0, 0.0}}, 
+{28, {{102.3432, -2.557}, 27.0, 0.010316, 0.0, 0.0, 0.0}}, {29, {{105.0431, -2.5292}, 27.0, 0.010316, 0.0, 0.0, 0.0}}, {30, {{107.743, -2.5013}, 27.0, 0.010316, 0.0, 0.0, 0.0}}, {31, {{110.4428, -2.4735}, 27.0, 0.010316, 0.0, 0.0, 0.0}}, 
+{32, {{113.1427, -2.4456}, 27.0, 0.010316, 0.0, 0.0, 0.0}}, {33, {{115.8425, -2.4178}, 27.0, 0.010316, 0.0, 0.0, 0.0}}, {34, {{118.5424, -2.3899}, 27.0, 0.010316, 0.0, 0.0, 0.0}}, {35, {{121.2422, -2.3621}, 27.0, 0.010318, 0.0, 0.0, 0.0}}, 
+{36, {{123.9421, -2.3342}, 27.0, 0.010318, 0.0, 0.0, 0.0}}, {37, {{126.642, -2.3063}, 27.0, 0.010318, 0.0, 0.0, 0.0}}, {38, {{129.3418, -2.2785}, 27.0, 0.010318, 0.0, 0.0, 0.0}}, {39, {{132.0417, -2.2506}, 27.0, 0.010318, 0.0, 0.0, 0.0}}, 
+{40, {{134.7415, -2.2228}, 27.0, 0.010318, 0.0, 0.0, 0.0}}, {41, {{137.4414, -2.1949}, 27.0, 0.010318, 0.0, 0.0, 0.0}}, {42, {{140.1412, -2.167}, 27.0, 0.010318, 0.0, 0.0, 0.0}}, {43, {{142.8411, -2.1392}, 27.0, 0.010318, 0.0, 0.0, 0.0}}, 
+{44, {{145.541, -2.1113}, 27.0, 0.010318, 0.0, 0.0, 0.0}}, {45, {{148.2408, -2.0835}, 27.0, 0.010318, 0.0, 0.0, 0.0}}, {46, {{150.9407, -2.0556}, 27.0, 0.010318, 0.0, 0.0, 0.0}}, {47, {{153.6405, -2.0278}, 27.0, 0.010318, 0.0, 0.0, 0.0}}, 
+{48, {{156.3404, -1.9999}, 27.0, 0.01032, 0.0, 0.0, 0.0}}, {49, {{159.0402, -1.972}, 27.0, 0.01032, 0.0, 0.0, 0.0}}, {50, {{161.7401, -1.9442}, 27.0, 0.01032, 0.0, 0.0, 0.0}}};
+obs1 = Obstacle(1, initCS1, trajectory1);
+// Generated moving obstacles ends
+
+// Generated ego vehicle starts
+// Cutin
+const ST_ISTATE init_state_cutin = {{d2i(15.0), d2i(0.0)}, d2i(36.0), d2i(0.0), d2i(0.0)};
+const int[0,MAXL] init_lane_cutin = 1;
+// Cutout
+const ST_ISTATE init_state_cutout = {{d2i(34.8468), d2i(-3.2532)}, d2i(35.0), d2i(0.0), d2i(0.0)};
+const int[0,MAXL] init_lane_cutout = 0;
+// Deceleration
+const ST_ISTATE init_state_deceleration = {{d2i(53.7458), d2i(-3.0583)}, d2i(25.0), d2i(0.0), d2i(0.0)};
+const int[0,MAXL] init_lane_deceleration = 0;
+
+dynamics = Dynamics();
+behavior_shield = Cutin();
+game = Game(init_lane_cutin, init_state_cutin);
+// Generated ego vehicle ends
+
+// Generated model instances starts
+system game, dynamics, behavior_shield, obs0, obs1;
+// Generated model instances ends
+
+</system>
+	<queries>
+		<option key="--alpha" value="1.0E-20"/>
+		<option key="--beta" value="1.0E-20"/>
+		<option key="--good-runs" value="1"/>
+		<option key="--search-order" value="1"/>
+		<option key="--runs-pr-state" value="1"/>
+		<option key="--diagnostic" value="0"/>
+		<query>
+			<formula>//behaviour observation</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>E&lt;&gt; behavior_shield.Goal</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-05-29 08:44:39 +0200">
+				<option key="--alpha" value="1.0E-20"/>
+				<option key="--beta" value="1.0E-20"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--search-order" value="1"/>
+				<option key="--runs-pr-state" value="1"/>
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] !behavior_shield.Error</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>A[] cps_state.vel == 3000 || cps_state.vel == 2000 || cps_state.vel == 0</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula/>
+			<comment>//Shield synthesis</comment>
+		</query>
+		<query>
+			<formula>strategy safe = control:A[] !behavior_shield.Error</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-06-02 16:19:48 +0200">
+				<option key="--alpha" value="1.0E-20"/>
+				<option key="--beta" value="1.0E-20"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--search-order" value="1"/>
+				<option key="--runs-pr-state" value="1"/>
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+		<query>
+			<formula>strategy reach = E&lt;&gt; control: A[] !behavior_shield.Error</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>strategy safeUntil = control:A[!behavior_shield.Error U count == behavior_shield.TC2]</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>saveStrategy("/home/rgu01/Uppaal/StagedShieldSynthesis/car/shield/safeCarObs.json",safe)</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>saveStrategy("/Users/rgu01/Projects/StagedShieldSynthesis/car/shield/safeCar.json",safe)</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>A[] !behavior_shield.Error under safe</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>A&lt;&gt; behavior_shield.S5 under safe</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>A[] count!=0 imply !collide(0) under safe</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>simulate [&lt;=MAXTIME] { cps_dyn.x, cps_dyn.y, i2d(cps_state.head), cps_dyn.vel, i2d(cps_state.acc) } : behavior_shield.S5 under safe</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula/>
+			<comment>//Controller synthesis</comment>
+		</query>
+		<query>
+			<formula>strategy safeReach = control: A&lt;&gt; cps_i_state.detection.reach</formula>
+			<comment>or "strategy safeReach = E&lt;&gt; control: A&lt;&gt; cps_i_state.detection.reach"</comment>
+		</query>
+		<query>
+			<formula>A&lt;&gt; cps_i_state.detection.reach under safeReach</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula/>
+			<comment>//Reinformcement learning</comment>
+		</query>
+		<query>
+			<formula>strategy reach = maxE(count) [&lt;=MAXTIME]
+{cps_state.position.x, cps_state.position.y, cps_state.head, cps_state.vel, cps_state.acc}-&gt;{}: 
+&lt;&gt; behavior_shield.S5</formula>
+			<comment>strategy reachSafe = minE(cost) [&lt;=MAXTIME] {control.location}-&gt;{cps_i_state.position.x, cps_i_state.position.y, 
+cps_i_state.velocity, cps_i_state.orientation, cps_i_state.acceleration, cps_i_state.accRate, cps_i_state.yawRate,
+obs_i_state[0].position.x, obs_i_state[0].position.y, obs_i_state[0].velocity, obs_i_state[0].orientation,
+obs_i_state[1].position.x, obs_i_state[1].position.y, obs_i_state[1].velocity, obs_i_state[1].orientation}: &lt;&gt; g_time&gt;=MAXTIME under safe</comment>
+		</query>
+		<query>
+			<formula>A[] !cps_i_state.detection.collide &amp;&amp; !cps_i_state.detection.outside under reach</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>E&lt;&gt; !cps_i_state.detection.collide &amp;&amp; !cps_i_state.detection.outside &amp;&amp; cps_i_state.detection.reach under reach</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula/>
+			<comment>//Simulation</comment>
+		</query>
+		<query>
+			<formula>simulate[&lt;=MAXTIME;1]{cps_dyn.x,i2d(cps_state.position.x),cps_dyn.y,i2d(cps_state.position.y)}</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>simulate[&lt;=MAXTIME;1]{cps_dyn.vel,i2d(cps_state.vel)}</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>simulate[&lt;=MAXTIME;100]{cps_dyn.x-i2d(cps_state.position.x),cps_dyn.y-i2d(cps_state.position.y)}: behavior_shield.S5 under safe</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>simulate[&lt;=MAXTIME;5000]{i2d(cps_state.position.x),i2d(cps_state.position.y)}</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>simulate[&lt;=MAXTIME;500]{i2d(cps_state.vel)}</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>simulate[&lt;=MAXTIME;500]{i2d(cps_state.acc)}</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>simulate[&lt;=MAXTIME;500]{i2d(cps_state.head)}</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>simulate[&lt;=MAXTIME;5000]{behavior_shield.S5}</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>Pr[&lt;=MAXTIME] (&lt;&gt; behavior_shield.S5)</formula>
+			<comment/>
+		</query>
+	</queries>
+</nta>

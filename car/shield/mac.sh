@@ -1,0 +1,2 @@
+#!/bin/bash
+../../bin_mac/verifyta ../models/DEU_A9-2_1_T-1_L1_0508.xml simulate.q -F 1.0 -u -D 0.01 -s --max-iterations 1 --eval-runs 1 --good-runs 100 --total-runs 200 --reset-no-better 1 --max-reset-learning 1 >> record.log

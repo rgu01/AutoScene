@@ -1,0 +1,8 @@
+Why must one generate a behavior shield pior to reinforcement learning?
+1. Ego-car agnostic: a behavior shield should be reusable for testing different ego cars in the same environment. Reinforcement learning is used for selecting the most suitable scenario for a certain ego car, e.g., the objective function can be obtaining the least TTC larger than the least reaction time and respecting the vehicle dynamics.
+2. Rare event: behavior fulfilling the behavior shield is rare, which means it is hard to obtain in simulation and thus hard to learn via reinforecement learning. Therefore, if one act the specification of a behavior shield upon the reinforcement learning model directly, he needs a great amount of time for training (we can show that in experiments: two groups: group one generates trajectories using the behavior shield and reinforcement learning, and group two uses the specification model and reinforcement learning).
+
+Next steps:
+1. Design the behavior shield for three scenarios: cut-in, cut-out, and deceleration
+   1.1 Variable speed
+2. Design an ego vehicle controller, e.g., automated lane-keeping function, and generate testing scenarios for it

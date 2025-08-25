@@ -1,0 +1,3353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>// Generated scenario starts
+const int P = 1;
+const uint16_t MAXTIME = 150;
+const int MAXP = 6;
+const int NONE = -1;
+const int MAXL = 35;
+const int MAXTP = 150;
+const int MAXPRE = 2;
+const int MAXSUC = 2;
+const double THRESHOLD_COLLISION = 2;
+const double THRESHOLD_REACH = 0.5;
+const double TIMESTEPSIZE = 0.1;
+const uint8_t N1 = 1;
+const uint8_t N2 = 4;
+const uint8_t MAXACT = 2;
+typedef int[0,MAXACT-1] act_id_t;
+const uint8_t BASE = 10;
+const uint8_t EXPONENT = 3;
+const uint8_t MAXSO = 1;
+const uint8_t MAXDO = 3;
+const uint8_t MAXOBS = MAXSO + MAXDO; //3 dynamic obs and 1 static obs
+typedef int[0,MAXOBS-1] obs_id_t;
+
+typedef int[-1,65535] id_t;
+
+typedef struct {
+    int32_t x;
+    int32_t y;
+}ST_IPOINT;
+
+typedef struct {
+    double x;
+    double y;
+}ST_DPOINT;
+
+typedef struct {
+    ST_IPOINT ends[2];
+}ST_DLINE;
+
+typedef struct {
+    ST_IPOINT points[MAXP];
+    bool dashLine;
+}ST_BOUND;
+
+typedef struct {
+    id_t ID;
+    ST_BOUND left;
+    ST_BOUND right;
+    id_t predecessor[MAXPRE];
+    id_t successor[MAXSUC];
+    id_t adjLeft;
+    bool dirLeft;
+    id_t adjRight;
+    bool dirRight;
+    int32_t length;
+}ST_LANE;
+
+typedef struct {
+    bool collide; // collision
+    bool outside; // outside road
+    bool reach;   // reach the goal
+}ST_DETECTION;
+
+typedef struct {
+    ST_DPOINT position;
+    double vel;
+    double head;
+    double acc;
+    double accRate;
+    double yawRate;
+}ST_DSTATE;
+
+typedef struct {
+    ST_IPOINT position;
+    int32_t vel;
+    int32_t head;
+    int32_t acc;
+    int32_t accRate;
+    int32_t yawRate;
+    ST_DETECTION detection;
+}ST_ISTATE;
+
+typedef struct {
+    hybrid clock x;
+    hybrid clock y;
+    hybrid clock vel;
+    hybrid clock head;
+    hybrid clock acc;
+    //hybrid clock accRate;
+    //hybrid clock yawRate;
+}ST_DYNAMICS;
+
+typedef struct {
+    //ST_IPOINT center;
+    int32_t width;
+    int32_t length;
+    //int32_t head;
+}ST_RECTANGLE;
+
+typedef struct {
+    int32_t maxvel;
+    int32_t minvel;
+    int32_t maxhead;
+    int32_t minhead;
+}ST_RULES;
+
+typedef struct {
+    ST_IPOINT goal;
+}ST_PLANNING;
+
+typedef struct {
+    int32_t time;
+    ST_DSTATE dState;
+}ST_PAIR;
+const ST_BOUND leftLane1 = {{{556914, 107158}, {556467, 107832}, {557858, 109947}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane1 = {{{560325, 107504}, {559945, 108224}, {558731, 107421}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane1 = {2789, leftLane1, rightLane1, {971, NONE}, {54, NONE}, NONE, false, NONE, false, 2805};
+
+const ST_BOUND leftLane2 = {{{556914, 107158}, {556537, 109289}, {555320, 112314}, {555141, 113045}, {555107, 113524}, {NONE, NONE}}, false};
+const ST_BOUND rightLane2 = {{{560325, 107504}, {560038, 109294}, {558820, 112340}, {558640, 113078}, {558607, 113551}, {NONE, NONE}}, false};
+const ST_LANE lane2 = {2790, leftLane2, rightLane2, {971, NONE}, {1005, NONE}, 2788, true, NONE, false, 6491};
+
+const ST_BOUND leftLane3 = {{{556693, 97436}, {556793, 102019}, {556893, 106611}, {556893, 106611}, {556893, 106893}, {556914, 107158}}, false};
+const ST_BOUND rightLane3 = {{{560192, 97328}, {560292, 101966}, {560393, 106615}, {560393, 106615}, {560393, 106893}, {560325, 107504}}, false};
+const ST_LANE lane3 = {971, leftLane3, rightLane3, {966, NONE}, {2789, 2790}, 970, true, NONE, false, 9953};
+
+const ST_BOUND leftLane4 = {{{557858, 109947}, {558412, 110272}, {558676, 110272}, {558676, 110272}, {563279, 110277}, {567882, 110281}}, false};
+const ST_BOUND rightLane4 = {{{558731, 107421}, {558416, 106772}, {558680, 106772}, {558680, 106772}, {563282, 106777}, {567885, 106781}}, false};
+const ST_LANE lane4 = {54, leftLane4, rightLane4, {2789, 3222}, {57, NONE}, 53, false, NONE, false, 10150};
+
+const ST_BOUND leftLane5 = {{{550657, 110266}, {554402, 110269}, {557858, 109947}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane5 = {{{550657, 106766}, {554404, 106769}, {558731, 107421}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane5 = {3222, leftLane5, rightLane5, {1482, NONE}, {54, NONE}, 1970, false, NONE, false, 7669};
+
+const ST_BOUND leftLane6 = {{{553195, 97543}, {553294, 102072}, {553393, 106611}, {553393, 106611}, {553393, 106893}, {553381, 107316}}, false};
+const ST_BOUND rightLane6 = {{{556693, 97436}, {556793, 102019}, {556893, 106611}, {556893, 106611}, {556893, 106893}, {556914, 107158}}, false};
+const ST_LANE lane6 = {970, leftLane6, rightLane6, {965, NONE}, {2788, NONE}, 969, true, 971, true, 9749};
+
+const ST_BOUND leftLane7 = {{{567882, 110281}, {563279, 110277}, {558676, 110272}, {558676, 110272}, {558412, 110272}, {557858, 109947}}, false};
+const ST_BOUND rightLane7 = {{{567879, 113781}, {563276, 113777}, {558672, 113772}, {558672, 113772}, {558408, 113772}, {558144, 113772}}, false};
+const ST_LANE lane7 = {53, leftLane7, rightLane7, {56, NONE}, {1970, NONE}, 54, false, NONE, false, 9923};
+
+const ST_BOUND leftLane8 = {{{557858, 109947}, {554402, 110269}, {550657, 110266}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane8 = {{{558144, 113772}, {554400, 113769}, {550656, 113766}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane8 = {1970, leftLane8, rightLane8, {53, NONE}, {1481, NONE}, 3222, false, NONE, false, 7352};
+
+const ST_BOUND leftLane9 = {{{553381, 107316}, {553035, 109284}, {551820, 112287}, {551641, 113011}, {551607, 113487}, {NONE, NONE}}, false};
+const ST_BOUND rightLane9 = {{{556914, 107158}, {556537, 109289}, {555320, 112314}, {555141, 113045}, {555107, 113524}, {NONE, NONE}}, false};
+const ST_LANE lane9 = {2788, leftLane9, rightLane9, {970, NONE}, {1004, NONE}, 2787, true, 2790, true, 6558};
+
+const ST_BOUND leftLane10 = {{{555107, 113524}, {555107, 113730}, {555104, 113992}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane10 = {{{558607, 113551}, {558607, 113767}, {558604, 114029}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane10 = {1005, leftLane10, rightLane10, {2790, NONE}, {2815, NONE}, 1004, true, NONE, false, 473};
+
+const ST_BOUND leftLane11 = {{{555104, 113992}, {555059, 119894}, {555014, 125797}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane11 = {{{558604, 114029}, {558559, 119923}, {558514, 125817}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane11 = {2815, leftLane11, rightLane11, {1005, NONE}, {1009, NONE}, 2814, true, NONE, false, 11797};
+
+const ST_BOUND leftLane12 = {{{549901, 107061}, {549782, 107994}, {548401, 111536}, {548149, 112776}, {548112, 113341}, {NONE, NONE}}, false};
+const ST_BOUND rightLane12 = {{{553381, 107316}, {553035, 109284}, {551820, 112287}, {551641, 113011}, {551607, 113487}, {NONE, NONE}}, false};
+const ST_LANE lane12 = {2787, leftLane12, rightLane12, {969, NONE}, {1003, NONE}, NONE, false, 2788, true, 6516};
+
+const ST_BOUND leftLane13 = {{{544350, 110265}, {547230, 110266}, {550109, 110266}, {550109, 110266}, {550383, 110266}, {550657, 110266}}, false};
+const ST_BOUND rightLane13 = {{{544353, 106765}, {547230, 106766}, {550109, 106766}, {550109, 106766}, {550383, 106766}, {550657, 106766}}, false};
+const ST_LANE lane13 = {1482, leftLane13, rightLane13, {786, NONE}, {3222, NONE}, 1481, false, NONE, false, 6305};
+
+const ST_BOUND leftLane14 = {{{549697, 97650}, {549795, 102126}, {549893, 106610}, {549893, 106610}, {549893, 106893}, {549901, 107061}}, false};
+const ST_BOUND rightLane14 = {{{553195, 97543}, {553294, 102072}, {553393, 106611}, {553393, 106611}, {553393, 106893}, {553381, 107316}}, false};
+const ST_LANE lane14 = {969, leftLane14, rightLane14, {964, NONE}, {2787, NONE}, 968, true, 970, true, 9594};
+
+const ST_BOUND leftLane15 = {{{550657, 110266}, {550383, 110266}, {550109, 110266}, {550109, 110266}, {547230, 110266}, {544350, 110265}}, false};
+const ST_BOUND rightLane15 = {{{550656, 113766}, {550383, 113766}, {550109, 113766}, {550109, 113766}, {547228, 113766}, {544346, 113765}}, false};
+const ST_LANE lane15 = {1481, leftLane15, rightLane15, {1970, NONE}, {787, NONE}, 1482, false, NONE, false, 6308};
+
+const ST_BOUND leftLane16 = {{{551607, 113487}, {551607, 113693}, {551604, 113955}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane16 = {{{555107, 113524}, {555107, 113730}, {555104, 113992}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane16 = {1004, leftLane16, rightLane16, {2788, NONE}, {2814, NONE}, 1003, true, 1005, true, 467};
+
+const ST_BOUND leftLane17 = {{{551604, 113955}, {551559, 119865}, {551514, 125776}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane17 = {{{555104, 113992}, {555059, 119894}, {555014, 125797}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane17 = {2814, leftLane17, rightLane17, {1004, NONE}, {1008, NONE}, 2813, true, 2815, true, 11813};
+
+const ST_BOUND leftLane18 = {{{567882, 110281}, {610192, 110310}, {652502, 110340}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane18 = {{{567885, 106781}, {610195, 106810}, {652505, 106840}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane18 = {57, leftLane18, rightLane18, {54, NONE}, {NONE, NONE}, 56, false, NONE, false, 84620};
+
+const ST_BOUND leftLane19 = {{{548112, 113341}, {548107, 113656}, {548104, 113923}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane19 = {{{551607, 113487}, {551607, 113693}, {551604, 113955}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane19 = {1003, leftLane19, rightLane19, {2787, NONE}, {2813, NONE}, NONE, false, 1004, true, 524};
+
+const ST_BOUND leftLane20 = {{{652502, 110340}, {610192, 110310}, {567882, 110281}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane20 = {{{652500, 113840}, {610190, 113810}, {567879, 113781}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane20 = {56, leftLane20, rightLane20, {NONE, NONE}, {53, NONE}, 57, false, NONE, false, 84620};
+
+const ST_BOUND leftLane21 = {{{546198, 97741}, {546296, 102202}, {546394, 106652}, {546394, 106652}, {546393, 106893}, {546393, 107152}}, false};
+const ST_BOUND rightLane21 = {{{549697, 97650}, {549795, 102126}, {549893, 106610}, {549893, 106610}, {549893, 106893}, {549901, 107061}}, false};
+const ST_LANE lane21 = {968, leftLane21, rightLane21, {963, NONE}, {NONE, NONE}, NONE, false, 969, true, 9413};
+
+const ST_BOUND leftLane22 = {{{548104, 113923}, {548059, 119838}, {548014, 125752}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane22 = {{{551604, 113955}, {551559, 119865}, {551514, 125776}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane22 = {2813, leftLane22, rightLane22, {1003, NONE}, {1007, NONE}, NONE, false, 2814, true, 11825};
+
+const ST_BOUND leftLane23 = {{{555668, 63902}, {556180, 80665}, {556693, 97436}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane23 = {{{559166, 63795}, {559679, 80558}, {560192, 97328}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane23 = {966, leftLane23, rightLane23, {NONE, NONE}, {971, NONE}, 965, true, NONE, false, 33549};
+
+const ST_BOUND leftLane24 = {{{552169, 64009}, {552682, 80772}, {553195, 97543}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane24 = {{{555668, 63902}, {556180, 80665}, {556693, 97436}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane24 = {965, leftLane24, rightLane24, {NONE, NONE}, {970, NONE}, 964, true, 966, true, 33550};
+
+const ST_BOUND leftLane25 = {{{548671, 64145}, {549184, 80879}, {549697, 97650}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane25 = {{{552169, 64009}, {552682, 80772}, {553195, 97543}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane25 = {964, leftLane25, rightLane25, {NONE, NONE}, {969, NONE}, 963, true, 965, true, 33535};
+
+const ST_BOUND leftLane26 = {{{543841, 110265}, {544350, 110265}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane26 = {{{543845, 106765}, {544353, 106765}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane26 = {786, leftLane26, rightLane26, {2630, NONE}, {1482, NONE}, 787, false, NONE, false, 508};
+
+const ST_BOUND leftLane27 = {{{544350, 110265}, {543841, 110265}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane27 = {{{544346, 113765}, {543836, 113765}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane27 = {787, leftLane27, rightLane27, {1481, NONE}, {2629, NONE}, 786, false, NONE, false, 509};
+
+const ST_BOUND leftLane28 = {{{545173, 64166}, {545685, 80986}, {546198, 97741}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane28 = {{{548671, 64145}, {549184, 80879}, {549697, 97650}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane28 = {963, leftLane28, rightLane28, {NONE, NONE}, {968, NONE}, NONE, false, 964, true, 33555};
+
+const ST_BOUND leftLane29 = {{{533216, 110251}, {538529, 110258}, {543841, 110265}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane29 = {{{533219, 106751}, {538532, 106758}, {543845, 106765}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane29 = {2630, leftLane29, rightLane29, {789, NONE}, {786, NONE}, 2629, false, NONE, false, 10625};
+
+const ST_BOUND leftLane30 = {{{543841, 110265}, {538529, 110258}, {533216, 110251}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane30 = {{{543836, 113765}, {538524, 113758}, {533213, 113751}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane30 = {2629, leftLane30, rightLane30, {787, NONE}, {790, NONE}, 2630, false, NONE, false, 10623};
+
+const ST_BOUND leftLane31 = {{{555014, 125797}, {554853, 152753}, {554693, 179694}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane31 = {{{558514, 125817}, {558353, 152774}, {558192, 179718}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane31 = {1009, leftLane31, rightLane31, {2815, NONE}, {NONE, NONE}, 1008, true, NONE, false, 53900};
+
+const ST_BOUND leftLane32 = {{{551514, 125776}, {551354, 152732}, {551192, 179696}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane32 = {{{555014, 125797}, {554853, 152753}, {554693, 179694}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane32 = {1008, leftLane32, rightLane32, {2814, NONE}, {NONE, NONE}, 1007, true, 1009, true, 53909};
+
+const ST_BOUND leftLane33 = {{{548014, 125752}, {547854, 152711}, {547694, 179636}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane33 = {{{551514, 125776}, {551354, 152732}, {551192, 179696}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane33 = {1007, leftLane33, rightLane33, {2813, NONE}, {NONE, NONE}, NONE, false, 1008, true, 53903};
+
+const ST_BOUND leftLane34 = {{{450534, 110193}, {491875, 110222}, {533216, 110251}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane34 = {{{450536, 106693}, {491877, 106722}, {533219, 106751}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane34 = {789, leftLane34, rightLane34, {NONE, NONE}, {2630, NONE}, 790, false, NONE, false, 82682};
+
+const ST_BOUND leftLane35 = {{{533216, 110251}, {491875, 110222}, {450534, 110193}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane35 = {{{533213, 113751}, {491872, 113722}, {450531, 113693}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane35 = {790, leftLane35, rightLane35, {2629, NONE}, {NONE, NONE}, 789, false, NONE, false, 82682};
+
+const ST_LANE laneNet[MAXL] = {lane1, lane2, lane3, lane4, lane5, lane6, lane7, lane8, lane9, lane10, lane11, lane12, lane13, lane14, lane15, lane16, lane17, lane18, lane19, lane20, lane21, lane22, lane23, lane24, lane25, lane26, lane27, lane28, lane29, lane30, lane31, lane32, lane33, lane34, lane35};
+
+const bool dynamicObsExists = true;
+const bool staticObsExists = false;
+const ST_RECTANGLE cps_shape = {1000, 4500};
+const ST_RECTANGLE obs_shape[MAXOBS] = {{2000, 5000}, {2000, 5000}, {2000, 5000}, {NONE, NONE}}; 
+
+const ST_PLANNING planning = {{555049, 102364}};
+
+// Generated scenario ends
+
+//NOTE: when overflow happens, the sign of the number will be changed
+//but this function has no assertion about overflow
+int32_t d2i(double value) {
+    return fint(value*pow(BASE,EXPONENT));
+}
+
+double i2d(int32_t value) {
+    return value/pow(BASE,EXPONENT);
+}
+
+const uint8_t M = 77;
+const uint8_t T = 84;
+const uint8_t N = 78;
+const int32_t ALL = -32767;
+
+const int32_t INC_ACC = d2i(0.2);
+const int32_t DEC_ACC = d2i(-0.1);
+const int32_t CONST_ACC = d2i(0);
+const int32_t INC_DIR = d2i(0.2);
+const int32_t DEC_DIR = d2i(-0.2);
+const int32_t CONST_DIR = d2i(0);
+const int32_t MAX_ACC = d2i(1);
+const int32_t MIN_ACC = d2i(-1);
+const int32_t MAX_V = d2i(5);
+const int32_t MIN_V = d2i(-1);
+const int32_t PI = d2i(M_PI);
+
+
+const uint8_t ACTNUM = MAXACT * 3;
+typedef int[-1,1] acc_t;
+const double ACC_GRA = 1; //granularity of acc
+typedef int[-1,1] dir_t;
+const double DIR_GRA = 1; //granularity of turning
+
+/** variables start **/
+ST_ISTATE cps_state, obs_state[MAXOBS];
+ST_DYNAMICS cps_dyn, obs_dyn[MAXOBS]; 
+const bool obs_consider[MAXOBS] = {false, false, true, false}; // we only consider obs2 now.
+
+int count = 0;
+
+const bool shielded = false;
+const int stage[8] = {5, 10, 13, 15, 17, 19, 20, -1};
+const int NOW = 0;
+
+//int32_t cLane[MAXOBS+1]; //current lane, obs_id and ego_id = max obs_id + 1
+
+typedef int[0,1] actmode_t;
+const actmode_t LK = 0; // lane keeping
+const actmode_t LC = 1; // lane changing
+actmode_t actmode = LK;
+
+const bool M2 = false;
+/** variables end **/
+
+/** test start **/
+
+/** test end **/
+
+/** Shielding */
+/*import "/home/rgu01/Uppaal/StagedShieldSynthesis/car/shield/libshield.so"
+{
+    int is_state_contained();
+    int get_action(int &amp;type[ACTNUM], int32_t &amp;value[ACTNUM]);
+    int set_cps_state(int32_t x, int32_t y, int32_t vel, int32_t head, int32_t acc, int32_t accRate, int32_t yawRate, bool collide, bool outside, bool reach);
+    int set_obs_state(int32_t id, int32_t x, int32_t y, int32_t vel, int32_t head, int32_t acc, int32_t accRate, int32_t yawRate, bool collide, bool outside, bool reach);
+};*/
+
+broadcast chan perform[MAXACT],decide,sense,start,end,move;
+
+int32_t min(const int32_t v1, const int32_t v2){
+    return v1 &lt; v2? v1:v2;
+}
+
+int32_t max(const int32_t v1, const int32_t v2){
+    return v1 &gt; v2? v1:v2;
+}
+
+double mTimeStep(const double value) {
+    return value*TIMESTEPSIZE;
+}
+
+int32_t getDisP2P(const ST_IPOINT &amp;p1, const ST_IPOINT &amp;p2) {
+    double distance = 0.0;
+    double rx1 = i2d(p1.x), ry1 = i2d(p1.y);
+    double rx2 = i2d(p2.x), ry2 = i2d(p2.y);
+    distance = sqrt(pow(rx1 - rx2, 2) + pow(ry1 - ry2, 2));
+
+    return d2i(distance);
+}
+
+// Function to count non-zero elements in a 2D array
+int check_pts_num(const ST_IPOINT lane_pts[MAXP]) {
+    uint16_t count = 0;
+    // NONE or 0?
+    while (count &lt; MAXP &amp;&amp; (lane_pts[count].x != NONE || lane_pts[count].y != NONE)){
+        count++;
+    }
+    return count;
+}
+
+// Function to calculate the corner points of a rectangle
+void calculateCornerPoints(ST_ISTATE veh_state, ST_RECTANGLE veh_shape, ST_IPOINT &amp;corners[4]) {
+    double halfLength = i2d(veh_shape.length)/2.0;
+    double halfWidth = i2d(veh_shape.width)/2.0;
+    double angle = i2d(veh_state.head);
+
+    // Calculate the coordinates of each corner point based on the center, length, width, and head
+    corners[0].x = d2i(i2d(veh_state.position.x) + halfLength*cos(angle) - halfWidth*sin(angle));
+    corners[0].y = d2i(i2d(veh_state.position.y) + halfLength*sin(angle) + halfWidth*cos(angle));
+
+    corners[1].x = d2i(i2d(veh_state.position.x) + halfLength*cos(angle) + halfWidth*sin(angle));
+    corners[1].y = d2i(i2d(veh_state.position.y) + halfLength*sin(angle) - halfWidth*cos(angle));
+
+    corners[2].x = d2i(i2d(veh_state.position.x) - halfLength*cos(angle) + halfWidth*sin(angle));
+    corners[2].y = d2i(i2d(veh_state.position.y) - halfLength*sin(angle) - halfWidth*cos(angle));
+
+    corners[3].x = d2i(i2d(veh_state.position.x) - halfLength*cos(angle) - halfWidth*sin(angle));
+    corners[3].y = d2i(i2d(veh_state.position.y) - halfLength*sin(angle) + halfWidth*cos(angle));
+}
+
+// Checking if a point is inside a polygon
+bool point_in_polygon(ST_IPOINT point, ST_IPOINT polygon[4])
+{
+    int num_vertices = 4, i = 0;
+    int32_t x = point.x;
+    int32_t y = point.y;
+    double x_intersection;
+    bool inside = false;
+ 
+    // Store the first point in the polygon and initialize
+    // the second point
+    ST_IPOINT p1 = polygon[0], p2;
+ 
+    // Loop through each edge in the polygon
+    for (i = 1; i &lt;= num_vertices; i++) {
+        // Get the next point in the polygon
+        p2 = polygon[i % num_vertices];
+ 
+        // Check if the point is above the minimum y
+        // coordinate of the edge
+        if (y &gt; min(p1.y, p2.y)) {
+            // Check if the point is below the maximum y
+            // coordinate of the edge
+            if (y &lt;= max(p1.y, p2.y)) {
+                // Check if the point is to the left of the
+                // maximum x coordinate of the edge
+                if (x &lt;= max(p1.x, p2.x)) {
+                    // Calculate the x-intersection of the
+                    // line connecting the point to the edge
+                    x_intersection = (y - p1.y) * (p2.x - p1.x)/(p2.y - p1.y) + p1.x;
+ 
+                    // Check if the point is on the same
+                    // line as the edge or to the left of
+                    // the x-intersection
+                    if (p1.x == p2.x || x &lt;= x_intersection) {
+                        // Flip the inside flag
+                        inside = !inside;
+                    }
+                }
+            }
+        }
+ 
+        // Store the current point as the first point for
+        // the next iteration
+        p1 = p2;
+    }
+ 
+    // Return the value of the inside flag
+    return inside;
+}
+
+bool check_masspoint_inlane_lane(const ST_LANE lane, ST_IPOINT massPoint) {
+    uint8_t num_box = 0;
+    uint8_t i_box = 0;
+    uint8_t inlane_pts_num = 0;
+    ST_IPOINT box_corners[4];
+
+    // check the number of points in the lane
+    num_box = check_pts_num(lane.left.points) - 1;
+    for (i_box = 0; i_box &lt; num_box &amp;&amp; inlane_pts_num &lt; 4; i_box++){
+        // define the corner of the road box
+        box_corners[0] = lane.right.points[i_box];
+        box_corners[1] = lane.right.points[i_box + 1];
+        box_corners[2] = lane.left.points[i_box + 1];
+        box_corners[3] = lane.left.points[i_box];
+        // check if the inlane status of the vehicle center point to the current box
+        if(point_in_polygon(massPoint,box_corners)){
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// check if veh_state are not covered by a single lane, or if vehicle rectangle touches the edge of the lane
+uint8_t check_inlane_lane_single(const ST_LANE lane, ST_ISTATE veh_state, ST_RECTANGLE veh_shape) {
+    uint8_t num_box = 0;
+    uint8_t i_box = 0, i_veh = 0;
+    uint8_t inlane_pts_num = 0;
+
+    ST_IPOINT veh_corners[4];
+    ST_IPOINT box_corners[4];
+    // Calculate the corner points
+    calculateCornerPoints(veh_state, veh_shape, veh_corners);
+
+    // check the number of points in the lane
+    num_box = check_pts_num(lane.left.points) - 1;
+    for (i_box = 0; i_box &lt; num_box &amp;&amp; inlane_pts_num &lt; 4; i_box++){
+        // define the corner of the road box
+        box_corners[0] = lane.right.points[i_box];
+        box_corners[1] = lane.right.points[i_box + 1];
+        box_corners[2] = lane.left.points[i_box + 1];
+        box_corners[3] = lane.left.points[i_box];
+        // check if the inlane status of the vehicle box to the current box
+        for(i_veh = 0; i_veh &lt; 4; i_veh++){
+            if(point_in_polygon(veh_corners[i_veh],box_corners)){
+                inlane_pts_num++;
+            }
+        }   
+    }
+
+    return inlane_pts_num;
+}
+
+bool check_inlane_laneNet(ST_ISTATE veh_state, ST_RECTANGLE veh_shape) {
+    uint8_t i_lane = 0, inlane_pts_num = 0;
+    bool inside = false;
+
+    for(i_lane = 0; i_lane &lt; MAXL &amp;&amp; inlane_pts_num&lt;4; i_lane++){
+        inlane_pts_num += check_inlane_lane_single(laneNet[i_lane], veh_state, veh_shape);
+    }
+    
+    if(inlane_pts_num &gt;= 4) {
+        inside = true;
+    }
+    else {
+        inside = false;
+    }
+
+    return inside;
+}
+
+int32_t compute_approximating_circle_radius(int32_t ego_length, int32_t ego_width) {
+    double length = i2d(ego_length);
+    double width = i2d(ego_width);
+    double square_length, diagonal_square, approx_radius;
+
+    if (length &lt;= 0 || width &lt;= 0) {
+        return -1;
+    }
+
+    if (fabs(length) &lt; 1e-6 &amp;&amp; fabs(width) &lt; 1e-6) {
+        return 0;
+    }
+    // Divide rectangle into 3 smaller rectangles
+    square_length = length/3.0;
+    // Calculate minimum radius
+    diagonal_square = sqrt(pow(square_length/2.0, 2) + pow(width/2.0, 2));
+    // Round up value
+    approx_radius = round(diagonal_square*10.0) / 10.0 + 0.1;
+
+    return d2i(approx_radius);
+}
+
+void compute_centers_of_approximation_circles(ST_ISTATE veh_state, ST_RECTANGLE veh_shape, ST_IPOINT &amp;centers[2]) {
+    double disc_radius, distance_centers, veh_cent_x_double, veh_cent_y_double;
+
+    disc_radius = i2d(compute_approximating_circle_radius(veh_shape.length, veh_shape.width));
+    distance_centers = disc_radius/2.0;
+
+    // Compute the center position of first circle (front)
+    veh_cent_x_double = i2d(veh_state.position.x);
+    veh_cent_y_double = i2d(veh_state.position.y);
+    centers[0].x = d2i(veh_cent_x_double + (distance_centers/2.0)*cos(i2d(veh_state.head)));
+    centers[0].y = d2i(veh_cent_y_double + (distance_centers/2.0)*sin(i2d(veh_state.head)));
+
+    // Compute the center position of second circle (rear)
+    centers[1].x = d2i(veh_cent_x_double - (distance_centers/2.0)*cos(i2d(veh_state.head)));
+    centers[1].y = d2i(veh_cent_y_double - (distance_centers/2.0)*sin(i2d(veh_state.head)));
+}
+
+bool check_collision(ST_ISTATE veh_state1, ST_ISTATE veh_state2, ST_RECTANGLE veh_st_rect1, ST_RECTANGLE veh_st_rect2, int32_t dis_thres) {    
+    // define two vehicles' circle tuple (front and rear)
+    ST_IPOINT veh_circle_tuple1[2] = {{0, 0}, {0, 0}};
+    ST_IPOINT veh_circle_tuple2[2] = {{0, 0}, {0, 0}};
+    double min_dis = FLT_MAX, dis = 0;
+    int i, j;    
+    
+    // calculate the centers of the vehicles' circles
+    compute_centers_of_approximation_circles(veh_state1, veh_st_rect1, veh_circle_tuple1);
+    compute_centers_of_approximation_circles(veh_state2, veh_st_rect2, veh_circle_tuple2);
+
+    for (i = 0; i &lt; 2; ++i) {
+        for (j = 0; j &lt; 2; ++j) {
+            dis = sqrt(pow(veh_circle_tuple1[i].x - veh_circle_tuple2[j].x, 2) + pow(veh_circle_tuple1[i].y - veh_circle_tuple2[j].y, 2));
+            min_dis = fmin(min_dis, dis);
+        }
+    }
+    if (dis_thres &gt; min_dis)
+        return true;
+    else
+        return false;
+}
+
+void updateAll(int32_t &amp;vx, int32_t &amp;vy, int32_t &amp;vv, int32_t &amp;vacc, int32_t &amp;vdir, 
+            const int32_t vaccRate, const int32_t vdirRate, const int8_t times){
+    int i = 0, LEN = 0;    
+    double rx=0,ry=0,rv=0,racc=0,rdir=0;
+    double dx=0,dy=0,dv=0,dacc=0,ddir=0;
+    double raccRate=0,rdirRate=0,step=0;
+    const double granularity = 0.01;
+    // assign the continuous variables with the discrete variables' values
+    rx = i2d(vx);
+    ry = i2d(vy);
+    rv = i2d(vv);
+    racc = i2d(vacc);
+    rdir = i2d(vdir);
+    raccRate = i2d(vaccRate);
+    rdirRate = i2d(vdirRate);
+    // setup the granularity for calculating integration
+    step = times*granularity;
+    LEN = fint(1/granularity);
+    // integration
+    for(i=0;i&lt;LEN;i++) {
+        dacc = raccRate * step;
+        ddir = rdirRate * step;
+        racc = racc + dacc;
+        rdir = rdir + ddir;
+        //rdir_mod = i2d(d2i(rdir)%PI);
+        dv = racc * step;
+        rv = rv + dv;
+        dx = rv * cos(rdir) * step;
+        rx = rx + dx;
+        dy = rv * sin(rdir) * step;
+        ry = ry + dy;
+    }
+    // update discrete variables with the continuous variables' values
+    vx = d2i(rx);
+    vy = d2i(ry);
+    vv = d2i(rv);
+    vacc = d2i(racc);
+    vdir = d2i(rdir);
+}
+
+void updateVA(int32_t &amp;vv, int32_t &amp;vacc, const int32_t vaccRate, const int8_t times){
+    int i = 0, LEN = 0;
+    double rx,ry,rv,racc;
+    double dx,dy,dv,dacc,raccRate,step;
+    const double granularity = 0.01;
+    // assign the continuous variables with the discrete variables' values
+    rv = i2d(vv);
+    racc = i2d(vacc);
+    raccRate = i2d(vaccRate);
+    // setup the granularity for calculating integration
+    step = times*granularity;
+    LEN = fint(1/granularity);
+    // integration
+    for(i=0;i&lt;LEN;i++) {
+        dacc = raccRate * step;
+        racc = racc + dacc;
+        dv = racc * step;
+        rv = rv + dv;
+    }
+    // update discrete variables with the continuous variables' values
+    vv = d2i(rv);
+    vacc = d2i(racc);
+}
+
+//ST_ISTATE future;
+ST_ISTATE predict(int length){
+    int horizon = P * length * N1; 
+    ST_ISTATE future = {{0, 0}, 0, 0, 0, 0, 0, {0, 0, 0}};
+    future = cps_state;
+
+    updateAll(future.position.x,future.position.y,future.vel,future.acc,future.head,
+           future.accRate,future.yawRate,horizon);
+    
+    return future;
+}
+
+void detect(ST_RECTANGLE obj_shape, ST_ISTATE &amp;obj_state){
+    int i = 0;
+    int32_t distance = 0;
+
+    for(i = 0; i &lt; MAXDO &amp;&amp; dynamicObsExists; i++){
+        if(obs_consider[i]){
+            distance = getDisP2P(obj_state.position, obs_state[i].position);
+            obj_state.detection.collide |= check_collision(obj_state, obs_state[i], obj_shape, obs_shape[i], d2i(THRESHOLD_COLLISION));
+            //distanceToDynamicObs[i] = distance;
+        }
+    }
+
+    for(i = MAXDO; i &lt; MAXDO+MAXSO &amp;&amp; staticObsExists; i++) {
+        obj_state.detection.collide |= check_collision(obj_state, obs_state[i], obj_shape, obs_shape[i], d2i(THRESHOLD_COLLISION));
+        //distanceToStaticObs = getDisP2P(obj_shape.center, staticObs[i].center);
+    }
+
+    obj_state.detection.outside = !check_inlane_laneNet(obj_state, obj_shape);
+    obj_state.detection.reach = (getDisP2P(obj_state.position, planning.goal) &lt;= d2i(THRESHOLD_REACH));
+}
+
+
+
+/*ST_ISTATE future_state;
+ST_RECTANGLE future_shape;
+void test(){
+    future_state = predict(2);
+    future_shape = cps_shape;
+    future_shape.center = future_state.position;
+    future_shape.head = future_state.head;
+    detect(future_shape, future_state);
+}*/
+
+/*int giveShieldState(){
+    int id = 0, j = 0;
+
+    j = set_cps_state(cps_state.position.x, cps_state.position.y, cps_state.vel,
+              cps_state.head, cps_state.acc, cps_state.accRate, 
+              cps_state.yawRate, cps_state.detection.collide, cps_state.detection.outside,
+              cps_state.detection.reach);
+    for(id = 0; id&lt;MAXOBS; id++){
+        j = set_obs_state(id, obs_state[id].position.x, obs_state[id].position.y, obs_state[id].vel,
+              obs_state[id].head, obs_state[id].acc, obs_state[id].accRate, 
+              obs_state[id].yawRate, obs_state[id].detection.collide, obs_state[id].detection.outside,
+              obs_state[id].detection.reach);
+    }
+    
+    return 1;
+}*/
+
+/*int updateShield(){
+    int i = giveShieldState();
+
+    return i;
+}*/
+
+// lanes could overlap with each other, so a shape with 4 corners can occupy more than 4 lanes
+void detect_lane(ST_ISTATE obj_state, ST_RECTANGLE obj_shape, int&amp; cLane[10]){
+    int index = 0, l = 0;
+
+    for(index = 0; index&lt;MAXL; index++){
+        //if(check_masspoint_inlane_lane(laneNet[index], obj_shape.center)){ 
+        if(check_inlane_lane_single(laneNet[index], obj_state, obj_shape) &gt; 0){
+            cLane[l++] = laneNet[index].ID;
+        }
+    }
+}</declaration>
+	<template>
+		<name>Monitor</name>
+		<declaration>const int id = MAXOBS; //ego_id = MAXOBS
+
+bool c(uint8_t scene){
+    int cLane[10] = {0,0,0,0,0,0,0,0,0,0};
+
+    if(scene == 1){
+        detect_lane(cps_state, cps_shape, cLane);
+        
+    }
+    return true;
+}</declaration>
+		<location id="id0" x="102" y="0">
+			<name x="92" y="-34">SC4</name>
+		</location>
+		<location id="id1" x="-34" y="136" color="#ff0000">
+			<name x="-51" y="153">Error</name>
+		</location>
+		<location id="id2" x="-34" y="0">
+			<name x="-44" y="-34">SC3</name>
+		</location>
+		<location id="id3" x="-170" y="0">
+			<name x="-180" y="-34">SC2</name>
+		</location>
+		<location id="id4" x="-306" y="0">
+			<name x="-316" y="-34">SC1</name>
+		</location>
+		<location id="id5" x="238" y="0" color="#00ff00">
+			<name x="228" y="-34">SC5</name>
+		</location>
+		<location id="id6" x="-442" y="0">
+			<name x="-459" y="-34">Begin</name>
+		</location>
+		<init ref="id6"/>
+		<transition id="id7">
+			<source ref="id6"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-399" y="-34">c(1)</label>
+			<label kind="synchronisation" x="-399" y="-17">start?</label>
+			<label kind="assignment" x="-424" y="0">actmode=LK</label>
+		</transition>
+		<transition id="id8" controllable="false">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="102" y="33">!c(4)&amp;&amp;
+!c(5)</label>
+			<label kind="synchronisation" x="102" y="84">decide?</label>
+			<label kind="assignment" x="102" y="101">count=MAXTIME</label>
+			<nail x="102" y="136"/>
+		</transition>
+		<transition id="id9" controllable="false">
+			<source ref="id2"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-34" y="33">!c(2)&amp;&amp;
+!c(3)&amp;&amp;
+!c(4)</label>
+			<label kind="synchronisation" x="-34" y="84">decide?</label>
+			<label kind="assignment" x="-34" y="101">count=MAXTIME</label>
+		</transition>
+		<transition id="id10" controllable="false">
+			<source ref="id3"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-153" y="33">!c(1)&amp;&amp;
+!c(2)&amp;&amp;
+!c(3)</label>
+			<label kind="synchronisation" x="-153" y="84">decide?</label>
+			<label kind="assignment" x="-153" y="101">count=MAXTIME</label>
+		</transition>
+		<transition id="id11" controllable="false">
+			<source ref="id4"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-306" y="42">!c(1)&amp;&amp;
+!c(2)</label>
+			<label kind="synchronisation" x="-306" y="84">decide?</label>
+			<label kind="assignment" x="-306" y="101">count=MAXTIME</label>
+			<nail x="-306" y="136"/>
+		</transition>
+		<transition id="id12">
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-152" y="-102">c(2)</label>
+			<label kind="synchronisation" x="-152" y="-85">decide?</label>
+			<label kind="assignment" x="-152" y="-68">actmode=LK</label>
+			<nail x="-34" y="-68"/>
+			<nail x="-170" y="-68"/>
+		</transition>
+		<transition id="id13">
+			<source ref="id3"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-288" y="-102">c(1)</label>
+			<label kind="synchronisation" x="-288" y="-85">decide?</label>
+			<label kind="assignment" x="-288" y="-68">actmode=LK</label>
+			<nail x="-170" y="-68"/>
+			<nail x="-306" y="-68"/>
+		</transition>
+		<transition id="id14">
+			<source ref="id0"/>
+			<target ref="id5"/>
+			<label kind="guard" x="120" y="-34">c(5)</label>
+			<label kind="synchronisation" x="120" y="-17">decide?</label>
+			<label kind="assignment" x="120" y="0">actmode=LK</label>
+		</transition>
+		<transition id="id15">
+			<source ref="id2"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-16" y="-34">c(4)</label>
+			<label kind="synchronisation" x="-16" y="-17">decide?</label>
+			<label kind="assignment" x="-16" y="0">actmode=LC</label>
+		</transition>
+		<transition id="id16">
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-152" y="-34">c(3)</label>
+			<label kind="synchronisation" x="-152" y="-17">decide?</label>
+			<label kind="assignment" x="-152" y="0">actmode=LC</label>
+		</transition>
+		<transition id="id17">
+			<source ref="id4"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-288" y="-34">c(2)</label>
+			<label kind="synchronisation" x="-288" y="-17">decide?</label>
+			<label kind="assignment" x="-288" y="0">actmode=LK</label>
+		</transition>
+	</template>
+	<template>
+		<name>M1</name>
+		<parameter>const int32_t initLane, const int id</parameter>
+		<declaration>int32_t enter = 0;
+int current_lane[10];
+
+bool ready(){
+    return true;
+    //return steps &lt;= 10; //this is to ensure the model does not linger between lanes forever
+}
+
+void change(int32_t lane_id){
+    detect_lane(obs_state[id], obs_shape[id], current_lane);
+    //cLane[id] = lane_id;
+    //steps++;
+}
+
+void forward(int32_t lane_id){
+    //cLane[id] = lane_id;
+    enter = count;
+    //steps++;
+}</declaration>
+		<location id="id18" x="272" y="238">
+			<name x="289" y="246">L2789</name>
+			<label kind="exponentialrate" x="262" y="272">1</label>
+		</location>
+		<location id="id19" x="374" y="-306">
+			<name x="391" y="-340">L2815</name>
+			<label kind="exponentialrate" x="364" y="-272">1</label>
+		</location>
+		<location id="id20" x="374" y="-170">
+			<name x="391" y="-195">L1005</name>
+			<label kind="exponentialrate" x="364" y="-136">1</label>
+		</location>
+		<location id="id21" x="170" y="-306">
+			<name x="178" y="-340">L2814</name>
+			<label kind="exponentialrate" x="160" y="-272">1</label>
+		</location>
+		<location id="id22" x="-34" y="-306">
+			<name x="-17" y="-340">L2813</name>
+			<label kind="exponentialrate" x="-44" y="-272">1</label>
+		</location>
+		<location id="id23" x="-34" y="170">
+			<name x="-76" y="187">L969</name>
+			<label kind="exponentialrate" x="-44" y="204">1</label>
+		</location>
+		<location id="id24" x="510" y="102">
+			<name x="500" y="68">L57</name>
+			<label kind="exponentialrate" x="500" y="136">1</label>
+		</location>
+		<location id="id25" x="272" y="102">
+			<name x="280" y="68">L54</name>
+			<label kind="exponentialrate" x="262" y="136">1</label>
+		</location>
+		<location id="id26" x="68" y="102">
+			<name x="58" y="68">L3222</name>
+			<label kind="exponentialrate" x="58" y="136">1</label>
+		</location>
+		<location id="id27" x="-102" y="102">
+			<name x="-112" y="68">L1482</name>
+			<label kind="exponentialrate" x="-112" y="136">1</label>
+		</location>
+		<location id="id28" x="-272" y="102">
+			<name x="-282" y="68">L786</name>
+			<label kind="exponentialrate" x="-282" y="136">1</label>
+		</location>
+		<location id="id29" x="-442" y="102">
+			<name x="-452" y="68">L2630</name>
+			<label kind="exponentialrate" x="-452" y="136">1</label>
+		</location>
+		<location id="id30" x="-612" y="102">
+			<name x="-622" y="68">L789</name>
+			<label kind="exponentialrate" x="-622" y="136">1</label>
+		</location>
+		<location id="id31" x="-612" y="-102">
+			<name x="-622" y="-136">L790</name>
+			<label kind="exponentialrate" x="-622" y="-68">1</label>
+		</location>
+		<location id="id32" x="-442" y="-102">
+			<name x="-452" y="-136">L2629</name>
+			<label kind="exponentialrate" x="-452" y="-68">1</label>
+		</location>
+		<location id="id33" x="-272" y="-102">
+			<name x="-282" y="-136">L787</name>
+			<label kind="exponentialrate" x="-282" y="-68">1</label>
+		</location>
+		<location id="id34" x="-102" y="-102">
+			<name x="-112" y="-136">L1481</name>
+			<label kind="exponentialrate" x="-112" y="-68">1</label>
+		</location>
+		<location id="id35" x="68" y="-102">
+			<name x="58" y="-136">L1970</name>
+			<label kind="exponentialrate" x="58" y="-68">1</label>
+		</location>
+		<location id="id36" x="272" y="-102">
+			<name x="262" y="-136">L53</name>
+			<label kind="exponentialrate" x="262" y="-68">1</label>
+		</location>
+		<location id="id37" x="510" y="-102">
+			<name x="500" y="-136">L56</name>
+			<label kind="exponentialrate" x="500" y="-68">1</label>
+		</location>
+		<location id="id38" x="-238" y="170">
+			<name x="-289" y="187">L968</name>
+			<label kind="exponentialrate" x="-248" y="204">1</label>
+		</location>
+		<location id="id39" x="-238" y="408">
+			<name x="-255" y="425">L963</name>
+			<label kind="exponentialrate" x="-248" y="442">1</label>
+		</location>
+		<location id="id40" x="-34" y="408">
+			<name x="-51" y="425">L964</name>
+			<label kind="exponentialrate" x="-44" y="442">1</label>
+		</location>
+		<location id="id41" x="170" y="170">
+			<name x="127" y="187">L970</name>
+			<label kind="exponentialrate" x="160" y="204">1</label>
+		</location>
+		<location id="id42" x="170" y="408">
+			<name x="153" y="425">L965</name>
+			<label kind="exponentialrate" x="161" y="442">1</label>
+		</location>
+		<location id="id43" x="374" y="408">
+			<name x="357" y="425">L966</name>
+			<label kind="exponentialrate" x="364" y="442">1</label>
+		</location>
+		<location id="id44" x="374" y="238">
+			<name x="391" y="238">L971</name>
+			<label kind="exponentialrate" x="364" y="272">1</label>
+		</location>
+		<location id="id45" x="374" y="0">
+			<name x="391" y="-34">L2790</name>
+			<label kind="exponentialrate" x="364" y="34">1</label>
+		</location>
+		<location id="id46" x="170" y="0">
+			<name x="187" y="-34">L2788</name>
+			<label kind="exponentialrate" x="160" y="34">1</label>
+		</location>
+		<location id="id47" x="-34" y="0">
+			<name x="-25" y="-34">L2787</name>
+			<label kind="exponentialrate" x="-44" y="34">1</label>
+		</location>
+		<location id="id48" x="-34" y="-170">
+			<name x="-17" y="-195">L1003</name>
+			<label kind="exponentialrate" x="-44" y="-136">1</label>
+		</location>
+		<location id="id49" x="170" y="-170">
+			<name x="187" y="-195">L1004</name>
+			<label kind="exponentialrate" x="160" y="-136">1</label>
+		</location>
+		<location id="id50" x="-34" y="-416">
+			<name x="-44" y="-450">L1007</name>
+			<label kind="exponentialrate" x="-44" y="-382">1</label>
+		</location>
+		<location id="id51" x="170" y="-416">
+			<name x="160" y="-450">L1008</name>
+			<label kind="exponentialrate" x="160" y="-382">1</label>
+		</location>
+		<location id="id52" x="374" y="-416">
+			<name x="364" y="-450">L1009</name>
+			<label kind="exponentialrate" x="364" y="-382">1</label>
+		</location>
+		<location id="id53" x="68" y="408">
+			<name x="43" y="425">Start</name>
+			<label kind="exponentialrate" x="42" y="399">1</label>
+		</location>
+		<location id="id54" x="170" y="340">
+			<urgent/>
+		</location>
+		<location id="id55" x="-34" y="340">
+			<urgent/>
+		</location>
+		<location id="id56" x="-238" y="340">
+			<urgent/>
+		</location>
+		<location id="id57" x="374" y="340">
+			<urgent/>
+		</location>
+		<location id="id58" x="374" y="136">
+			<committed/>
+		</location>
+		<location id="id59" x="170" y="-510">
+			<urgent/>
+		</location>
+		<init ref="id53"/>
+		<transition id="id60">
+			<source ref="id51"/>
+			<target ref="id59"/>
+			<label kind="synchronisation" x="170" y="-480">move?</label>
+		</transition>
+		<transition id="id61">
+			<source ref="id44"/>
+			<target ref="id58"/>
+			<label kind="synchronisation" x="382" y="170">move?</label>
+		</transition>
+		<transition id="id62">
+			<source ref="id43"/>
+			<target ref="id57"/>
+			<label kind="synchronisation" x="357" y="365">move?</label>
+		</transition>
+		<transition id="id63">
+			<source ref="id39"/>
+			<target ref="id56"/>
+			<label kind="synchronisation" x="-255" y="365">move?</label>
+		</transition>
+		<transition id="id64">
+			<source ref="id40"/>
+			<target ref="id55"/>
+			<label kind="synchronisation" x="-51" y="365">move?</label>
+		</transition>
+		<transition id="id65">
+			<source ref="id42"/>
+			<target ref="id54"/>
+			<label kind="synchronisation" x="153" y="365">move?</label>
+		</transition>
+		<transition id="id66">
+			<source ref="id41"/>
+			<target ref="id46"/>
+			<label kind="guard" x="178" y="25">ready()</label>
+			<label kind="synchronisation" x="178" y="42">move?</label>
+			<label kind="assignment" x="178" y="59">forward(2788)</label>
+		</transition>
+		<transition id="id67">
+			<source ref="id53"/>
+			<target ref="id42"/>
+			<label kind="synchronisation" x="102" y="416">start?</label>
+			<label kind="assignment" x="76" y="450">forward(initLane)</label>
+		</transition>
+		<transition id="id68">
+			<source ref="id18"/>
+			<target ref="id25"/>
+			<label kind="guard" x="238" y="144">ready()</label>
+			<label kind="synchronisation" x="238" y="161">move?</label>
+			<label kind="assignment" x="238" y="178">forward(54)</label>
+		</transition>
+		<transition id="id69">
+			<source ref="id58"/>
+			<target ref="id18"/>
+			<label kind="guard" x="306" y="195">ready()</label>
+			<label kind="assignment" x="306" y="212">forward(2789)</label>
+		</transition>
+		<transition id="id70">
+			<source ref="id52"/>
+			<target ref="id51"/>
+			<label kind="guard" x="229" y="-450">ready()</label>
+			<label kind="synchronisation" x="229" y="-433">move?</label>
+			<label kind="assignment" x="229" y="-416">change(1008)</label>
+		</transition>
+		<transition id="id71">
+			<source ref="id59"/>
+			<target ref="id52"/>
+			<label kind="guard" x="195" y="-493">ready()</label>
+			<label kind="assignment" x="195" y="-476">change(1009)</label>
+		</transition>
+		<transition id="id72">
+			<source ref="id59"/>
+			<target ref="id50"/>
+			<label kind="guard" x="68" y="-493">ready()</label>
+			<label kind="assignment" x="59" y="-476">change(1007)</label>
+		</transition>
+		<transition id="id73">
+			<source ref="id50"/>
+			<target ref="id51"/>
+			<label kind="guard" x="59" y="-450">ready()</label>
+			<label kind="synchronisation" x="76" y="-433">move?</label>
+			<label kind="assignment" x="25" y="-416">change(1008)</label>
+		</transition>
+		<transition id="id74">
+			<source ref="id22"/>
+			<target ref="id50"/>
+			<label kind="guard" x="-34" y="-391">ready()</label>
+			<label kind="synchronisation" x="-34" y="-378">move?</label>
+			<label kind="assignment" x="-34" y="-357">forward(1007)</label>
+		</transition>
+		<transition id="id75">
+			<source ref="id21"/>
+			<target ref="id51"/>
+			<label kind="guard" x="170" y="-391">ready()</label>
+			<label kind="synchronisation" x="170" y="-374">move?</label>
+			<label kind="assignment" x="170" y="-357">forward(1008)</label>
+		</transition>
+		<transition id="id76">
+			<source ref="id19"/>
+			<target ref="id52"/>
+			<label kind="guard" x="374" y="-391">ready()</label>
+			<label kind="synchronisation" x="374" y="-378">move?</label>
+			<label kind="assignment" x="374" y="-357">forward(1009)</label>
+		</transition>
+		<transition id="id77">
+			<source ref="id20"/>
+			<target ref="id19"/>
+			<label kind="guard" x="374" y="-272">ready()</label>
+			<label kind="synchronisation" x="374" y="-255">move?</label>
+			<label kind="assignment" x="374" y="-238">forward(2815)</label>
+		</transition>
+		<transition id="id78">
+			<source ref="id45"/>
+			<target ref="id20"/>
+			<label kind="guard" x="374" y="-119">ready()</label>
+			<label kind="synchronisation" x="374" y="-102">move?</label>
+			<label kind="assignment" x="374" y="-85">forward(1005)</label>
+		</transition>
+		<transition id="id79">
+			<source ref="id49"/>
+			<target ref="id21"/>
+			<label kind="guard" x="178" y="-272">ready()</label>
+			<label kind="synchronisation" x="178" y="-255">move?</label>
+			<label kind="assignment" x="178" y="-238">forward(2814)</label>
+		</transition>
+		<transition id="id80">
+			<source ref="id46"/>
+			<target ref="id49"/>
+			<label kind="guard" x="178" y="-119">ready()</label>
+			<label kind="synchronisation" x="178" y="-102">move?</label>
+			<label kind="assignment" x="178" y="-85">forward(1004)</label>
+		</transition>
+		<transition id="id81">
+			<source ref="id48"/>
+			<target ref="id22"/>
+			<label kind="guard" x="-34" y="-272">ready()</label>
+			<label kind="synchronisation" x="-34" y="-255">move?</label>
+			<label kind="assignment" x="-34" y="-238">forward(2813)</label>
+		</transition>
+		<transition id="id82">
+			<source ref="id47"/>
+			<target ref="id48"/>
+			<label kind="guard" x="-34" y="-119">ready()</label>
+			<label kind="synchronisation" x="-34" y="-102">move?</label>
+			<label kind="assignment" x="-34" y="-85">forward(1003)</label>
+		</transition>
+		<transition id="id83">
+			<source ref="id23"/>
+			<target ref="id47"/>
+			<label kind="guard" x="-34" y="51">ready()</label>
+			<label kind="synchronisation" x="-34" y="68">move?</label>
+			<label kind="assignment" x="-34" y="85">forward(2787)</label>
+		</transition>
+		<transition id="id84">
+			<source ref="id58"/>
+			<target ref="id45"/>
+			<label kind="guard" x="374" y="51">ready()</label>
+			<label kind="assignment" x="374" y="85">forward(2790)</label>
+		</transition>
+		<transition id="id85">
+			<source ref="id57"/>
+			<target ref="id44"/>
+			<label kind="guard" x="374" y="263">ready()</label>
+			<label kind="assignment" x="374" y="297">forward(971)</label>
+		</transition>
+		<transition id="id86">
+			<source ref="id57"/>
+			<target ref="id42"/>
+			<label kind="guard" x="187" y="348">ready()</label>
+			<label kind="assignment" x="187" y="374">change(965)</label>
+		</transition>
+		<transition id="id87">
+			<source ref="id54"/>
+			<target ref="id43"/>
+			<label kind="guard" x="306" y="348">ready()</label>
+			<label kind="assignment" x="280" y="374">change(966)</label>
+		</transition>
+		<transition id="id88">
+			<source ref="id54"/>
+			<target ref="id41"/>
+			<label kind="guard" x="170" y="221">ready()</label>
+			<label kind="assignment" x="170" y="255">forward(970)</label>
+		</transition>
+		<transition id="id89">
+			<source ref="id54"/>
+			<target ref="id40"/>
+			<label kind="guard" x="-25" y="348">ready()</label>
+			<label kind="assignment" x="-25" y="374">change(964)</label>
+		</transition>
+		<transition id="id90">
+			<source ref="id55"/>
+			<target ref="id42"/>
+			<label kind="guard" x="93" y="348">ready()</label>
+			<label kind="assignment" x="68" y="374">change(965)</label>
+		</transition>
+		<transition id="id91">
+			<source ref="id56"/>
+			<target ref="id40"/>
+			<label kind="guard" x="-212" y="348">ready()</label>
+			<label kind="assignment" x="-144" y="382">change(964)</label>
+		</transition>
+		<transition id="id92">
+			<source ref="id55"/>
+			<target ref="id39"/>
+			<label kind="guard" x="-212" y="382">ready()</label>
+			<label kind="assignment" x="-144" y="348">change(963)</label>
+		</transition>
+		<transition id="id93">
+			<source ref="id55"/>
+			<target ref="id23"/>
+			<label kind="guard" x="-34" y="221">ready()</label>
+			<label kind="assignment" x="-34" y="255">forward(969)</label>
+		</transition>
+		<transition id="id94">
+			<source ref="id56"/>
+			<target ref="id38"/>
+			<label kind="guard" x="-238" y="221">ready()</label>
+			<label kind="assignment" x="-238" y="255">forward(968)</label>
+		</transition>
+		<transition id="id95">
+			<source ref="id25"/>
+			<target ref="id24"/>
+			<label kind="guard" x="297" y="68">ready()</label>
+			<label kind="synchronisation" x="297" y="85">move?</label>
+			<label kind="assignment" x="297" y="102">forward(57)</label>
+		</transition>
+		<transition id="id96">
+			<source ref="id37"/>
+			<target ref="id36"/>
+			<label kind="guard" x="290" y="-136">ready()</label>
+			<label kind="synchronisation" x="290" y="-119">move?</label>
+			<label kind="assignment" x="290" y="-102">forward(53)</label>
+		</transition>
+		<transition id="id97">
+			<source ref="id36"/>
+			<target ref="id35"/>
+			<label kind="guard" x="86" y="-136">ready()</label>
+			<label kind="synchronisation" x="86" y="-119">move?</label>
+			<label kind="assignment" x="86" y="-102">forward(1970)</label>
+		</transition>
+		<transition id="id98">
+			<source ref="id35"/>
+			<target ref="id34"/>
+			<label kind="guard" x="-84" y="-136">ready()</label>
+			<label kind="synchronisation" x="-84" y="-119">move?</label>
+			<label kind="assignment" x="-84" y="-102">forward(1481)</label>
+		</transition>
+		<transition id="id99">
+			<source ref="id26"/>
+			<target ref="id25"/>
+			<label kind="guard" x="86" y="68">ready()</label>
+			<label kind="synchronisation" x="86" y="85">move?</label>
+			<label kind="assignment" x="86" y="102">forward(54)</label>
+		</transition>
+		<transition id="id100">
+			<source ref="id27"/>
+			<target ref="id26"/>
+			<label kind="guard" x="-84" y="68">ready()</label>
+			<label kind="synchronisation" x="-84" y="85">move?</label>
+			<label kind="assignment" x="-84" y="102">forward(3222)</label>
+		</transition>
+		<transition id="id101">
+			<source ref="id28"/>
+			<target ref="id27"/>
+			<label kind="guard" x="-254" y="68">ready()</label>
+			<label kind="synchronisation" x="-254" y="85">move?</label>
+			<label kind="assignment" x="-254" y="102">forward(1482)</label>
+		</transition>
+		<transition id="id102">
+			<source ref="id34"/>
+			<target ref="id33"/>
+			<label kind="guard" x="-254" y="-136">ready()</label>
+			<label kind="synchronisation" x="-254" y="-119">move?</label>
+			<label kind="assignment" x="-254" y="-102">forward(787)</label>
+		</transition>
+		<transition id="id103">
+			<source ref="id29"/>
+			<target ref="id28"/>
+			<label kind="guard" x="-424" y="68">ready()</label>
+			<label kind="synchronisation" x="-424" y="85">move?</label>
+			<label kind="assignment" x="-424" y="102">forward(786)</label>
+		</transition>
+		<transition id="id104">
+			<source ref="id33"/>
+			<target ref="id32"/>
+			<label kind="guard" x="-424" y="-136">ready()</label>
+			<label kind="synchronisation" x="-424" y="-119">move?</label>
+			<label kind="assignment" x="-424" y="-102">forward(2629)</label>
+		</transition>
+		<transition id="id105">
+			<source ref="id30"/>
+			<target ref="id29"/>
+			<label kind="guard" x="-594" y="68">ready()</label>
+			<label kind="synchronisation" x="-594" y="85">move?</label>
+			<label kind="assignment" x="-594" y="102">forward(2630)</label>
+		</transition>
+		<transition id="id106">
+			<source ref="id32"/>
+			<target ref="id31"/>
+			<label kind="guard" x="-594" y="-136">ready()</label>
+			<label kind="synchronisation" x="-594" y="-119">move?</label>
+			<label kind="assignment" x="-594" y="-102">forward(790)</label>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">Act_Move</name>
+		<parameter>const act_id_t id</parameter>
+		<declaration>bool gearChanged(const int accRate){
+    //return (accRate&gt;0 &amp;&amp; cps_state.acc&lt;0) || (accRate&lt;0 &amp;&amp; cps_state.acc&gt;0) || 
+    //       (accRate==0 &amp;&amp; cps_state.acc!=0 &amp;&amp; (cps_state.vel&gt;=d2i(MAX_V)||cps_state.vel&lt;=d2i(MIN_V)));
+    return (accRate&gt;=0 &amp;&amp; cps_state.acc&lt;0) || (accRate&lt;=0 &amp;&amp; cps_state.acc&gt;0);
+}
+
+bool permit(acc_t gear){
+    int i = 0;
+    int type[ACTNUM];
+    int32_t value[ACTNUM];
+
+/*    if(shielded){
+        i = updateShield();
+        get_action(type,value);
+    }
+
+    // if the state is in the shield, the model must be shielded
+    if(is_state_contained()){
+        for(i = 0; i &lt; ACTNUM; i++){
+            if(type[i] == M &amp;&amp; value[i] == gear){
+                return true;
+            }
+        }
+        return false;
+    }
+*/
+    // if the state is not in the shield, the model can go anywhere
+    return true;
+}
+
+bool can(acc_t gear){
+    //int32_t pre_v = cps_state.vel, pre_acc = cps_state.acc, accRate = d2i(mTimeStep(gear)/ACC_GRA);
+
+    if((shielded &amp;&amp; count &lt; stage[NOW-1]) &amp;&amp; !permit(gear)){
+        return false;
+    }
+
+    //if(gearChanged(accRate)){
+    //    pre_acc = 0;
+    //}
+    //updateVA(pre_v, pre_acc, accRate, N2*P);
+    //if(pre_v&lt;=MAX_V &amp;&amp; pre_v&gt;=MIN_V &amp;&amp; pre_acc&lt;=MAX_ACC &amp;&amp; pre_acc&gt;=MIN_ACC){
+    //    return true;
+    //}else{}
+
+    return true;
+}
+
+void act(acc_t gear){
+    cps_state.accRate=d2i(mTimeStep(gear)/ACC_GRA);
+    //if(gearChanged(cps_state.accRate)){
+    //    cps_state.acc = 0;
+    //    cps_dyn.acc = 0.0;
+    //}
+
+    //updateShield();
+    //getShieldState();
+}</declaration>
+		<location id="id107" x="-204" y="0">
+			<name x="-221" y="25">Wait</name>
+		</location>
+		<location id="id108" x="-68" y="0">
+			<name x="-93" y="25">Choose</name>
+			<committed/>
+		</location>
+		<init ref="id107"/>
+		<transition id="id109">
+			<source ref="id108"/>
+			<target ref="id107"/>
+			<label kind="select" x="-161" y="-85">g:acc_t</label>
+			<label kind="guard" x="-161" y="-68">can(g)</label>
+			<label kind="assignment" x="-161" y="-51">act(g)</label>
+			<nail x="-68" y="-68"/>
+			<nail x="-204" y="-68"/>
+		</transition>
+		<transition id="id110">
+			<source ref="id107"/>
+			<target ref="id108"/>
+			<label kind="synchronisation" x="-178" y="-25">perform[id]?</label>
+		</transition>
+	</template>
+	<template>
+		<name>Act_Turn</name>
+		<parameter>const act_id_t id</parameter>
+		<declaration>bool permit(acc_t gear){
+    int i = 0;
+    int type[ACTNUM];
+    int32_t value[ACTNUM];
+
+/*
+    if(shielded){
+        i = updateShield();
+        get_action(type,value);
+    }
+
+    // if the state is in the shield, the model must be shielded
+    if(is_state_contained()){
+        for(i = 0; i &lt; ACTNUM; i++){
+            if(type[i] == T &amp;&amp; value[i] == gear){
+                return true;
+            }
+        }
+        return false;
+    }
+*/
+    // if the state is not in the shield, the model can go anywhere
+    return true;
+}
+
+bool can(dir_t gear){
+    if((shielded &amp;&amp; count &lt; stage[NOW-1]) &amp;&amp; !permit(gear)){
+        return false;
+    }
+
+    //if(cps_state.vel == 0 &amp;&amp; gear != 0){
+        // the vehicle cannot turn without a speed
+        //return false;
+    //}
+    return true;
+}
+
+void act(dir_t gear){
+    cps_state.yawRate=d2i(mTimeStep(gear)/DIR_GRA);
+
+    //updateShield();
+    //getShieldState();
+}</declaration>
+		<location id="id111" x="170" y="102">
+			<name x="136" y="127">Choose</name>
+			<committed/>
+		</location>
+		<location id="id112" x="34" y="102">
+			<name x="17" y="127">Wait</name>
+		</location>
+		<init ref="id112"/>
+		<transition id="id113">
+			<source ref="id111"/>
+			<target ref="id112"/>
+			<label kind="select" x="76" y="17">g:dir_t</label>
+			<label kind="guard" x="76" y="34">can(g)</label>
+			<label kind="assignment" x="76" y="51">act(g)</label>
+			<nail x="170" y="34"/>
+			<nail x="34" y="34"/>
+		</transition>
+		<transition id="id114">
+			<source ref="id112"/>
+			<target ref="id111"/>
+			<label kind="synchronisation" x="59" y="76">perform[id]?</label>
+		</transition>
+	</template>
+	<template>
+		<name>Controller</name>
+		<parameter>const int[0,MAXL] initLane, const ST_DSTATE &amp;initCS, const ST_RULES &amp;rules</parameter>
+		<declaration>act_id_t actID = 0;
+
+void initDis() {
+    ST_IPOINT leftTop = laneNet[initLane].left.points[0];
+    ST_IPOINT rightTop = laneNet[initLane].left.points[1];
+    ST_IPOINT rightDown = laneNet[initLane].right.points[0];
+    ST_IPOINT leftDown = laneNet[initLane].right.points[1];
+    ST_IPOINT middleDStart, middleDEnd;
+    ST_IPOINT start;
+    int32_t diffX = 0, diffY = 0;
+    double xs, ys, xe, ye, angle;
+
+    diffX = leftDown.x - leftTop.x;
+    diffY = leftDown.y - leftTop.y;
+    middleDStart.x = leftTop.x + diffX/2;
+    middleDStart.y = leftTop.y + diffY/2;
+    diffX = rightDown.x - rightTop.x;
+    diffY = rightDown.y - rightTop.y;
+    middleDEnd.x = rightTop.x + diffX/2;
+    middleDEnd.y = rightTop.y + diffY/2;
+    
+    xs = i2d(middleDStart.x);
+    ys = i2d(middleDStart.y);
+    xe = i2d(middleDEnd.x);
+    ye = i2d(middleDEnd.y);
+
+    angle = atan2(ys-ye,xs-xe);
+
+    if(initCS.position.x != NONE || initCS.position.y != NONE){
+        start.x = d2i(initCS.position.x);
+        start.y = d2i(initCS.position.y);
+        angle = initCS.head;
+    }else{
+        start = middleDStart;
+    }
+
+    cps_state.position = start;
+    cps_state.vel = d2i(mTimeStep(initCS.vel));
+    cps_state.head = d2i(angle);
+    cps_state.acc = d2i(mTimeStep(initCS.acc));
+    cps_state.accRate = d2i(mTimeStep(initCS.accRate));
+    cps_state.yawRate = d2i(mTimeStep(initCS.yawRate));
+    cps_state.detection.collide = false;
+    cps_state.detection.outside = false;
+    cps_state.detection.reach = false;
+
+
+    cps_dyn.x = i2d(start.x);
+    cps_dyn.y = i2d(start.y);
+    cps_dyn.vel = mTimeStep(initCS.vel);
+    cps_dyn.head = angle;
+    cps_dyn.acc = mTimeStep(initCS.acc);
+}
+
+void initialize(){
+    initDis();
+}
+
+void sensor(){
+    updateAll(cps_state.position.x,cps_state.position.y,cps_state.vel,cps_state.acc,cps_state.head,
+           cps_state.accRate,cps_state.yawRate,P*N1);
+    detect(cps_shape, cps_state);
+    //test();
+}</declaration>
+		<location id="id115" x="68" y="0">
+			<name x="25" y="-34">Choose</name>
+			<committed/>
+		</location>
+		<location id="id116" x="-136" y="0">
+			<name x="-195" y="-34">Acting</name>
+		</location>
+		<location id="id117" x="-17" y="-85">
+			<name x="-27" y="-119">M1</name>
+			<urgent/>
+		</location>
+		<location id="id118" x="-42" y="0">
+			<name x="-59" y="-42">Ini</name>
+		</location>
+		<init ref="id118"/>
+		<transition id="id119">
+			<source ref="id117"/>
+			<target ref="id115"/>
+			<label kind="guard" x="-76" y="-68">actID&lt;MAXACT-1</label>
+			<nail x="-17" y="0"/>
+		</transition>
+		<transition id="id120" controllable="false">
+			<source ref="id118"/>
+			<target ref="id116"/>
+			<label kind="synchronisation" x="-102" y="-25">start?</label>
+			<label kind="assignment" x="-119" y="17">initialize()</label>
+		</transition>
+		<transition id="id121">
+			<source ref="id117"/>
+			<target ref="id116"/>
+			<label kind="guard" x="-170" y="-102">actID==MAXACT-1</label>
+			<label kind="synchronisation" x="-170" y="-119">perform[actID]!</label>
+			<label kind="assignment" x="-170" y="-85">actID = 0</label>
+			<nail x="-136" y="-85"/>
+		</transition>
+		<transition id="id122" controllable="false">
+			<source ref="id116"/>
+			<target ref="id116"/>
+			<label kind="synchronisation" x="-195" y="-17">sense?</label>
+			<label kind="assignment" x="-195" y="17">sensor()</label>
+			<nail x="-170" y="0"/>
+			<nail x="-170" y="25"/>
+		</transition>
+		<transition id="id123" controllable="false">
+			<source ref="id116"/>
+			<target ref="id115"/>
+			<label kind="synchronisation" x="-85" y="51">decide?</label>
+			<nail x="-136" y="68"/>
+			<nail x="68" y="68"/>
+		</transition>
+		<transition id="id124">
+			<source ref="id115"/>
+			<target ref="id117"/>
+			<label kind="synchronisation" x="8" y="-119">perform[actID]!</label>
+			<label kind="assignment" x="8" y="-102">actID++</label>
+			<nail x="68" y="-85"/>
+		</transition>
+	</template>
+	<template>
+		<name>Timer</name>
+		<declaration>clock t;
+
+bool ToDecide(){
+    int i = 0, steps = 2;
+
+    /*if(future_state.detection.collide || future_state.detection.outside){
+        return true;
+    }*/
+    //return count == 0 || (count%N2==0 &amp;&amp; count%MAXTIME!=0);
+    return count == 0 || count%MAXTIME!=0;
+    //return false;
+}
+
+bool ToEnd(){
+    //return cps_state.detection.outside || cps_state.detection.collide || cps_state.detection.reach || count&gt;=MAXTIME;
+    return count&gt;=MAXTIME;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+</declaration>
+		<location id="id125" x="-68" y="0">
+			<name x="-144" y="17">Counting</name>
+			<label kind="invariant" x="-59" y="8">t&lt;=P</label>
+		</location>
+		<location id="id126" x="136" y="0">
+			<name x="153" y="17">Judge</name>
+			<committed/>
+		</location>
+		<location id="id127" x="-153" y="0">
+			<name x="-163" y="-34">S</name>
+			<urgent/>
+		</location>
+		<location id="id128" x="238" y="0">
+			<name x="221" y="-34">Done</name>
+		</location>
+		<location id="id129" x="34" y="102">
+			<committed/>
+		</location>
+		<init ref="id127"/>
+		<transition id="id130" controllable="false">
+			<source ref="id126"/>
+			<target ref="id129"/>
+			<label kind="guard" x="52" y="68">!ToEnd()&amp;&amp;ToDecide()</label>
+			<label kind="synchronisation" x="76" y="85">move!</label>
+			<nail x="136" y="102"/>
+		</transition>
+		<transition id="id131" controllable="false">
+			<source ref="id126"/>
+			<target ref="id128"/>
+			<label kind="guard" x="153" y="-25">ToEnd()</label>
+			<label kind="synchronisation" x="161" y="0">end!</label>
+		</transition>
+		<transition id="id132" controllable="false">
+			<source ref="id127"/>
+			<target ref="id125"/>
+			<label kind="synchronisation" x="-136" y="-25">start!</label>
+		</transition>
+		<transition id="id133">
+			<source ref="id129"/>
+			<target ref="id125"/>
+			<label kind="synchronisation" x="-76" y="68">decide!</label>
+			<label kind="assignment" x="-76" y="85">count++</label>
+			<nail x="-68" y="102"/>
+		</transition>
+		<transition id="id134" controllable="false">
+			<source ref="id126"/>
+			<target ref="id125"/>
+			<label kind="guard" x="-42" y="-59">!ToEnd()&amp;&amp;!ToDecide()</label>
+			<label kind="synchronisation" x="-42" y="-42">move!</label>
+			<label kind="assignment" x="-42" y="-25">count++</label>
+		</transition>
+		<transition id="id135" controllable="false">
+			<source ref="id125"/>
+			<target ref="id126"/>
+			<label kind="guard" x="-59" y="-119">t&gt;=P</label>
+			<label kind="synchronisation" x="-8" y="-119">sense!</label>
+			<label kind="assignment" x="59" y="-119">t=0</label>
+			<nail x="-68" y="-102"/>
+			<nail x="136" y="-102"/>
+		</transition>
+	</template>
+	<template>
+		<name>Dynamics</name>
+		<location id="id136" x="95" y="0">
+			<name x="83" y="-34">S1</name>
+			<label kind="invariant" x="-119" y="119">cps_dyn.x'==0 &amp;&amp;
+cps_dyn.y'==0 &amp;&amp;
+cps_dyn.vel'==0 &amp;&amp;
+cps_dyn.acc'==0 &amp;&amp;
+cps_dyn.head'==0</label>
+		</location>
+		<location id="id137" x="0" y="0">
+			<name x="-10" y="-34">S0</name>
+			<label kind="invariant" x="-119" y="25">cps_dyn.x'==cos(cps_dyn.head)*cps_dyn.vel &amp;&amp;
+cps_dyn.y'==sin(cps_dyn.head)*cps_dyn.vel &amp;&amp;
+cps_dyn.vel'==cps_dyn.acc &amp;&amp;
+cps_dyn.acc'==i2d(cps_state.accRate) &amp;&amp;
+cps_dyn.head'==i2d(cps_state.yawRate)</label>
+		</location>
+		<init ref="id137"/>
+		<transition id="id138" controllable="false">
+			<source ref="id137"/>
+			<target ref="id136"/>
+			<label kind="synchronisation" x="25" y="-25">end?</label>
+		</transition>
+	</template>
+	<template>
+		<name>Obstacle</name>
+		<parameter>const obs_id_t id, const ST_DSTATE &amp;initCS, const ST_PAIR &amp;trajectory[MAXTP]</parameter>
+		<declaration>void initCon() {
+    obs_dyn[id].x = initCS.position.x;
+    obs_dyn[id].y = initCS.position.y;
+    obs_dyn[id].vel = mTimeStep(initCS.vel);
+    obs_dyn[id].head = initCS.head;
+}
+
+void initDis() {
+    obs_state[id].position.x = d2i(initCS.position.x);
+    obs_state[id].position.y = d2i(initCS.position.y);
+    obs_state[id].vel = d2i(mTimeStep(initCS.vel));
+    obs_state[id].head = d2i(initCS.head);
+}
+
+void initialize() {
+    count = 0;
+    initDis();
+    initCon();
+}
+
+void change(){
+    int index = count - 1;
+
+    if(index &gt;= 0 &amp;&amp; count == trajectory[index].time) {
+        // predefined trajectory starts
+        obs_dyn[id].x = trajectory[index].dState.position.x;
+        obs_dyn[id].y = trajectory[index].dState.position.y;
+        obs_dyn[id].vel = mTimeStep(trajectory[index].dState.vel);
+        obs_dyn[id].head = trajectory[index].dState.head;
+
+        obs_state[id].position.x = d2i(trajectory[index].dState.position.x);
+        obs_state[id].position.y = d2i(trajectory[index].dState.position.y);
+        obs_state[id].vel = d2i(mTimeStep(trajectory[index].dState.vel));
+        obs_state[id].head = d2i(trajectory[index].dState.head);
+    }
+    else if(count &gt;= MAXTP - 1) {
+        obs_dyn[id].vel = 0;
+        obs_dyn[id].head = 0;
+        obs_state[id].vel = 0;
+        obs_state[id].head = 0;
+    }
+}</declaration>
+		<location id="id139" x="119" y="0">
+			<name x="109" y="-34">S1</name>
+			<label kind="invariant" x="-161" y="153">obs_dyn[id].x'==0 &amp;&amp;
+obs_dyn[id].y'==0 &amp;&amp;
+obs_dyn[id].vel'==0 &amp;&amp;
+obs_dyn[id].acc'==0 &amp;&amp;
+obs_dyn[id].head'==0</label>
+		</location>
+		<location id="id140" x="0" y="0">
+			<name x="-10" y="-34">S0</name>
+			<label kind="invariant" x="-161" y="25">obs_dyn[id].x'==cos(i2d(obs_state[id].head))*
+i2d(obs_state[id].vel)&amp;&amp;
+obs_dyn[id].y'==sin(i2d(obs_state[id].head))*
+i2d(obs_state[id].vel)&amp;&amp;
+obs_dyn[id].vel'==0 &amp;&amp;
+obs_dyn[id].acc'==0 &amp;&amp;
+obs_dyn[id].head'==0</label>
+			<label kind="comments" x="-144" y="-102">Obstacle with a predefined trajectory</label>
+		</location>
+		<init ref="id140"/>
+		<transition id="id141" controllable="false">
+			<source ref="id140"/>
+			<target ref="id139"/>
+			<label kind="synchronisation" x="42" y="-17">end?</label>
+		</transition>
+		<transition id="id142" controllable="false">
+			<source ref="id140"/>
+			<target ref="id140"/>
+			<label kind="synchronisation" x="25" y="-68">sense?</label>
+			<label kind="assignment" x="25" y="-51">change()</label>
+			<nail x="34" y="-34"/>
+			<nail x="68" y="-34"/>
+		</transition>
+		<transition id="id143" controllable="false">
+			<source ref="id140"/>
+			<target ref="id140"/>
+			<label kind="synchronisation" x="-102" y="-68">start?</label>
+			<label kind="assignment" x="-102" y="-51">initialize()</label>
+			<nail x="-34" y="-34"/>
+			<nail x="-68" y="-34"/>
+		</transition>
+	</template>
+	<system>// Generated moving obstacles starts
+const ST_DSTATE initCS0 = {{558.3176, 93.2035}, 7.8212, 1.54, -4.5525, 0.0, 0.0};
+const ST_PAIR PHOLDER = {NONE,{{NONE,NONE},NONE,NONE,NONE,NONE,NONE}};
+const ST_PAIR trajectory0[MAXTP] = {{1, {{558.34, 93.9513}, 7.3659, 1.5408, -4.5525, 0.0, 0.0}}, {2, {{558.3605, 94.6537}, 6.9107, 1.5416, -4.5525, 0.0, 0.0}}, {3, {{558.3792, 95.3106}, 6.4554, 1.5422, -4.5525, 0.0, 0.0}}, {4, {{558.3964, 95.9221}, 6.0018, 1.5427, -4.5525, 0.0, 0.0}}, {5, {{558.412, 96.4882}, 5.5465, 1.5431, -4.5525, 0.0, 0.0}}, {6, {{558.4257, 97.0086}, 5.0913, 1.5445, -4.5525, 0.0, 0.0}}, {7, {{558.4377, 97.4835}, 4.636, 1.5456, -4.5525, 0.0, 0.0}}, {8, {{558.4481, 97.913}, 4.1808, 1.5464, -4.5525, 0.0, 0.0}}, {9, {{558.4572, 98.2969}, 3.7255, 1.547, -4.5525, 0.0, 0.0}}, {10, {{558.4651, 98.6353}, 3.2703, 1.5475, -4.5525, 0.0, 0.0}}, {11, {{558.4718, 98.9281}, 2.815, 1.5479, -4.5525, 0.0, 0.0}}, {12, {{558.4774, 99.1755}, 2.3598, 1.5482, -4.5525, 0.0, 0.0}}, {13, {{558.4819, 99.3773}, 1.9045, 1.5484, -4.5525, 0.0, 0.0}}, {14, {{558.4854, 99.5336}, 1.4492, 1.5485, -4.5525, 0.0, 0.0}}, {15, {{558.4878, 99.6444}, 0.994, 1.5484, -4.5525, 0.0, 0.0}}, {16, {{558.4893, 99.7097}, 0.5387, 1.5484, -4.5525, 0.0, 0.0}}, {17, {{558.4905, 99.7296}, 0.0874, 1.5487, -4.4785, 0.0, 0.0}}, {18, {{558.4905, 99.7296}, 0.0, 1.5487, -0.0134, 0.0, 0.0}}, {19, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {20, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {21, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {22, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {23, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {24, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {25, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {26, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {27, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {28, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {29, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {30, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {31, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {32, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {33, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {34, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {35, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {36, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {37, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {38, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {39, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {40, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {41, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {42, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {43, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {44, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {45, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {46, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {47, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {48, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {49, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {50, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {51, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {52, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {53, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {54, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {55, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {56, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {57, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {58, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {59, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {60, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {61, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {62, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {63, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {64, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {65, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {66, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {67, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {68, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {69, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {70, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {71, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {72, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {73, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {74, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {75, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {76, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {77, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {78, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {79, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {80, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {81, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {82, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {83, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {84, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {85, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {86, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {87, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {88, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {89, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {90, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {91, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {92, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {93, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {94, {{558.4905, 99.7296}, 0.0, 1.5487, 0.0, 0.0, 0.0}}, {95, {{558.491, 99.7465}, 0.225, 1.5487, 2.2609, 0.0, 0.0}}, {96, {{558.4919, 99.7851}, 0.4393, 1.5487, 2.1104, 0.0, 0.0}}, {97, {{558.4933, 99.8445}, 0.6449, 1.5486, 2.0645, 0.0, 0.0}}, {98, {{558.4951, 99.9254}, 0.8657, 1.5486, 2.2659, 0.0, 0.0}}, {99, {{558.4973, 100.0278}, 1.0803, 1.5485, 2.2579, 0.0, 0.0}}, {100, {{558.5001, 100.1496}, 1.2669, 1.5484, 1.9351, 0.0, 0.0}}, {101, {{558.5032, 100.2889}, 1.4353, 1.5483, 1.7103, 0.0, 0.0}}, {102, {{558.5065, 100.4368}, 1.4275, 1.5482, -2.0839, 0.0, 0.0}}, {103, {{558.509, 100.5459}, 0.9767, 1.5481, -4.5525, 0.0, 0.0}}, {104, {{558.5104, 100.6102}, 0.5323, 1.5481, -4.4439, 0.0, 0.0}}, {105, {{558.5132, 100.6295}, 0.0814, 1.549, -4.4657, 0.0, 0.0}}, {106, {{558.5132, 100.6295}, 0.0, 1.549, -0.0264, 0.0, 0.0}}, {107, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {108, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {109, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {110, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {111, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {112, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {113, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {114, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {115, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {116, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {117, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {118, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {119, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {120, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {121, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {122, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {123, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {124, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {125, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {126, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {127, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {128, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {129, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {130, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {131, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {132, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {133, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {134, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {135, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {136, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {137, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {138, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {139, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {140, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {141, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {142, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {143, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {144, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {145, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {146, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {147, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {148, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {149, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}, {150, {{558.5132, 100.6295}, 0.0, 1.549, 0.0, 0.0, 0.0}}};
+const int32_t initLane0 = 966;
+obs0 = Obstacle(0, initCS0, trajectory0);
+
+const ST_DSTATE initCS1 = {{611.3566, 112.0608}, 21.805, -3.1408, -4.7269, 0.0, 0.0};
+const ST_PAIR trajectory1[MAXTP] = {{1, {{609.2116, 112.0592}, 21.3323, -3.1408, -4.7269, 0.0, 0.0}}, {2, {{607.1138, 112.0577}, 20.8596, -3.1408, -4.7269, 0.0, 0.0}}, {3, {{605.0633, 112.0562}, 20.3869, -3.1408, -4.7269, 0.0, 0.0}}, {4, {{603.06, 112.0547}, 19.9142, -3.1408, -4.7269, 0.0, 0.0}}, {5, {{601.104, 112.0533}, 19.4415, -3.1408, -4.7269, 0.0, 0.0}}, {6, {{599.1953, 112.0519}, 18.9688, -3.1408, -4.7269, 0.0, 0.0}}, {7, {{597.3339, 112.0505}, 18.4961, -3.1408, -4.7269, 0.0, 0.0}}, {8, {{595.5197, 112.0492}, 18.0234, -3.1408, -4.7269, 0.0, 0.0}}, {9, {{593.7528, 112.0479}, 17.5508, -3.1408, -4.7269, 0.0, 0.0}}, {10, {{592.0332, 112.0466}, 17.0781, -3.1408, -4.7269, 0.0, 0.0}}, {11, {{590.3609, 112.0454}, 16.6054, -3.1408, -4.7269, 0.0, 0.0}}, {12, {{588.7358, 112.0442}, 16.1327, -3.1408, -4.7269, 0.0, 0.0}}, {13, {{587.1579, 112.043}, 15.66, -3.1408, -4.7269, 0.0, 0.0}}, {14, {{585.6274, 112.0419}, 15.1873, -3.1408, -4.7269, 0.0, 0.0}}, {15, {{584.1441, 112.0408}, 14.7146, -3.1408, -4.7269, 0.0, 0.0}}, {16, {{582.7081, 112.0397}, 14.2419, -3.1408, -4.7269, 0.0, 0.0}}, {17, {{581.3194, 112.0387}, 13.7692, -3.1408, -4.7269, 0.0, 0.0}}, {18, {{579.9779, 112.0377}, 13.2965, -3.1408, -4.7269, 0.0, 0.0}}, {19, {{578.6837, 112.0368}, 12.8238, -3.1408, -4.7269, 0.0, 0.0}}, {20, {{577.4366, 112.0359}, 12.3527, -3.1408, -4.7269, 0.0, 0.0}}, {21, {{576.2368, 112.035}, 11.88, -3.1408, -4.7269, 0.0, 0.0}}, {22, {{575.0842, 112.0341}, 11.4073, -3.1408, -4.7269, 0.0, 0.0}}, {23, {{573.9789, 112.0333}, 10.9346, -3.1408, -4.7269, 0.0, 0.0}}, {24, {{572.9208, 112.0326}, 10.4631, -3.1408, -4.7269, 0.0, 0.0}}, {25, {{571.9099, 112.0318}, 9.9904, -3.1408, -4.7269, 0.0, 0.0}}, {26, {{570.9465, 112.0313}, 9.5177, -3.141, -4.7269, 0.0, 0.0}}, {27, {{570.0303, 112.0309}, 9.045, -3.1411, -4.7269, 0.0, 0.0}}, {28, {{569.1615, 112.0281}, 8.5723, -3.1382, -4.7269, 0.0, 0.0}}, {29, {{568.3399, 112.0224}, 8.0996, -3.1346, -4.7269, 0.0, 0.0}}, {30, {{567.5658, 112.0124}, 7.6269, -3.1287, -4.7269, 0.0, 0.0}}, {31, {{566.8391, 111.9975}, 7.1542, -3.121, -4.7269, 0.0, 0.0}}, {32, {{566.1605, 111.9756}, 6.6815, -3.1093, -4.7269, 0.0, 0.0}}, {33, {{565.5297, 111.9465}, 6.2088, -3.0954, -4.7269, 0.0, 0.0}}, {34, {{564.9465, 111.9122}, 5.7361, -3.0828, -4.7269, 0.0, 0.0}}, {35, {{564.4111, 111.8734}, 5.2634, -3.0692, -4.7269, 0.0, 0.0}}, {36, {{563.9231, 111.8323}, 4.7907, -3.0577, -4.7269, 0.0, 0.0}}, {37, {{563.4826, 111.7902}, 4.318, -3.0462, -4.7269, 0.0, 0.0}}, {38, {{563.0893, 111.7488}, 3.8453, -3.0367, -4.7269, 0.0, 0.0}}, {39, {{562.7431, 111.7097}, 3.3727, -3.029, -4.7269, 0.0, 0.0}}, {40, {{562.4439, 111.674}, 2.9, -3.0228, -4.7269, 0.0, 0.0}}, {41, {{562.1917, 111.6425}, 2.4273, -3.0174, -4.7269, 0.0, 0.0}}, {42, {{561.9866, 111.6159}, 1.9546, -3.0124, -4.7269, 0.0, 0.0}}, {43, {{561.8283, 111.5948}, 1.4819, -3.0088, -4.7269, 0.0, 0.0}}, {44, {{561.7168, 111.5796}, 1.0092, -3.0064, -4.7269, 0.0, 0.0}}, {45, {{561.652, 111.5707}, 0.5365, -3.0051, -4.7269, 0.0, 0.0}}, {46, {{561.6323, 111.5795}, 0.0658, -3.0001, -4.6867, 0.0, 0.0}}, {47, {{561.6322, 111.5795}, 0.0, -3.0001, -0.0316, 0.0, 0.0}}, {48, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {49, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {50, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {51, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {52, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {53, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {54, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {55, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {56, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {57, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {58, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {59, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {60, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {61, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {62, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {63, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {64, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {65, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {66, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {67, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {68, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {69, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {70, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {71, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {72, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {73, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {74, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {75, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {76, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {77, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {78, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {79, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {80, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {81, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {82, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {83, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {84, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {85, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {86, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {87, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {88, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {89, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {90, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {91, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {92, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {93, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {94, {{561.6322, 111.5795}, 0.0, -3.0001, 0.0, 0.0, 0.0}}, {95, {{561.6158, 111.5774}, 0.2205, -2.9997, 2.2059, 0.0, 0.0}}, {96, {{561.5776, 111.5723}, 0.4411, -2.9988, 2.2059, 0.0, 0.0}}, {97, {{561.5176, 111.5636}, 0.6617, -2.9979, 2.2059, 0.0, 0.0}}, {98, {{561.4359, 111.5517}, 0.8823, -2.9965, 2.2059, 0.0, 0.0}}, {99, {{561.3323, 111.5364}, 1.1029, -2.995, 2.2059, 0.0, 0.0}}, {100, {{561.2069, 111.5177}, 1.3235, -2.9931, 2.2059, 0.0, 0.0}}, {101, {{561.0598, 111.4954}, 1.5441, -2.9911, 2.2059, 0.0, 0.0}}, {102, {{560.891, 111.4694}, 1.7647, -2.9889, 2.2059, 0.0, 0.0}}, {103, {{560.6977, 111.4391}, 1.9853, -2.9859, 2.2059, 0.0, 0.0}}, {104, {{560.4977, 111.4122}, 2.1627, -3.0078, 1.3407, 0.0, 0.0}}, {105, {{560.2869, 111.3906}, 2.3113, -3.0396, 1.4461, 0.0, 0.0}}, {106, {{560.0557, 111.3743}, 2.5154, -3.071, 2.1822, 0.0, 0.0}}, {107, {{559.8061, 111.3642}, 2.6623, -3.1014, 1.5574, 0.0, 0.0}}, {108, {{559.5357, 111.3614}, 2.866, -3.1309, 2.0801, 0.0, 0.0}}, {109, {{559.2436, 111.3665}, 3.0704, 3.1239, 2.1189, 0.0, 0.0}}, {110, {{558.9335, 111.3802}, 3.2236, 3.0973, 1.5952, 0.0, 0.0}}, {111, {{558.6041, 111.403}, 3.4178, 3.0725, 1.9499, 0.0, 0.0}}, {112, {{558.258, 111.4349}, 3.5675, 3.0497, 1.4885, 0.0, 0.0}}, {113, {{557.8942, 111.4761}, 3.747, 3.0288, 1.6506, 0.0, 0.0}}, {114, {{557.5132, 111.5266}, 3.9243, 3.0098, 1.8353, 0.0, 0.0}}, {115, {{557.1176, 111.5858}, 4.0694, 2.9928, 1.6596, 0.0, 0.0}}, {116, {{556.7078, 111.6475}, 4.2299, 2.992, 2.0638, 0.0, 0.0}}, {117, {{556.2835, 111.702}, 4.3528, 3.014, 1.2602, 0.0, 0.0}}, {118, {{555.8387, 111.7502}, 4.553, 3.0334, 1.8324, 0.0, 0.0}}, {119, {{555.3761, 111.7925}, 4.7134, 3.0504, 1.699, 0.0, 0.0}}, {120, {{554.896, 111.8292}, 4.8705, 3.0652, 1.48, 0.0, 0.0}}, {121, {{554.3968, 111.861}, 5.0601, 3.0779, 1.7243, 0.0, 0.0}}, {122, {{553.8802, 111.8883}, 5.2314, 3.0888, 1.8791, 0.0, 0.0}}, {123, {{553.3458, 111.9115}, 5.402, 3.0981, 1.7998, 0.0, 0.0}}, {124, {{552.7927, 111.9311}, 5.5781, 3.106, 1.4601, 0.0, 0.0}}, {125, {{552.2205, 111.9477}, 5.7849, 3.1126, 2.1908, 0.0, 0.0}}, {126, {{551.6314, 111.9615}, 5.9365, 3.1181, 1.5502, 0.0, 0.0}}, {127, {{551.0248, 111.9729}, 6.1099, 3.1227, 1.5545, 0.0, 0.0}}, {128, {{550.4007, 111.9823}, 6.2923, 3.1265, 1.9891, 0.0, 0.0}}, {129, {{549.7568, 111.99}, 6.4883, 3.1296, 1.9152, 0.0, 0.0}}, {130, {{549.0988, 111.9962}, 6.61, 3.1321, 1.1754, 0.0, 0.0}}, {131, {{548.4227, 112.0013}, 6.8033, 3.1341, 1.673, 0.0, 0.0}}, {132, {{547.7306, 112.0053}, 6.9685, 3.1357, 1.9283, 0.0, 0.0}}, {133, {{547.0226, 112.0086}, 7.1337, 3.137, 2.1274, 0.0, 0.0}}, {134, {{547.4028, 112.0065}, 7.3027, 3.1362, 1.8702, 0.0, 0.0}}, {135, {{546.8143, 112.0087}, 7.4783, 3.1378, 2.0348, 0.0, 0.0}}, {136, {{546.0548, 112.0102}, 7.6268, 3.1396, 1.2692, 0.0, 0.0}}, {137, {{545.2822, 112.0105}, 7.7664, 3.1411, 1.6328, 0.0, 0.0}}, {138, {{544.4934, 112.0104}, 7.9312, -3.1414, 1.7416, 0.0, 0.0}}, {139, {{543.6907, 112.0103}, 8.063, -3.1414, 1.443, 0.0, 0.0}}, {140, {{542.8732, 112.0102}, 8.2191, -3.1414, 1.7572, 0.0, 0.0}}, {141, {{542.0371, 112.0101}, 8.4094, -3.1415, 1.9151, 0.0, 0.0}}, {142, {{541.1856, 112.0101}, 8.5612, -3.1415, 1.8557, 0.0, 0.0}}, {143, {{540.3147, 112.0096}, 8.7566, -3.1409, 1.9238, 0.0, 0.0}}, {144, {{539.4296, 112.0086}, 8.8796, -3.1404, 1.134, 0.0, 0.0}}, {145, {{538.5314, 112.0072}, 9.019, -3.14, 1.4821, 0.0, 0.0}}, {146, {{537.6154, 112.0055}, 9.1977, -3.1397, 1.505, 0.0, 0.0}}, {147, {{536.6809, 112.004}, 9.3914, -3.1399, 1.8523, 0.0, 0.0}}, {148, {{535.7298, 112.0029}, 9.5539, -3.1404, 1.7442, 0.0, 0.0}}, {149, {{534.7601, 112.0021}, 9.7412, -3.1407, 1.7607, 0.0, 0.0}}, {150, {{533.7735, 112.0014}, 9.8971, -3.1408, 1.2328, 0.0, 0.0}}};
+const int32_t initLane1 = 56;
+obs1 = Obstacle(1, initCS1, trajectory1);
+obs1m1 = M1(initLane1, 1);
+
+const ST_DSTATE initCS2 = {{557.731, 74.0733}, 9.5064, 1.5403, -3.2442, 0.0, 0.0};
+const ST_PAIR trajectory2[MAXTP] = {{1, {{557.7593, 75.0015}, 9.2222, 1.5403, -2.4688, 0.0, 0.0}}, {2, {{557.7867, 75.903}, 8.9405, 1.5403, -3.1046, 0.0, 0.0}}, {3, {{557.8132, 76.7719}, 8.6135, 1.5403, -3.1172, 0.0, 0.0}}, {4, {{557.8387, 77.6121}, 8.3356, 1.5403, -2.7592, 0.0, 0.0}}, {5, {{557.8635, 78.4256}, 8.0568, 1.5403, -3.2174, 0.0, 0.0}}, {6, {{557.8874, 79.2082}, 7.7612, 1.5402, -2.7179, 0.0, 0.0}}, {7, {{557.9105, 79.9625}, 7.4843, 1.5402, -2.4067, 0.0, 0.0}}, {8, {{557.9327, 80.6888}, 7.2049, 1.5401, -2.4469, 0.0, 0.0}}, {9, {{557.9541, 81.3866}, 6.9112, 1.5401, -2.7538, 0.0, 0.0}}, {10, {{557.9747, 82.0551}, 6.6363, 1.5401, -2.0172, 0.0, 0.0}}, {11, {{557.9943, 82.6955}, 6.3246, 1.54, -3.2574, 0.0, 0.0}}, {12, {{558.0132, 83.3088}, 6.0816, 1.54, -2.1424, 0.0, 0.0}}, {13, {{558.0312, 83.8943}, 5.7651, 1.54, -3.6376, 0.0, 0.0}}, {14, {{558.0483, 84.4525}, 5.4954, 1.54, -3.5406, 0.0, 0.0}}, {15, {{558.0646, 84.9834}, 5.2607, 1.54, -2.0186, 0.0, 0.0}}, {16, {{558.0802, 85.4891}, 4.9896, 1.54, -2.7568, 0.0, 0.0}}, {17, {{558.0949, 85.9663}, 4.699, 1.54, -2.9855, 0.0, 0.0}}, {18, {{558.1087, 86.4153}, 4.4214, 1.54, -2.7884, 0.0, 0.0}}, {19, {{558.1218, 86.8423}, 4.2129, 1.54, -2.3193, 0.0, 0.0}}, {20, {{558.1341, 87.2408}, 3.9235, 1.54, -2.5335, 0.0, 0.0}}, {21, {{558.1456, 87.6167}, 3.6791, 1.54, -3.2207, 0.0, 0.0}}, {22, {{558.1565, 87.9705}, 3.4852, 1.54, -2.1679, 0.0, 0.0}}, {23, {{558.1666, 88.2989}, 3.2313, 1.54, -2.135, 0.0, 0.0}}, {24, {{558.1761, 88.6067}, 3.0378, 1.54, -1.6653, 0.0, 0.0}}, {25, {{558.185, 88.8955}, 2.8443, 1.54, -1.7477, 0.0, 0.0}}, {26, {{558.1933, 89.1643}, 2.6605, 1.54, -1.1325, 0.0, 0.0}}, {27, {{558.201, 89.4148}, 2.4756, 1.54, -1.2059, 0.0, 0.0}}, {28, {{558.2081, 89.6469}, 2.2669, 1.54, -2.1945, 0.0, 0.0}}, {29, {{558.2147, 89.8624}, 2.1181, 1.54, -1.5027, 0.0, 0.0}}, {30, {{558.2209, 90.0617}, 1.968, 1.54, -1.0298, 0.0, 0.0}}, {31, {{558.2265, 90.2459}, 1.7979, 1.54, -1.7791, 0.0, 0.0}}, {32, {{558.2318, 90.4167}, 1.6921, 1.54, -0.6673, 0.0, 0.0}}, {33, {{558.2367, 90.5751}, 1.5635, 1.54, -0.8442, 0.0, 0.0}}, {34, {{558.2411, 90.7202}, 1.408, 1.54, -1.7234, 0.0, 0.0}}, {35, {{558.2453, 90.8544}, 1.3111, 1.54, -1.2657, 0.0, 0.0}}, {36, {{558.2491, 90.9771}, 1.2103, 1.54, -0.6629, 0.0, 0.0}}, {37, {{558.2525, 91.089}, 1.0979, 1.54, -0.8745, 0.0, 0.0}}, {38, {{558.2557, 91.1924}, 1.0004, 1.54, -1.3426, 0.0, 0.0}}, {39, {{558.2586, 91.2878}, 0.9353, 1.54, -0.7482, 0.0, 0.0}}, {40, {{558.2613, 91.3747}, 0.8481, 1.54, -0.8495, 0.0, 0.0}}, {41, {{558.2637, 91.4538}, 0.7699, 1.54, -0.849, 0.0, 0.0}}, {42, {{558.2659, 91.5253}, 0.7008, 1.54, -0.571, 0.0, 0.0}}, {43, {{558.268, 91.5916}, 0.6488, 1.54, -0.6029, 0.0, 0.0}}, {44, {{558.2698, 91.6515}, 0.5924, 1.54, -0.2564, 0.0, 0.0}}, {45, {{558.2715, 91.7057}, 0.5297, 1.54, -0.5118, 0.0, 0.0}}, {46, {{558.273, 91.755}, 0.4797, 1.54, -0.5071, 0.0, 0.0}}, {47, {{558.2744, 91.7999}, 0.433, 1.54, -0.6438, 0.0, 0.0}}, {48, {{558.2756, 91.8408}, 0.3969, 1.54, -0.5113, 0.0, 0.0}}, {49, {{558.2768, 91.8779}, 0.3637, 1.54, -0.2982, 0.0, 0.0}}, {50, {{558.2778, 91.9115}, 0.3292, 1.54, -0.2709, 0.0, 0.0}}, {51, {{558.2787, 91.942}, 0.2976, 1.54, -0.299, 0.0, 0.0}}, {52, {{558.2796, 91.9696}, 0.269, 1.54, -0.2636, 0.0, 0.0}}, {53, {{558.2804, 91.9946}, 0.2429, 1.54, -0.2752, 0.0, 0.0}}, {54, {{558.2811, 92.0173}, 0.2199, 1.54, -0.2837, 0.0, 0.0}}, {55, {{558.2817, 92.0376}, 0.1996, 1.54, -0.165, 0.0, 0.0}}, {56, {{558.2823, 92.0561}, 0.1784, 1.54, -0.2423, 0.0, 0.0}}, {57, {{558.2828, 92.0729}, 0.1632, 1.54, -0.1986, 0.0, 0.0}}, {58, {{558.2832, 92.0879}, 0.146, 1.54, -0.1663, 0.0, 0.0}}, {59, {{558.2837, 92.1015}, 0.133, 1.54, -0.1058, 0.0, 0.0}}, {60, {{558.284, 92.1138}, 0.1203, 1.54, -0.1051, 0.0, 0.0}}, {61, {{558.2844, 92.125}, 0.1099, 1.54, -0.0884, 0.0, 0.0}}, {62, {{558.2847, 92.1351}, 0.0987, 1.54, -0.0897, 0.0, 0.0}}, {63, {{558.285, 92.1442}, 0.0894, 1.54, -0.088, 0.0, 0.0}}, {64, {{558.2852, 92.1524}, 0.0807, 1.54, -0.056, 0.0, 0.0}}, {65, {{558.2854, 92.1598}, 0.0719, 1.54, -0.0693, 0.0, 0.0}}, {66, {{558.2857, 92.1665}, 0.0649, 1.54, -0.0895, 0.0, 0.0}}, {67, {{558.2858, 92.1726}, 0.0596, 1.54, -0.0575, 0.0, 0.0}}, {68, {{558.286, 92.1781}, 0.0535, 1.54, -0.0628, 0.0, 0.0}}, {69, {{558.2862, 92.1831}, 0.0477, 1.54, -0.0695, 0.0, 0.0}}, {70, {{558.2863, 92.1876}, 0.0437, 1.54, -0.0381, 0.0, 0.0}}, {71, {{558.2864, 92.1916}, 0.0398, 1.54, -0.0248, 0.0, 0.0}}, {72, {{558.2865, 92.1952}, 0.0352, 1.54, -0.0486, 0.0, 0.0}}, {73, {{558.2866, 92.1986}, 0.0321, 1.54, -0.0413, 0.0, 0.0}}, {74, {{558.2867, 92.2015}, 0.0291, 1.54, -0.0279, 0.0, 0.0}}, {75, {{558.2868, 92.2043}, 0.0263, 1.54, -0.0325, 0.0, 0.0}}, {76, {{558.2869, 92.2067}, 0.0238, 1.54, -0.0204, 0.0, 0.0}}, {77, {{558.287, 92.2089}, 0.0211, 1.54, -0.0306, 0.0, 0.0}}, {78, {{558.287, 92.2109}, 0.0193, 1.54, -0.0181, 0.0, 0.0}}, {79, {{558.2871, 92.2127}, 0.0175, 1.54, -0.013, 0.0, 0.0}}, {80, {{558.2871, 92.2143}, 0.0159, 1.54, -0.0162, 0.0, 0.0}}, {81, {{558.2872, 92.2158}, 0.0143, 1.54, -0.012, 0.0, 0.0}}, {82, {{558.2872, 92.2171}, 0.0128, 1.54, -0.0175, 0.0, 0.0}}, {83, {{558.2872, 92.2183}, 0.0115, 1.54, -0.0143, 0.0, 0.0}}, {84, {{558.2873, 92.2194}, 0.0105, 1.54, -0.0085, 0.0, 0.0}}, {85, {{558.2873, 92.2203}, 0.0094, 1.54, -0.0095, 0.0, 0.0}}, {86, {{558.2873, 92.2212}, 0.0085, 1.54, -0.0114, 0.0, 0.0}}, {87, {{558.2874, 92.222}, 0.0078, 1.54, -0.0047, 0.0, 0.0}}, {88, {{558.2874, 92.2227}, 0.0069, 1.54, -0.0081, 0.0, 0.0}}, {89, {{558.2874, 92.2234}, 0.0063, 1.54, -0.0056, 0.0, 0.0}}, {90, {{558.2874, 92.224}, 0.0057, 1.54, -0.0056, 0.0, 0.0}}, {91, {{558.2874, 92.2245}, 0.0051, 1.54, -0.0066, 0.0, 0.0}}, {92, {{558.2875, 92.225}, 0.0046, 1.54, -0.006, 0.0, 0.0}}, {93, {{558.2875, 92.2254}, 0.0042, 1.54, -0.0056, 0.0, 0.0}}, {94, {{558.2875, 92.2258}, 0.0038, 1.54, -0.0046, 0.0, 0.0}}, {95, {{558.2875, 92.2264}, 0.009, 1.54, 0.108, 0.0, 0.0}}, {96, {{558.2876, 92.2293}, 0.0369, 1.54, 0.3451, 0.0, 0.0}}, {97, {{558.2878, 92.2369}, 0.0896, 1.54, 0.5473, 0.0, 0.0}}, {98, {{558.2883, 92.2515}, 0.165, 1.54, 0.7571, 0.0, 0.0}}, {99, {{558.289, 92.2751}, 0.2617, 1.54, 1.0273, 0.0, 0.0}}, {100, {{558.2901, 92.3094}, 0.3679, 1.54, 0.9895, 0.0, 0.0}}, {101, {{558.2915, 92.3554}, 0.4902, 1.54, 1.2004, 0.0, 0.0}}, {102, {{558.2933, 92.4135}, 0.6144, 1.54, 1.3345, 0.0, 0.0}}, {103, {{558.2952, 92.4761}, 0.6125, 1.54, -0.5488, 0.0, 0.0}}, {104, {{558.297, 92.5352}, 0.5843, 1.54, -0.2621, 0.0, 0.0}}, {105, {{558.2987, 92.5909}, 0.5437, 1.54, -0.5428, 0.0, 0.0}}, {106, {{558.3003, 92.6417}, 0.491, 1.54, -0.6692, 0.0, 0.0}}, {107, {{558.3017, 92.6879}, 0.4554, 1.54, -0.266, 0.0, 0.0}}, {108, {{558.303, 92.7298}, 0.4078, 1.54, -0.4665, 0.0, 0.0}}, {109, {{558.3042, 92.7676}, 0.3695, 1.54, -0.3419, 0.0, 0.0}}, {110, {{558.3052, 92.8022}, 0.3347, 1.54, -0.444, 0.0, 0.0}}, {111, {{558.3062, 92.8334}, 0.3043, 1.54, -0.3322, 0.0, 0.0}}, {112, {{558.3071, 92.8619}, 0.2769, 1.54, -0.3263, 0.0, 0.0}}, {113, {{558.3078, 92.8876}, 0.2498, 1.54, -0.258, 0.0, 0.0}}, {114, {{558.3086, 92.9108}, 0.2242, 1.54, -0.3316, 0.0, 0.0}}, {115, {{558.3092, 92.9319}, 0.2065, 1.54, -0.172, 0.0, 0.0}}, {116, {{558.3098, 92.9509}, 0.1868, 1.54, -0.1417, 0.0, 0.0}}, {117, {{558.3103, 92.9679}, 0.166, 1.54, -0.1714, 0.0, 0.0}}, {118, {{558.3108, 92.9834}, 0.1518, 1.54, -0.1288, 0.0, 0.0}}, {119, {{558.3112, 92.9975}, 0.1376, 1.54, -0.1312, 0.0, 0.0}}, {120, {{558.3116, 93.0102}, 0.1238, 1.54, -0.128, 0.0, 0.0}}, {121, {{558.312, 93.0216}, 0.1106, 1.54, -0.1336, 0.0, 0.0}}, {122, {{558.3123, 93.0319}, 0.0999, 1.54, -0.1158, 0.0, 0.0}}, {123, {{558.3126, 93.0413}, 0.0907, 1.54, -0.1096, 0.0, 0.0}}, {124, {{558.3128, 93.0497}, 0.0825, 1.54, -0.0735, 0.0, 0.0}}, {125, {{558.3131, 93.0574}, 0.0756, 1.54, -0.052, 0.0, 0.0}}, {126, {{558.3133, 93.0643}, 0.0676, 1.54, -0.0664, 0.0, 0.0}}, {127, {{558.3135, 93.0706}, 0.0614, 1.54, -0.0425, 0.0, 0.0}}, {128, {{558.3137, 93.0762}, 0.0557, 1.54, -0.0316, 0.0, 0.0}}, {129, {{558.3138, 93.0813}, 0.0499, 1.54, -0.0387, 0.0, 0.0}}, {130, {{558.314, 93.0859}, 0.0451, 1.54, -0.0479, 0.0, 0.0}}, {131, {{558.3141, 93.0901}, 0.0404, 1.54, -0.0516, 0.0, 0.0}}, {132, {{558.3142, 93.0939}, 0.0366, 1.54, -0.0336, 0.0, 0.0}}, {133, {{558.3143, 93.0972}, 0.0332, 1.54, -0.027, 0.0, 0.0}}, {134, {{558.3144, 93.1003}, 0.0301, 1.54, -0.0323, 0.0, 0.0}}, {135, {{558.3145, 93.1031}, 0.0269, 1.54, -0.026, 0.0, 0.0}}, {136, {{558.3146, 93.1056}, 0.0242, 1.54, -0.0354, 0.0, 0.0}}, {137, {{558.3146, 93.1078}, 0.0219, 1.54, -0.0224, 0.0, 0.0}}, {138, {{558.3147, 93.1099}, 0.0201, 1.54, -0.0228, 0.0, 0.0}}, {139, {{558.3147, 93.1118}, 0.0183, 1.54, -0.0102, 0.0, 0.0}}, {140, {{558.3148, 93.1134}, 0.0162, 1.54, -0.0171, 0.0, 0.0}}, {141, {{558.3148, 93.115}, 0.0148, 1.54, -0.0113, 0.0, 0.0}}, {142, {{558.3149, 93.1163}, 0.0132, 1.54, -0.0154, 0.0, 0.0}}, {143, {{558.3149, 93.1176}, 0.012, 1.54, -0.0131, 0.0, 0.0}}, {144, {{558.315, 93.1187}, 0.0108, 1.54, -0.0137, 0.0, 0.0}}, {145, {{558.315, 93.1197}, 0.01, 1.54, -0.0066, 0.0, 0.0}}, {146, {{558.315, 93.1206}, 0.0088, 1.54, -0.0102, 0.0, 0.0}}, {147, {{558.315, 93.1214}, 0.008, 1.54, -0.0073, 0.0, 0.0}}, {148, {{558.3151, 93.1222}, 0.0073, 1.54, -0.0079, 0.0, 0.0}}, {149, {{558.3151, 93.1229}, 0.0065, 1.54, -0.0057, 0.0, 0.0}}, {150, {{558.3151, 93.1235}, 0.006, 1.54, -0.0041, 0.0, 0.0}}};
+const int32_t initLane2 = 966;
+obs2 = Obstacle(2, initCS2, trajectory2);
+// Generated moving obstacles ends
+
+// Generated ego vehicle starts
+const ST_DSTATE initEgo = {{554.3932, 79.5064}, 13.683, 1.5402, 0.0, 0.0, 0.0};
+const ST_RULES rules = {d2i(4.0), 0, d2i(0.2), d2i(-0.2)}; 
+const int[0,MAXL] initLane = 1;
+move_act = Act_Move(0);
+turn_act = Act_Turn(1);
+controller = Controller(initLane,initEgo,rules);
+timer = Timer();
+dynamics = Dynamics();
+monitor = Monitor();
+//egom1 = M1(965, MAXOBS);
+// Generated ego vehicle ends
+
+// Generated model instances starts
+system timer, move_act, turn_act, monitor, obs2, controller, dynamics;
+//system timer, obs1, obs1m1;
+// Generated model instances ends
+</system>
+	<queries>
+		<option key="--total-runs" value="3000"/>
+		<option key="--good-runs" value="1"/>
+		<option key="--eval-runs" value="3000"/>
+		<option key="--runs-pr-state" value="1"/>
+		<query>
+			<formula>//behaviour observation</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>A[] !timer.Done imply !deadlock</formula>
+			<comment/>
+			<result outcome="failure" type="quality" timestamp="2025-02-05 16:20:31 +0100">
+				<option key="--total-runs" value="2"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--eval-runs" value="1"/>
+				<option key="--runs-pr-state" value="1"/>
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] !cps_i_state.detection.collide</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>A[] !cps_i_state.detection.outside</formula>
+			<comment/>
+			<result outcome="failure" type="quality" timestamp="2025-02-04 13:48:44 +0100">
+				<option key="--total-runs" value="2"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--eval-runs" value="1"/>
+				<option key="--runs-pr-state" value="1"/>
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] !cps_i_state.detection.collide &amp;&amp; !cps_i_state.detection.outside</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-02-07 16:24:58 +0100">
+				<option key="--total-runs" value="3000"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--eval-runs" value="3000"/>
+				<option key="--runs-pr-state" value="1"/>
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] count &lt; stage[NOW-1] imply (!cps_i_state.detection.collide &amp;&amp; !cps_i_state.detection.outside) </formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-02-10 13:25:00 +0100">
+				<option key="--total-runs" value="3000"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--eval-runs" value="3000"/>
+				<option key="--runs-pr-state" value="1"/>
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; count &gt;= 7 imply egom1.L970</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-03-27 11:34:07 +0100">
+				<option key="--total-runs" value="3000"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--eval-runs" value="3000"/>
+				<option key="--runs-pr-state" value="1"/>
+				<option key="--diagnostic" value="2"/>
+			</result>
+		</query>
+		<query>
+			<formula/>
+			<comment>//Shield synthesis</comment>
+		</query>
+		<query>
+			<formula>strategy safe = control:A[] (count&gt;=10 &amp;&amp; count&lt;=12) imply egom1.L970</formula>
+			<comment/>
+			<result outcome="failure" type="quality" timestamp="2025-04-22 15:02:41 +0200">
+				<option key="--total-runs" value="3000"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--eval-runs" value="3000"/>
+				<option key="--runs-pr-state" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>strategy liveness = control:A&lt;&gt; egom1.L57</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-04-22 15:04:10 +0200">
+				<option key="--total-runs" value="3000"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--eval-runs" value="3000"/>
+				<option key="--runs-pr-state" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>saveStrategy("/home/rgu01/Uppaal/StagedShieldSynthesis/car/shield/safeCar.json",safe)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-02-27 11:24:41 +0100">
+				<option key="--total-runs" value="3000"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--eval-runs" value="3000"/>
+				<option key="--runs-pr-state" value="1"/>
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+		<query>
+			<formula>saveStrategy("/home/rgu01/Uppaal/StagedShieldSynthesis/car/shield/livenessCar.json",liveness)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-04-22 15:04:13 +0200">
+				<option key="--total-runs" value="3000"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--eval-runs" value="3000"/>
+				<option key="--runs-pr-state" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] !cps_i_state.detection.collide &amp;&amp; !cps_i_state.detection.outside under safe</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>A&lt;&gt; egom1.L1007 under liveness</formula>
+			<comment/>
+			<result outcome="failure" type="quality" timestamp="2025-04-11 13:00:24 +0200">
+				<option key="--total-runs" value="3000"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--eval-runs" value="3000"/>
+				<option key="--runs-pr-state" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula/>
+			<comment>//Controller synthesis</comment>
+		</query>
+		<query>
+			<formula>strategy safeReach = control: A&lt;&gt; cps_i_state.detection.reach</formula>
+			<comment>or "strategy safeReach = E&lt;&gt; control: A&lt;&gt; cps_i_state.detection.reach"</comment>
+			<result outcome="success" type="quality" timestamp="2025-02-07 16:26:10 +0100">
+				<option key="--total-runs" value="3000"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--eval-runs" value="3000"/>
+				<option key="--runs-pr-state" value="1"/>
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+		<query>
+			<formula>A&lt;&gt; cps_i_state.detection.reach under safeReach</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-02-07 16:26:46 +0100">
+				<option key="--total-runs" value="3000"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--eval-runs" value="3000"/>
+				<option key="--runs-pr-state" value="1"/>
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+		<query>
+			<formula/>
+			<comment>//Reinformcement learning</comment>
+		</query>
+		<query>
+			<formula>strategy reach = maxE((5+100*cps_i_state.detection.reach)*rProgress) [&lt;=MAXTIME]{controller.location, move.location, turn.location,
+cps_i_state.position.x, cps_i_state.position.y, cps_i_state.velocity, cps_i_state.orientation, cps_i_state.acceleration, cps_i_state.accRate, cps_i_state.yawRate,
+obs_i_state[0].position.x, obs_i_state[0].position.y, obs_i_state[0].velocity, obs_i_state[0].orientation,
+obs_i_state[1].position.x, obs_i_state[1].position.y, obs_i_state[1].velocity, obs_i_state[1].orientation,
+obs_i_state[2].position.x, obs_i_state[2].position.y, obs_i_state[2].velocity, obs_i_state[2].orientation,
+obs_i_state[3].position.x, obs_i_state[3].position.y, obs_i_state[3].velocity, obs_i_state[3].orientation}-&gt;
+{}: &lt;&gt; cps_i_state.detection.reach</formula>
+			<comment>strategy reachSafe = minE(cost) [&lt;=MAXTIME] {control.location}-&gt;{cps_i_state.position.x, cps_i_state.position.y, 
+cps_i_state.velocity, cps_i_state.orientation, cps_i_state.acceleration, cps_i_state.accRate, cps_i_state.yawRate,
+obs_i_state[0].position.x, obs_i_state[0].position.y, obs_i_state[0].velocity, obs_i_state[0].orientation,
+obs_i_state[1].position.x, obs_i_state[1].position.y, obs_i_state[1].velocity, obs_i_state[1].orientation}: &lt;&gt; g_time&gt;=MAXTIME under safe</comment>
+			<result outcome="success" type="quality" timestamp="2025-02-07 15:17:29 +0100">
+				<option key="--total-runs" value="3000"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--eval-runs" value="3000"/>
+				<option key="--runs-pr-state" value="1"/>
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] !cps_i_state.detection.collide &amp;&amp; !cps_i_state.detection.outside under reach</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-02-07 11:00:11 +0100">
+				<option key="--total-runs" value="200"/>
+				<option key="--good-runs" value="100"/>
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; !cps_i_state.detection.collide &amp;&amp; !cps_i_state.detection.outside &amp;&amp; cps_i_state.detection.reach under reach</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula/>
+			<comment>//Simulation</comment>
+		</query>
+		<query>
+			<formula>simulate[&lt;=MAXTIME;1]{cps_dynamic.x,i2d(cps_shape.center.x),cps_dynamic.y,i2d(cps_shape.center.y)}</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>simulate [&lt;=MAXTIME;1] { cps_dynamic.x, cps_dynamic.y, cps_dynamic.orientation, cps_dynamic.velocity, cps_dynamic.acceleration }:cps_i_state.detection.reach under safeReach</formula>
+			<comment/>
+			<result outcome="success" type="interval" value="≥ 0.025 (95% CI)" timestamp="2025-02-07 16:26:55 +0100">
+				<option key="--total-runs" value="3000"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--eval-runs" value="3000"/>
+				<option key="--runs-pr-state" value="1"/>
+				<option key="--diagnostic" value="0"/>
+				<details>≥ 0.025 (95% CI)</details>
+				<plot title="Simulations (1)" xaxis="time" yaxis="value">
+					<series title="cps_dynamic.x" type="l" color="0xff0000" encoding="csv">0.0,0.0
+4.0,4.800000000000001
+4.078880128509023,4.894655496651542
+4.1577630723073415,4.989412536444943
+4.23664601610566,5.084316829667288
+4.315528959903979,5.179417461378831
+4.394411903702298,5.274763516639826
+4.4732948475006165,5.370404080510528
+4.552177791298935,5.46638823805119
+4.631060735097254,5.562765074322067
+4.709943678895573,5.659583674383414
+4.788826622693891,5.756893123295484
+4.86770956649221,5.854742506118532
+4.946592510290529,5.953180907912811
+5.0,6.020260395702579
+5.078882943798319,6.119802161096236
+5.1577658875966375,6.220064348492631
+5.236648831394956,6.321096042952018
+5.315531775193275,6.42294632953465
+5.394414718991594,6.525664293300783
+5.473297662789912,6.62929901931067
+5.552180606588231,6.7338995926245655
+5.63106355038655,6.839515098302724
+5.7099464941848685,6.946194621405399
+5.788829437983187,7.053987246992847
+5.867712381781506,7.16294206012532
+5.946595325579825,7.273108145863072
+6.0,7.348545149671718
+6.078882943798319,7.46085810109658
+6.1577658875966375,7.5745137264064075
+6.236648831394956,7.689561110661455
+6.315531775193275,7.806049338921978
+6.394414718991594,7.92402749624823
+6.473297662789912,8.043544667700465
+6.552180606588231,8.164649938338938
+6.63106355038655,8.287392393223902
+6.7099464941848685,8.411821117415613
+6.788829437983187,8.537985195974324
+6.867712381781506,8.665933713960289
+6.946595325579825,8.795715756433763
+7.0,8.884854263888782
+7.078882943798319,9.017826695724679
+7.1577658875966375,9.152764053327772
+7.236648831394956,9.289715421758313
+7.315531775193275,9.428729886076558
+7.394414718991594,9.569856531342761
+7.473297662789912,9.713144442617176
+7.552180606588231,9.858642704960058
+7.63106355038655,10.00640040343166
+7.7018652677949095,10.140885327066947
+7.772666985203269,10.277261444592629
+7.843468702611629,10.415564248082593
+7.914270420019989,10.555829229610726
+7.985072137428348,10.698091881250917
+8.0,10.728515268667328
+8.07080171740836,10.87124303614268
+8.14160343481672,11.013899819470256
+8.21240515222508,11.15645012657617
+8.283206869633439,11.298858465386532
+8.354008587041799,11.441089343827457
+8.424810304450158,11.583107269825057
+8.495612021858518,11.724876751305443
+8.566413739266878,11.866362296194728
+8.637215456675237,12.007528412419024
+8.708017174083597,12.148339607904445
+8.778818891491957,12.288760390577103
+8.849620608900317,12.428755268363108
+8.920422326308676,12.568288749188575
+8.991224043717036,12.707325340979615
+9.0,12.724493101063008
+9.07080171740836,12.8629269231958
+9.14160343481672,13.00078847286202
+9.21240515222508,13.13804225798778
+9.283206869633439,13.27465278649919
+9.354008587041799,13.410584566322367
+9.424810304450158,13.545802105383421
+9.495612021858518,13.680269911608464
+9.566413739266878,13.81395249292361
+9.637215456675237,13.946814357254969
+9.708017174083597,14.078820012528654
+9.778818891491957,14.209933966670778
+9.849620608900317,14.340120727607456
+9.920422326308676,14.469344803264796
+9.991224043717036,14.597570701568912
+10.0,14.613336328181047
+10.07080171740836,14.740396033230445
+10.14160343481672,14.866382177494472
+10.21240515222508,14.991259268899242
+10.283206869633439,15.114991815370866
+10.354008587041799,15.237544324835458
+10.424810304450158,15.35888130521913
+10.495612021858518,15.478967264447995
+10.566413739266878,15.597766710448164
+10.637215456675237,15.71524415114575
+10.708017174083597,15.831364094466865
+10.778818891491957,15.946091048337621
+10.849620608900317,16.05938952068413
+10.920422326308676,16.171224019432508
+10.991224043717036,16.281559052508864
+11.0,16.295044950021445
+11.07080171740836,16.403650366246612
+11.14160343481672,16.51068093336761
+11.21240515222508,16.616101159310553
+11.283206869633439,16.719875552001554
+11.354008587041799,16.821968619366725
+11.424810304450158,16.92234486933218
+11.495612021858518,17.020968809824026
+11.566413739266878,17.117804948768384
+11.637215456675237,17.21281779409136
+11.708017174083597,17.30597185371907
+11.778818891491957,17.397231635577622
+11.849668550575107,17.486620852367206
+11.920909472653989,17.57451415009601
+11.992817142300543,17.661166170237685
+12.0,17.66960932590088
+12.074776710507692,17.759460559176723
+12.150535982607032,17.850577696449584
+12.227037976161652,17.942720117627324
+12.304089976256511,18.035704870349242
+12.381535740559949,18.12939317135458
+12.45924706715144,18.22367974758843
+12.537117241621441,18.31848455297338
+12.615056014830563,18.41374640387232
+12.692994788039684,18.509429211154476
+12.770933561248805,18.605580318356406
+12.848872334457926,18.702247069014668
+12.926811107667048,18.79947680666582
+13.0,18.89135413448448
+13.077938773209121,18.989811795609196
+13.155877546418242,19.088971589043965
+13.233816319627364,19.18888085832534
+13.311755092836485,19.289586946989886
+13.389693866045606,19.391137198574157
+13.467632639254727,19.493578956614712
+13.545571412463849,19.59695956464811
+13.62351018567297,19.70132636621091
+13.701448958882091,19.80672670483967
+13.779387732091212,19.913207924070946
+13.857326505300334,20.0208173674413
+13.935265278509455,20.129602378487288
+14.0,20.22097323173423
+14.077938773209121,20.332036207645388
+14.155877546418242,20.444408761103528
+14.233816319627364,20.558138235645213
+14.311755092836485,20.673271974807
+14.389693866045606,20.78985732212545
+14.467632639254727,20.907941621137116
+14.545571412463849,21.02757221537856
+14.62351018567297,21.14879644838634
+14.701448958882091,21.27166166369701
+14.779387732091212,21.396215204847135
+14.857326505300334,21.52250441537327
+14.935265278509455,21.650576638811973
+15.0,21.75847168236596
+15.077938773209121,21.889933850384466
+15.155877546418242,22.023313041186892
+15.233816319627364,22.158656598309793
+15.311755092836485,22.29601186528973
+15.389693866045606,22.435426185663264
+15.467632639254727,22.576946902966952
+15.545571412463849,22.72062136073735
+15.62351018567297,22.86649690251102
+15.693642164818614,22.999585645691237
+15.763774143964259,23.13452559911367
+15.833906123109903,23.271351257153675
+15.904038102255548,23.41009711418662
+15.974170081401192,23.550797664587865
+16.0,23.603350927251597
+16.070131979145646,23.74481952298065
+16.140263958291293,23.886219129958974
+16.21039593743694,24.027515253811213
+16.280527916582585,24.168673400162003
+16.35065989572823,24.30965907463598
+16.420791874873878,24.450437782857783
+16.490923854019524,24.59097503045205
+16.56105583316517,24.73123632304342
+16.631187812310817,24.871187166256526
+16.701319791456463,25.01079306571601
+16.77145177060211,25.150019527046506
+16.841583749747755,25.288832055872653
+16.9117157288934,25.42719615781909
+16.981847708039048,25.565077338510452
+17.0,25.600631264103605
+17.070131979145646,25.73785217804749
+17.140263958291293,25.874512253790762
+17.21039593743694,26.010576996958058
+17.280527916582585,26.146011913174014
+17.35065989572823,26.28078250806327
+17.420791874873878,26.414854287250467
+17.490923854019524,26.548192756360237
+17.56105583316517,26.680763421017218
+17.631187812310817,26.81253178684605
+17.701319791456463,26.94346335947137
+17.77145177060211,27.073523644517813
+17.841583749747755,27.202678147610023
+17.9117157288934,27.33089237437263
+17.981847708039048,27.45813183043028
+18.0,27.490804047995272
+18.070131979145646,27.616764082239428
+18.140263958291293,27.74167142883308
+18.21039593743694,27.86549159340087
+18.280527916582585,27.988190081567428
+18.35065989572823,28.1097323989574
+18.420791874873878,28.230084051195423
+18.490923854019524,28.34921054390613
+18.56105583316517,28.46707738271416
+18.631187812310817,28.58365007324415
+18.701319791456463,28.69889412112074
+18.77145177060211,28.81277503196857
+18.841583749747755,28.925258311412275
+18.9117157288934,29.03630946507649
+18.981847708039048,29.145893998585855
+19.0,29.17386927892659
+19.070131979145646,29.281555235556446
+19.140263958291293,29.387696655085914
+19.21039593743694,29.49225904313963
+19.280527916582585,29.595207905342228
+19.35065989572823,29.69650874731835
+19.420791874873878,29.796127074692635
+19.490923854019524,29.894028393089716
+19.56105583316517,29.990178208134232
+19.631187812310817,30.084542025450823
+19.701319791456463,30.17708535066412
+19.77145177060211,30.26777368939877
+19.841749982142534,30.356778620335213
+19.912520670651606,30.444422652632912
+19.98401246432366,30.530924201946185
+20.0,30.549798867615767
+20.07448291002512,30.639397348343817
+20.149997662611508,30.730321425290636
+20.22629304268856,30.82231623091308
+20.30316750727507,30.91518775161157
+20.380458040546394,31.008788698699103
+20.45803129029316,31.103007304300387
+20.535776655548627,31.19775858836907
+20.613600974043433,31.292977634006768
+20.691425292538238,31.38861544998454
+20.769249611033043,31.48471917157017
+20.84707392952785,31.581335934031458
+20.924898248022654,31.678512872636194
+21.0,31.772876288005925
+21.077824318494805,31.87129208986998
+21.15564863698961,31.970407824724536
+21.233472955484416,32.07027062783739
+21.31129727397922,32.17092763447632
+21.389121592474027,32.27242597990913
+21.466945910968832,32.374812799403614
+21.544770229463637,32.47813522822756
+21.622594547958442,32.58244040164875
+21.700418866453248,32.68777545493499
+21.778243184948053,32.79418752335407
+21.85606750344286,32.90172374217378
+21.933891821937664,33.01043124666191
+22.0,33.10380826289761
+22.077824318494805,33.21480922009223
+22.15564863698961,33.32711577273227
+22.233472955484416,33.44077505608552
+22.31129727397922,33.55583420541978
+22.389121592474027,33.67234035600283
+22.466945910968832,33.79034064310247
+22.544770229463637,33.909882201986484
+22.622594547958442,34.031012167922675
+22.700418866453248,34.15377767617883
+22.778243184948053,34.27822586202274
+22.85606750344286,34.40440386072219
+22.933891821937664,34.53235880754498
+23.0,34.64260012290857
+23.077824318494805,34.773968667283235
+23.15564863698961,34.90724846955824
+23.233472955484416,35.04248666500138
+23.31129727397922,35.17973038888043
+23.389121592474027,35.3190267764632
+23.466945910968832,35.46042296301747
+23.544770229463637,35.603966083811045
+23.622594547958442,35.74970327411171
+23.700418866453248,35.89768166918725
+23.770248294576138,36.0323050301773
+23.84007772269903,36.16880087029437
+23.90990715082192,36.307203239408295
+23.97973657894481,36.44754618738891
+24.0,36.48884454909825
+24.06982942812289,36.62979546608034
+24.13965885624578,36.77067828332276
+24.20948828436867,36.91145895095568
+24.27931771249156,37.05210341910925
+24.349147140614452,37.19257763791366
+24.418976568737342,37.33284755749906
+24.488805996860233,37.47287912799562
+24.558635424983123,37.6126382995335
+24.628464853106014,37.75209102224287
+24.698294281228904,37.8912032462539
+24.768123709351794,38.02994092169675
+24.837953137474685,38.16826999870158
+24.907782565597575,38.30615642739857
+24.977611993720465,38.44356615791788
+25.0,38.48745732760992
+25.06982942812289,38.62418164247347
+25.13965885624578,38.76035024269415
+25.20948828436867,38.89592907840214
+25.27931771249156,39.030884099727594
+25.349147140614452,39.16518125680068
+25.418976568737342,39.29878649975156
+25.488805996860233,39.431665778710396
+25.558635424983123,39.563785043807364
+25.628464853106014,39.69511024517263
+25.698294281228904,39.82560733293635
+25.768123709351794,39.9552422572287
+25.837953137474685,40.08398096817983
+25.907782565597575,40.21178941591992
+25.977611993720465,40.338633550579125
+26.0,40.37898095142428
+26.06982942812289,40.50449572135701
+26.13965885624578,40.628967161743674
+26.20948828436867,40.75236122271444
+26.27931771249156,40.87464385439948
+26.349147140614452,40.99578100692895
+26.418976568737342,41.11573863043302
+26.488805996860233,41.23448267504185
+26.558635424983123,41.35197909088562
+26.628464853106014,41.468193828094485
+26.698294281228904,41.583092836798606
+26.768123709351794,41.69664206712815
+26.837953137474685,41.80880746921329
+26.907782565597575,41.91955499318419
+26.977611993720465,42.028850589171014
+27.0,42.06341542054133
+27.06982942812289,42.170737702730946
+27.13965885624578,42.2765290404713
+27.20948828436867,42.38075538389256
+27.27931771249156,42.483382683124894
+27.349147140614452,42.584376888298465
+27.418976568737342,42.683703949543435
+27.488805996860233,42.781329816989974
+27.558635424983123,42.87722044076825
+27.628464853106014,42.97134177100842
+27.698294281228904,43.063659757840654
+27.768123709351794,43.15414035139512
+27.838162905889345,43.24301015134251
+27.9087036831257,43.33057191862884
+27.979984089498128,43.41703035138191
+28.0,43.44072281898859
+28.07431387188133,43.53021661088707
+28.149678358885737,43.62105176801332
+28.225837725171306,43.71296187773321
+28.302588002322686,43.80574377985695
+28.379765448060564,43.89924302966843
+28.457237328392054,43.99334232424568
+28.53489470241864,44.08795245401575
+28.61264685758805,44.183005318422246
+28.690417066371804,44.27844858451847
+28.768187275155558,44.37430088130849
+28.845957483939312,44.47060272569828
+28.923727692723066,44.56739445724314
+29.0,44.66284174522274
+29.077770208783754,44.76072256547535
+29.155540417567508,44.85921229894679
+29.233310626351262,44.958350415209324
+29.311080835135016,45.05817612426829
+29.38885104391877,45.15872836016354
+29.466621252702524,45.26004576461298
+29.544391461486278,45.36216667070074
+29.62216167027003,45.465129086612436
+29.699931879053786,45.56897067942013
+29.77770208783754,45.67372875891937
+29.855472296621294,45.77944026152083
+29.933242505405047,45.886141734199214
+30.0,45.978614465586475
+30.077770208783754,46.0872541627433
+30.155540417567508,46.19698600090614
+30.233310626351262,46.30784487496195
+30.311080835135016,46.41986521327248
+30.38885104391877,46.533080962007475
+30.466621252702524,46.64752556955182
+30.544391461486278,46.76323197098913
+30.62216167027003,46.88023257266429
+30.699931879053786,46.99855923682716
+30.77770208783754,47.11824326636007
+30.855472296621294,47.239315389591326
+30.933242505405047,47.361805745197266
+31.0,47.46819350779646
+31.077770208783754,47.59340019485247
+31.155540417567508,47.72010787047119
+31.233310626351262,47.848344258237994
+31.311080835135016,47.97813642007072
+31.38885104391877,48.10951074168736
+31.466621252702524,48.24249291817831
+31.544391461486278,48.377107939685466
+31.62216167027003,48.51338007719047
+31.699931879053786,48.65133286841433
+31.77770208783754,48.790989103830746
+31.855472296621294,48.93237081279536
+31.933242505405047,49.07549924979314
+32.0,49.19987681615762
+32.077770208783754,49.346308313980515
+32.14766814006076,49.479305281996574
+32.217566071337764,49.613672719088896
+32.28746400261477,49.749392876681306
+32.357361933891774,49.886447766155435
+32.42725986516878,50.02481916028447
+32.497157796445784,50.164488594687086
+32.56705572772279,50.30543736930135
+32.63695365899979,50.44764654987862
+32.7068515902768,50.59109696949721
+32.7767495215538,50.73576923009583
+32.84664745283081,50.88164370402665
+32.909486522276765,51.01374301071004
+32.97232559172272,51.146784166315356
+33.0,51.20578397289519
+33.06283906944596,51.340155855878756
+33.125678138891914,51.47543340339456
+33.18851720833787,51.61160153856339
+33.25135627778383,51.74864504082248
+33.314195347229784,51.88654854691524
+33.37703441667574,52.02529655189088
+33.4398734861217,52.164873410113884
+33.502712555567655,52.30526333628326
+33.56555162501361,52.44645040646157
+33.62839069445957,52.5884185591136
+33.691229763905525,52.73115159615466
+33.75406883335148,52.87463318400848
+33.81690790279744,53.01884685467458
+33.879746972243396,53.1637760068051
+33.936288012595455,53.2947460584552
+33.99282905294751,53.426270219830705
+34.0,53.44301978161029
+34.05654104035206,53.57515351261537
+34.11308208070412,53.70781496208017
+34.169623121056176,53.84099158960924
+34.226164161408235,53.974670771517125
+34.282705201760294,54.108839801499386
+34.33924624211235,54.243485891308396
+34.39578728246441,54.37859617143385
+34.45232832281647,54.514157691788014
+34.50886936316853,54.65015742239565
+34.56541040352059,54.78658225408856
+34.621951443872646,54.92341899920476
+34.678492484224705,55.06065439229227
+34.735033524576764,55.19827509081739
+34.79157456492882,55.33626767587756
+34.84811560528088,55.474618652918664
+34.90465664563294,55.613314452456834
+34.961197685985,55.75234143080464
+35.0,55.84796907902865
+35.05654104035206,55.987523408152995
+35.11308208070412,56.12737190375587
+35.169623121056176,56.26750065495971
+35.226164161408235,56.40789568014457
+35.282705201760294,56.54854292769883
+35.33924624211235,56.689428276774194
+35.39578728246441,56.83053753804475
+35.45232832281647,56.97185645447024
+35.50886936316853,57.113370702063406
+35.56541040352059,57.2550658906614
+35.621951443872646,57.39692756470122
+35.678492484224705,57.53894120399917
+35.735033524576764,57.681092224534254
+35.79157456492882,57.82336597923549
+35.84811560528088,57.96574775877315
+35.90465664563294,58.10822279235383
+35.961197685985,58.25077624851934
+36.0,58.34864583331326
+36.050873307073026,58.47767138983382
+36.10174661414605,58.60743654952072
+36.15261992121908,58.737950485553704
+36.2034932282921,58.86922237111253
+36.25436653536513,59.00126137937694
+36.305239842438155,59.13407668352671
+36.35611314951118,59.267677456741566
+36.40698645658421,59.40207287220128
+36.45785976365723,59.5372721030856
+36.50873307073026,59.673284322574276
+36.559606377803284,59.81011870384707
+36.61047968487631,59.94778442008372
+36.661352991949336,60.08629064446399
+36.71222629902236,60.22564655016764
+36.76309960609539,60.365861310374406
+36.81397291316841,60.50694409826405
+36.85973426758097,60.634560944258844
+36.90549562199352,60.76289348960752
+36.95125697640608,60.89194841077548
+36.997018330818634,61.021732384228116
+37.0,61.030236646801114
+37.045761354412555,61.16080472184549
+37.09152270882511,61.2921156371233
+37.137284063237665,61.42417606909996
+37.18304541765022,61.556992694240854
+37.228806772062775,61.690572189011384
+37.27456812647533,61.82492122987695
+37.320329480887885,61.960046493302954
+37.36609083530044,62.095954655754795
+37.411852189712995,62.23265239369787
+37.45761354412555,62.37014638359758
+37.503374898538105,62.50844330191932
+37.54913625295066,62.64754982512849
+37.594897607363215,62.7874726296905
+37.64065896177577,62.92821839207073
+37.68184010561618,63.05554953200606
+37.72302124945659,63.18355686726343
+37.764202393297005,63.31224526354149
+37.805383537137416,63.44161958653891
+37.84656468097783,63.571684701954354
+37.88774582481824,63.70244547548647
+37.92892696865865,63.83390677283393
+37.97010811249906,63.96607345969538
+38.0,64.06252397644982
+38.04118114384041,64.19577269732426
+38.08236228768082,64.32957083449303
+38.123543431521234,64.46391110981233
+38.164724575361646,64.59878617517305
+38.20590571920206,64.73418861304553
+38.24708686304247,64.87011093702804
+38.28826800688288,65.00654559239872
+38.32944915072329,65.1434849566711
+38.3706302945637,65.28092134015313
+38.411811438404115,65.41884698650965
+38.452992582244526,65.55725407332842
+38.49417372608494,65.69613471268953
+38.53535486992535,65.83548095173823
+38.57653601376576,65.97528477326124
+38.61771715760617,66.11553809626628
+38.658898301446584,66.25623277656513
+38.700079445286995,66.39736060735993
+38.74126058912741,66.53891331983274
+38.78244173296782,66.68088258373852
+38.82362287680823,66.82326000800124
+38.86480402064864,66.96603714131327
+38.90598516448905,67.10920547273798
+38.947166308329464,67.2527564323156
+38.988347452169876,67.39668139167212
+39.0,67.4375095268397
+39.04118114384041,67.58140314640846
+39.08236228768082,67.72515637432103
+39.123543431521234,67.86876386903046
+39.164724575361646,68.01222028898978
+39.20590571920206,68.15552029265204
+39.24708686304247,68.29865853847028
+39.28826800688288,68.44162968489752
+39.32944915072329,68.58442839038682
+39.3706302945637,68.72704931339122
+39.411811438404115,68.86948711236376
+39.452992582244526,69.01173644575746
+39.49417372608494,69.15379197202539
+39.53535486992535,69.29564834962056
+39.57653601376576,69.43730023699604
+39.61771715760617,69.57874229260484
+39.658898301446584,69.71996917490003
+39.700079445286995,69.86097554233463
+39.74126058912741,70.00175605336167
+39.78244173296782,70.14230536643421
+39.82362287680823,70.2826181400053
+39.86480402064864,70.42268903252796
+39.90598516448905,70.56251270245522
+39.947166308329464,70.70208380824015
+39.988347452169876,70.84139700833578
+40.0,70.88074235126123
+					</series>
+					<series title="cps_dynamic.y" type="l" color="0xccff00" encoding="csv">0.0,0.0
+28.0,0.0
+28.07431387188133,6.650752616182754E-4
+28.149678358885737,0.0020247825290896308
+28.225837725171306,0.004100812494656453
+28.302588002322686,0.006909138684974855
+28.379765448060564,0.010461625118906479
+28.457237328392054,0.014767197038094908
+28.53489470241864,0.01983267466630083
+28.61264685758805,0.025663355245078918
+28.690417066371804,0.03226341151285423
+28.768187275155558,0.0396411810543611
+28.845957483939312,0.047807397299855246
+28.923727692723066,0.056773834829998475
+29.0,0.0663649483808765
+29.077770208783754,0.07695528877465344
+29.155540417567508,0.08838710290160152
+29.233310626351262,0.10067628380693047
+29.311080835135016,0.11383975150916303
+29.38885104391877,0.12789544950860346
+29.466621252702524,0.14286234108102183
+29.544391461486278,0.15876040535702696
+29.62216167027003,0.1756106331876277
+29.699931879053786,0.19343502279651095
+29.77770208783754,0.21225657521959046
+29.855472296621294,0.23209928953240963
+29.933242505405047,0.25298815786600737
+30.0,0.2718393544659895
+30.077770208783754,0.29474272900528087
+30.155540417567508,0.3187691455091314
+30.233310626351262,0.34394737710452455
+30.311080835135016,0.3703071627688865
+30.38885104391877,0.39787920112036246
+30.466621252702524,0.42669514400146724
+30.544391461486278,0.4567875898569305
+30.62216167027003,0.4881900769065859
+30.699931879053786,0.5209370761141778
+30.77770208783754,0.5550639839529876
+30.855472296621294,0.5906071149692059
+30.933242505405047,0.6276036941440053
+31.0,0.6606417023175932
+31.077770208783754,0.700442174470773
+31.155540417567508,0.7418074692966565
+31.233310626351262,0.7847782492978143
+31.311080835135016,0.8293960474704146
+31.38885104391877,0.875703258507534
+31.466621252702524,0.9237431298084062
+31.544391461486278,0.973559752294767
+31.62216167027003,1.0251980510354772
+31.699931879053786,1.0787037756806297
+31.77770208783754,1.1341234907063713
+31.855472296621294,1.1915045654716976
+31.933242505405047,1.2508951640885009
+32.0,1.303642689014566
+32.077770208783754,1.3668997550404882
+32.14766814006076,1.425459689819029
+32.217566071337764,1.485747822606765
+32.28746400261477,1.547786133815285
+32.357361933891774,1.6115964395670843
+32.42725986516878,1.6772003894157383
+32.497157796445784,1.744619464078122
+32.56705572772279,1.8138749731788453
+32.63695365899979,1.8849880530070742
+32.7068515902768,1.9579796642859062
+32.7767495215538,2.0328705899544657
+32.84664745283081,2.109681432962889
+32.909486522276765,2.1803026880213863
+32.97232559172272,2.2525060564646218
+33.0,2.285007707064987
+33.06283906944596,2.3595155752983175
+33.125678138891914,2.4356409602055593
+33.18851720833787,2.513398155466434
+33.25135627778383,2.5928013288090006
+33.314195347229784,2.673864520769521
+33.37703441667574,2.7566016434598013
+33.4398734861217,2.8410264793420907
+33.502712555567655,2.9271526800116074
+33.56555162501361,3.0149937649867664
+33.62839069445957,3.1045631205071893
+33.691229763905525,3.1958739983395623
+33.75406883335148,3.288939514591421
+33.81690790279744,3.3837726485329322
+33.879746972243396,3.4803862414267486
+33.936288012595455,3.5687679859839476
+33.99282905294751,3.658610114934379
+34.0,3.67019091559809
+34.05654104035206,3.7616895072823087
+34.11308208070412,3.854667658370043
+34.169623121056176,3.9491342380176806
+34.226164161408235,4.045098020683808
+34.282705201760294,4.142567685471646
+34.33924624211235,4.241551815476057
+34.39578728246441,4.342058897135142
+34.45232832281647,4.444097319586481
+34.50886936316853,4.547675374028032
+34.56541040352059,4.652801253083723
+34.621951443872646,4.759483050173786
+34.678492484224705,4.867728758889838
+34.735033524576764,4.97754627237476
+34.79157456492882,5.088943382707407
+34.84811560528088,5.2019277802921575
+34.90465664563294,5.316507053253369
+34.961197685985,5.432688686834735
+35.0,5.513525154118328
+35.05654104035206,5.632425462299851
+35.11308208070412,5.752947724504374
+35.169623121056176,5.875099041623264
+35.226164161408235,5.998886408918903
+35.282705201760294,6.124316715452583
+35.33924624211235,6.251396743517527
+35.39578728246441,6.380133168077056
+35.45232832281647,6.510532556207928
+35.50886936316853,6.642601366548889
+35.56541040352059,6.776345948754452
+35.621951443872646,6.911772542953942
+35.678492484224705,7.048887279215828
+35.735033524576764,7.187696177017375
+35.79157456492882,7.328205144719642
+35.84811560528088,7.4704199790478505
+35.90465664563294,7.614346364577155
+35.961197685985,7.759989873223844
+36.0,7.861003857571944
+36.050873307073026,7.993853545410396
+36.10174661414605,8.127464757185821
+36.15261992121908,8.261846937957786
+36.2034932282921,8.397009532785853
+36.25436653536513,8.532961986729589
+36.305239842438155,8.669713744848556
+36.35611314951118,8.80727425220232
+36.40698645658421,8.945652953850447
+36.45785976365723,9.084859294852498
+36.50873307073026,9.22490272026804
+36.559606377803284,9.365792675156635
+36.61047968487631,9.507538604577851
+36.661352991949336,9.65014995359125
+36.71222629902236,9.793636167256397
+36.76309960609539,9.938006690632857
+36.81397291316841,10.083270968780194
+36.85973426758097,10.214670193945594
+36.90549562199352,10.346806330761005
+36.95125697640608,10.479686253572629
+36.997018330818634,10.613316836726666
+37.0,10.622073153371108
+37.045761354412555,10.756511077756644
+37.09152270882511,10.891713859088258
+37.137284063237665,11.027688371712149
+37.18304541765022,11.164441489974518
+37.228806772062775,11.301980088221566
+37.27456812647533,11.44031104079949
+37.320329480887885,11.579441222054491
+37.36609083530044,11.719377506332771
+37.411852189712995,11.860126767980526
+37.45761354412555,12.001695881343958
+37.503374898538105,12.144091720769266
+37.54913625295066,12.28732116060265
+37.594897607363215,12.43139107519031
+37.64065896177577,12.576308338878446
+37.68184010561618,12.707413390069037
+37.72302124945659,12.839214678035296
+37.764202393297005,12.97171721268817
+37.805383537137416,13.104926003938605
+37.84656468097783,13.23884606169755
+37.88774582481824,13.373482395875952
+37.92892696865865,13.508840016384754
+37.97010811249906,13.644923933134905
+38.0,13.744233104032709
+38.04118114384041,13.880305415241326
+38.08236228768082,14.015817901379478
+38.123543431521234,14.150763395721428
+38.164724575361646,14.285134802407761
+38.20590571920206,14.418925096982983
+38.24708686304247,14.552127326929504
+38.28826800688288,14.684734612197948
+38.32944915072329,14.816740145733789
+38.3706302945637,14.948137194000283
+38.411811438404115,15.078919097497687
+38.452992582244526,15.209079271278721
+38.49417372608494,15.338611205460275
+38.53535486992535,15.467508465731324
+38.57653601376576,15.595764693857047
+38.61771715760617,15.723373608179102
+38.658898301446584,15.850329004112071
+38.700079445286995,15.976624754636024
+38.74126058912741,16.102254810785197
+38.78244173296782,16.22721320213277
+38.82362287680823,16.3514940372717
+38.86480402064864,16.475091504291623
+38.90598516448905,16.59799987125177
+38.947166308329464,16.72021348664991
+38.988347452169876,16.841726779887278
+39.0,16.875910263615957
+39.04118114384041,16.997110187401496
+39.08236228768082,17.118191860926316
+39.123543431521234,17.23915078506748
+39.164724575361646,17.35998246070205
+39.20590571920206,17.480682388707084
+39.24708686304247,17.60124606995965
+39.28826800688288,17.721669005336807
+39.32944915072329,17.841946695715617
+39.3706302945637,17.96207464197314
+39.411811438404115,18.08204834498644
+39.452992582244526,18.20186330563258
+39.49417372608494,18.321515024788617
+39.53535486992535,18.44099900333162
+39.57653601376576,18.560310742138643
+39.61771715760617,18.679445742086752
+39.658898301446584,18.79839950405301
+39.700079445286995,18.917167528914476
+39.74126058912741,19.035745317548216
+39.78244173296782,19.15412837083129
+39.82362287680823,19.27231218964076
+39.86480402064864,19.39029227485369
+39.90598516448905,19.508064127347136
+39.947166308329464,19.625623247998163
+39.988347452169876,19.742965137683836
+40.0,19.77610526285528
+					</series>
+					<series title="cps_dynamic.orientation" type="l" color="0x00ff66" encoding="csv">0.0,0.0
+28.0,0.0
+36.0,0.8000000000000016
+38.0,0.8000000000000016
+39.0,0.7000000000000027
+40.0,0.7000000000000027
+					</series>
+					<series title="cps_dynamic.velocity" type="l" color="0x0066ff" encoding="csv">0.0,0.0
+0.0,1.2000000000000002
+4.0,1.2000000000000002
+4.078880128509023,1.2006222074673603
+4.1577630723073415,1.2018666890239873
+4.23664601610566,1.203733422462843
+4.315528959903979,1.2062224077839279
+4.394411903702298,1.2093336449872414
+4.4732948475006165,1.2130671340727839
+4.552177791298935,1.2174228750405551
+4.631060735097254,1.2224008678905554
+4.709943678895573,1.2280011126227843
+4.788826622693891,1.2342236092372423
+4.86770956649221,1.241068357733929
+4.946592510290529,1.2485353581128447
+5.0,1.2540121650890015
+5.078882943798319,1.2625227113510622
+5.1577658875966375,1.2716555094953519
+5.236648831394956,1.2814105595218703
+5.315531775193275,1.2917878614306177
+5.394414718991594,1.302787415221594
+5.473297662789912,1.314409220894799
+5.552180606588231,1.326653278450233
+5.63106355038655,1.3395195878878958
+5.7099464941848685,1.3530081492077874
+5.788829437983187,1.367118962409908
+5.867712381781506,1.3818520274942574
+5.946595325579825,1.3972073444608357
+6.0,1.4080243452129644
+6.078882943798319,1.4244231858548568
+6.1577658875966375,1.4414442783789783
+6.236648831394956,1.4590876227853287
+6.315531775193275,1.4773532190739078
+6.394414718991594,1.496241067244716
+6.473297662789912,1.5157511672977528
+6.552180606588231,1.5358835192330187
+6.63106355038655,1.5566381230505133
+6.7099464941848685,1.5780149787502369
+6.788829437983187,1.6000140863321892
+6.867712381781506,1.6226354457963705
+6.946595325579825,1.6458790571427806
+7.0,1.662036525336927
+7.078882943798319,1.6863236603586513
+7.1577658875966375,1.7112330472626045
+7.236648831394956,1.7367646860487866
+7.315531775193275,1.7629185767171978
+7.394414718991594,1.7896947192678376
+7.473297662789912,1.8170931137007065
+7.552180606588231,1.845113760015804
+7.63106355038655,1.8737566582131306
+7.7018652677949095,1.8999665000705541
+7.772666985203269,1.926677630246775
+7.843468702611629,1.9538900487417932
+7.914270420019989,1.9816037555556087
+7.985072137428348,2.0098187506882215
+8.0,2.015873303439519
+8.07080171740836,2.0153720151207217
+8.14160343481672,2.014369438483127
+8.21240515222508,2.012865573526735
+8.283206869633439,2.0108604202515457
+8.354008587041799,2.008353978657559
+8.424810304450158,2.0053462487447753
+8.495612021858518,2.001837230513194
+8.566413739266878,1.9978269239628155
+8.637215456675237,1.9933153290936396
+8.708017174083597,1.9883024459056664
+8.778818891491957,1.9827882743988958
+8.849620608900317,1.976772814573328
+8.920422326308676,1.970256066428963
+8.991224043717036,1.9632380299658005
+9.0,1.962306000800698
+9.07080171740836,1.9547245407410647
+9.14160343481672,1.9466417923626342
+9.21240515222508,1.9380577556654064
+9.283206869633439,1.9289724306493812
+9.354008587041799,1.9193858173145586
+9.424810304450158,1.9092979156609386
+9.495612021858518,1.8987087256885216
+9.566413739266878,1.887618247397307
+9.637215456675237,1.8760264807872953
+9.708017174083597,1.863933425858486
+9.778818891491957,1.8513390826108798
+9.849620608900317,1.838243451044476
+9.920422326308676,1.824646531159275
+9.991224043717036,1.8105483229552766
+10.0,1.8087386981618772
+10.07080171740836,1.794077066361408
+10.14160343481672,1.7789141462421416
+10.21240515222508,1.7632499378040778
+10.283206869633439,1.7470844410472166
+10.354008587041799,1.730417655971558
+10.424810304450158,1.7132495825771024
+10.495612021858518,1.6955802208638493
+10.566413739266878,1.6774095708317989
+10.637215456675237,1.658737632480951
+10.708017174083597,1.639564405811306
+10.778818891491957,1.6198898908228636
+10.849620608900317,1.599714087515624
+10.920422326308676,1.579036995889587
+10.991224043717036,1.5578586159447525
+11.0,1.5551713955230562
+11.07080171740836,1.533429591981751
+11.14160343481672,1.5111865001216487
+11.21240515222508,1.4884421199427489
+11.283206869633439,1.4651964514450517
+11.354008587041799,1.4414494946285574
+11.424810304450158,1.4172012494932658
+11.495612021858518,1.3924517160391767
+11.566413739266878,1.3672008942662903
+11.637215456675237,1.3414487841746066
+11.708017174083597,1.3151953857641256
+11.778818891491957,1.2884406990348474
+11.849668550575107,1.2611659285957106
+11.920909472653989,1.2332330079737417
+11.992817142300543,1.2045215903709772
+12.0,1.2016013120982478
+12.074776710507692,1.2021604677416828
+12.150535982607032,1.2033009173883895
+12.227037976161652,1.2050378031672868
+12.304089976256511,1.207380877255223
+12.381535740559949,1.2103357099588974
+12.45924706715144,1.2139045798410564
+12.537117241621441,1.2180871211726472
+12.615056014830563,1.2228807922977256
+12.692994788039684,1.2282819086597383
+12.770933561248805,1.2342904702586854
+12.848872334457926,1.2409064770945668
+12.926811107667048,1.2481299291673824
+13.0,1.2554835822526818
+13.077938773209121,1.263884904810528
+13.155877546418242,1.2728936726053088
+13.233816319627364,1.2825098856370238
+13.311755092836485,1.292733543905673
+13.389693866045606,1.3035646474112565
+13.467632639254727,1.3150031961537743
+13.545571412463849,1.3270491901332264
+13.62351018567297,1.3397026293496128
+13.701448958882091,1.3529635138029334
+13.779387732091212,1.3668318434931883
+13.857326505300334,1.3813076184203774
+13.935265278509455,1.396390838584501
+14.0,1.4094232589436653
+14.077938773209121,1.4256184588224237
+14.155877546418242,1.4424211039381165
+14.233816319627364,1.4598311942907436
+14.311755092836485,1.477848729880305
+14.389693866045606,1.4964737107068005
+14.467632639254727,1.5157061367702305
+14.545571412463849,1.5355460080705947
+14.62351018567297,1.5559933246078932
+14.701448958882091,1.577048086382126
+14.779387732091212,1.5987102933932928
+14.857326505300334,1.6209799456413942
+14.935265278509455,1.6438570431264299
+15.0,1.663362935634649
+15.077938773209121,1.6873520128343198
+15.155877546418242,1.7119485352709247
+15.233816319627364,1.7371525029444639
+15.311755092836485,1.7629639158549373
+15.389693866045606,1.789382774002345
+15.467632639254727,1.816409077386687
+15.545571412463849,1.8440428260079633
+15.62351018567297,1.8722840198661739
+15.693642164818614,1.8981882633936271
+15.763774143964259,1.9245843563709688
+15.833906123109903,1.9514722987981992
+15.904038102255548,1.978852090675318
+15.974170081401192,2.0067237320023255
+16.0,2.0171701313036174
+16.070131979145646,2.016678281853729
+16.140263958291293,2.015694582953952
+16.21039593743694,2.0142190346042868
+16.280527916582585,2.0122516368047325
+16.35065989572823,2.00979238955529
+16.420791874873878,2.0068412928559587
+16.490923854019524,2.003398346706739
+16.56105583316517,1.999463551107631
+16.631187812310817,1.9950369060586344
+16.701319791456463,1.9901184115597492
+16.77145177060211,1.9847080676109756
+16.841583749747755,1.9788058742123134
+16.9117157288934,1.9724118313637626
+16.981847708039048,1.9655259390653235
+17.0,1.9636163548234442
+17.070131979145646,1.9561113074589913
+17.140263958291293,1.9481144106446497
+17.21039593743694,1.9396256643804197
+17.280527916582585,1.9306450686663013
+17.35065989572823,1.9211726235022941
+17.420791874873878,1.9112083288883985
+17.490923854019524,1.9007521848246145
+17.56105583316517,1.889804191310942
+17.631187812310817,1.8783643483473809
+17.701319791456463,1.8664326559339313
+17.77145177060211,1.8540091140705932
+17.841583749747755,1.8410937227573665
+17.9117157288934,1.8276864819942513
+17.981847708039048,1.8137873917812477
+18.0,1.8100625783432711
+18.070131979145646,1.7955443330642538
+18.140263958291293,1.7805342383353477
+18.21039593743694,1.7650322941565533
+18.280527916582585,1.7490385005278704
+18.35065989572823,1.7325528574492988
+18.420791874873878,1.7155753649208387
+18.490923854019524,1.6981060229424902
+18.56105583316517,1.6801448315142533
+18.631187812310817,1.6616917906361277
+18.701319791456463,1.6427469003081137
+18.77145177060211,1.6233101605302112
+18.841583749747755,1.60338157130242
+18.9117157288934,1.5829611326247404
+18.981847708039048,1.5620488444971723
+19.0,1.5565088018630981
+19.070131979145646,1.5349773586695163
+19.140263958291293,1.5129540660260459
+19.21039593743694,1.490438923932687
+19.280527916582585,1.4674319323894396
+19.35065989572823,1.4439330913963035
+19.420791874873878,1.419942400953279
+19.490923854019524,1.3954598610603661
+19.56105583316517,1.3704854717175647
+19.631187812310817,1.3450192329248747
+19.701319791456463,1.3190611446822962
+19.77145177060211,1.2926112069898292
+19.841749982142534,1.2656043916968212
+19.912520670651606,1.2379152135300218
+19.98401246432366,1.20943279382139
+20.0,1.2029475527388511
+20.07448291002512,1.2035023231274322
+20.149997662611508,1.2046350267654966
+20.22629304268856,1.2063615381355683
+20.30316750727507,1.208692122115748
+20.380458040546394,1.2116327025998674
+20.45803129029316,1.215185800167242
+20.535776655548627,1.21935121534534
+20.613600974043433,1.2241265231086078
+20.691425292538238,1.2295074933267935
+20.769249611033043,1.2354941259998975
+20.84707392952785,1.2420864211279194
+20.924898248022654,1.2492843787108594
+21.0,1.2568150008601284
+21.077824318494805,1.2652030951645268
+21.15564863698961,1.2741968519238434
+21.233472955484416,1.283796271138078
+21.31129727397922,1.2940013528072305
+21.389121592474027,1.304812096931301
+21.466945910968832,1.3162285035102899
+21.544770229463637,1.3282505725441967
+21.622594547958442,1.3408783040330214
+21.700418866453248,1.3541116979767645
+21.778243184948053,1.3679507543754255
+21.85606750344286,1.3823954732290045
+21.933891821937664,1.3974458545375015
+22.0,1.410744943419764
+22.077824318494805,1.4269154695736428
+22.15564863698961,1.4436916581824397
+22.233472955484416,1.4610735092461546
+22.31129727397922,1.4790610227647876
+22.389121592474027,1.4976541987383385
+22.466945910968832,1.5168530371668076
+22.544770229463637,1.5366575380501948
+22.622594547958442,1.5570677013885
+22.700418866453248,1.5780835271817233
+22.778243184948053,1.5997050154298647
+22.85606750344286,1.621932166132924
+22.933891821937664,1.6447649792909014
+23.0,1.6646748859793998
+23.077824318494805,1.688627843982759
+23.15564863698961,1.7131864644410362
+23.233472955484416,1.7383507473542315
+23.31129727397922,1.7641206927223447
+23.389121592474027,1.790496300545376
+23.466945910968832,1.8174775708233255
+23.544770229463637,1.845064503556193
+23.622594547958442,1.8732570987439785
+23.700418866453248,1.9020553563866822
+23.770248294576138,1.9283827846158377
+23.84007772269903,1.95519782774819
+23.90990715082192,1.9825004857837394
+23.97973657894481,2.0102907587224856
+24.0,2.0184965648316915
+24.06982942812289,2.0180089499284946
+24.13965885624578,2.0170337201221007
+24.20948828436867,2.01557087541251
+24.27931771249156,2.0136204157997217
+24.349147140614452,2.0111823412837366
+24.418976568737342,2.0082566518645546
+24.488805996860233,2.0048433475421756
+24.558635424983123,2.0009424283165997
+24.628464853106014,1.9965538941878267
+24.698294281228904,1.9916777451558567
+24.768123709351794,1.9863139812206898
+24.837953137474685,1.980462602382326
+24.907782565597575,1.974123608640765
+24.977611993720465,1.967296999996007
+25.0,1.96495198748304
+25.06982942812289,1.9574814297675538
+25.13965885624578,1.9495232571488708
+25.20948828436867,1.9410774696269908
+25.27931771249156,1.9321440672019137
+25.349147140614452,1.9227230498736396
+25.418976568737342,1.9128144176421686
+25.488805996860233,1.9024181705075007
+25.558635424983123,1.8915343084696357
+25.628464853106014,1.8801628315285737
+25.698294281228904,1.8683037396843147
+25.768123709351794,1.8559570329368587
+25.837953137474685,1.8431227112862056
+25.907782565597575,1.8298007747323557
+25.977611993720465,1.8159912232753088
+26.0,1.8114074101343887
+26.06982942812289,1.7969539096066136
+26.13965885624578,1.7820127941756414
+26.20948828436867,1.7665840638414723
+26.27931771249156,1.7506677186041062
+26.349147140614452,1.7342637584635432
+26.418976568737342,1.717372183419783
+26.488805996860233,1.699992993472826
+26.558635424983123,1.682126188622672
+26.628464853106014,1.6637717688693208
+26.698294281228904,1.6449297342127727
+26.768123709351794,1.6256000846530276
+26.837953137474685,1.6057828201900857
+26.907782565597575,1.5854779408239466
+26.977611993720465,1.5646854465546105
+27.0,1.5578628327857371
+27.06982942812289,1.536426389445673
+27.13965885624578,1.5145023312024117
+27.20948828436867,1.4920906580559536
+27.27931771249156,1.4691913700062984
+27.349147140614452,1.4458044670534462
+27.418976568737342,1.4219299491973971
+27.488805996860233,1.397567816438151
+27.558635424983123,1.372718068775708
+27.628464853106014,1.3473807062100678
+27.698294281228904,1.3215557287412307
+27.768123709351794,1.2952431363691965
+27.838162905889345,1.268360951758325
+27.9087036831257,1.2407886521788956
+27.979984089498128,1.212419163853373
+28.0,1.2043083035092492
+28.07431387188133,1.2048605586646488
+28.149678358885737,1.2059886019379573
+28.225837725171306,1.2077085677411994
+28.302588002322686,1.2100309390452944
+28.379765448060564,1.212961871771376
+28.457237328392054,1.216504175330204
+28.53489470241864,1.2206580271272602
+28.61264685758805,1.225421488480784
+28.690417066371804,1.2307908764207443
+28.768187275155558,1.2367650848981315
+28.845957483939312,1.2433441139129455
+28.923727692723066,1.2505279634651865
+29.0,1.2581666190332792
+29.077770208783754,1.2665484604490815
+29.155540417567508,1.2755351224023108
+29.233310626351262,1.285126604892967
+29.311080835135016,1.2953229079210502
+29.38885104391877,1.30612403148656
+29.466621252702524,1.317529975589497
+29.544391461486278,1.3295407402298607
+29.62216167027003,1.3421563254076514
+29.699931879053786,1.355376731122869
+29.77770208783754,1.3692019573755134
+29.855472296621294,1.3836320041655847
+29.933242505405047,1.398666871493083
+30.0,1.4120918885328637
+30.077770208783754,1.4282507508270417
+30.155540417567508,1.4450144336586466
+30.233310626351262,1.4623829370276784
+30.311080835135016,1.480356260934137
+30.38885104391877,1.4989344053780225
+30.466621252702524,1.518117370359335
+30.544391461486278,1.5379051558780743
+30.62216167027003,1.5582977619342404
+30.699931879053786,1.5792951885278335
+30.77770208783754,1.6008974356588535
+30.855472296621294,1.6231045033273004
+30.933242505405047,1.645916391533174
+31.0,1.6660171580324485
+31.077770208783754,1.6899530412050021
+31.155540417567508,1.7144937449149826
+31.233310626351262,1.7396392691623899
+31.311080835135016,1.765389613947224
+31.38885104391877,1.7917447792694852
+31.466621252702524,1.8187047651291732
+31.544391461486278,1.846269571526288
+31.62216167027003,1.8744391984608297
+31.699931879053786,1.9032136459327984
+31.77770208783754,1.932592913942194
+31.855472296621294,1.9625770024890163
+31.933242505405047,1.9931659115732656
+32.0,2.0199424275320337
+36.0,3.6199424275320395
+36.050873307073026,3.640550559698504
+36.10174661414605,3.6614175012022234
+36.15261992121908,3.6825432520431973
+36.2034932282921,3.703927812221426
+36.25436653536513,3.725571181736909
+36.305239842438155,3.747473360589647
+36.35611314951118,3.7696343487796393
+36.40698645658421,3.7920541463068864
+36.45785976365723,3.814732753171388
+36.50873307073026,3.8376701693731445
+36.559606377803284,3.8608663949121556
+36.61047968487631,3.884321429788421
+36.661352991949336,3.9080352740019415
+36.71222629902236,3.9320079275527164
+36.76309960609539,3.956239390440746
+36.81397291316841,3.9807296626660302
+36.85973426758097,4.002968464882991
+36.90549562199352,4.025416677255719
+36.95125697640608,4.048074299784214
+36.997018330818634,4.070941332468476
+37.0,4.07244492254607
+37.045761354412555,4.095535009908114
+37.09152270882511,4.118834507425926
+37.137284063237665,4.142343415099504
+37.18304541765022,4.16606173292885
+37.228806772062775,4.189989460913963
+37.27456812647533,4.214126599054842
+37.320329480887885,4.23847314735149
+37.36609083530044,4.263029105803905
+37.411852189712995,4.287794474412086
+37.45761354412555,4.312769253176035
+37.503374898538105,4.337953442095751
+37.54913625295066,4.363347041171234
+37.594897607363215,4.388950050402483
+37.64065896177577,4.4147624697895
+37.68184010561618,4.438160937256261
+37.72302124945659,4.461728993383822
+37.764202393297005,4.485466638172184
+37.805383537137416,4.509373871621347
+37.84656468097783,4.53345069373131
+37.88774582481824,4.557697104502074
+37.92892696865865,4.582113103933637
+37.97010811249906,4.606698692026002
+38.0,4.624667570244607
+38.04118114384041,4.624497981583806
+38.08236228768082,4.624158804262205
+38.123543431521234,4.623650038279804
+38.164724575361646,4.622971683636602
+38.20590571920206,4.6221237403326
+38.24708686304247,4.621106208367797
+38.28826800688288,4.619919087742193
+38.32944915072329,4.618562378455789
+38.3706302945637,4.617036080508585
+38.411811438404115,4.615340193900581
+38.452992582244526,4.6134747186317755
+38.49417372608494,4.61143965470217
+38.53535486992535,4.609235002111763
+38.57653601376576,4.606860760860556
+38.61771715760617,4.604316930948549
+38.658898301446584,4.601603512375742
+38.700079445286995,4.598720505142134
+38.74126058912741,4.595667909247725
+38.78244173296782,4.592445724692515
+38.82362287680823,4.589053951476505
+38.86480402064864,4.585492589599696
+38.90598516448905,4.581761639062085
+38.947166308329464,4.577861099863674
+38.988347452169876,4.5737909720044625
+39.0,4.572591308883719
+39.04118114384041,4.568303605838877
+39.08236228768082,4.563846314133235
+39.123543431521234,4.559219433766792
+39.164724575361646,4.554422964739548
+39.20590571920206,4.549456907051504
+39.24708686304247,4.54432126070266
+39.28826800688288,4.539016025693016
+39.32944915072329,4.533541202022571
+39.3706302945637,4.527896789691325
+39.411811438404115,4.5220827886992785
+39.452992582244526,4.516099199046431
+39.49417372608494,4.509946020732785
+39.53535486992535,4.503623253758337
+39.57653601376576,4.497130898123089
+39.61771715760617,4.49046895382704
+39.658898301446584,4.483637420870191
+39.700079445286995,4.476636299252541
+39.74126058912741,4.469465588974091
+39.78244173296782,4.462125290034841
+39.82362287680823,4.45461540243479
+39.86480402064864,4.446935926173938
+39.90598516448905,4.439086861252286
+39.947166308329464,4.431068207669833
+39.988347452169876,4.4228799654265805
+40.0,4.420515047522829
+					</series>
+					<series title="cps_dynamic.acceleration" type="l" color="0xcc00ff" encoding="csv">0.0,0.0
+4.0,0.0
+8.0,0.4
+8.0,0.0
+12.0,-0.3999999999999999
+12.0,0.0
+16.0,0.39999999999999974
+16.0,0.0
+20.0,-0.3999999999999996
+20.0,0.0
+24.0,0.39999999999999997
+24.0,0.0
+28.0,-0.39999999999999997
+28.0,0.0
+32.0,0.40000000000000063
+36.0,0.40000000000000063
+38.0,0.600000000000001
+38.0,0.0
+40.0,-0.2000000000000003
+					</series>
+					<comment/>
+				</plot>
+			</result>
+		</query>
+	</queries>
+</nta>

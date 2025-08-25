@@ -1,0 +1,2 @@
+#!/bin/bash
+./bin_linux/verifyta car/models/DEU_A9-2_1_T-1_0528.xml car/shield/synthesis.q -F 1 -u -D 0.01 -s --max-iterations 1 --eval-runs 1 --good-runs 100 --total-runs 200 --reset-no-better 1 --max-reset-learning 1 >> car/shield/record.log

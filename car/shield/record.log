@@ -1,0 +1,2364 @@
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748499343
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 4276 states
+ -- States explored : 0 states
+ -- CPU user time used : 4519 ms
+ -- Virtual memory used : 66024 KiB
+ -- Resident memory used : 23208 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 2 ms
+ -- Virtual memory used : 66156 KiB
+ -- Resident memory used : 23208 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,15) (1,15) (1,19) (2,19) (2,22.6) (3,22.6) (3,26.6) (4,26.6) (4,30.2) (5,30.2) (5,34.2) (6,34.2) (6,38.2) (7,38.2) (7,42.2) (8,42.2) (8,46.2) (9,46.2) (9,50.2) (10,50.2) (10,54.2) (11,54.2) (11,58.2) (12,58.2) (12,62.2) (13,62.2) (13,66.2) (14,66.2) (14,70.2) (15,70.2) (15,74.2) (16,74.2) (16,78.2) (17,78.2) (17,82.2) (18,82.2) (18,86.2) (19,86.2) (19,90.2) (20,90.2) (20,94.2) (21,94.2) (21,98.2) (22,98.2) (22,102.2) (23,102.2) (23,106.2) (24,106.2) (24,110.2) (25,110.2) (25,114.2) (26,114.2) (26,118.2) (27,118.2) (27,122.2) (28,122.2) (28,126.2) (29,126.2) (29,130.1) (30,130.1) (30,134.1) (31,134.1) (31,138.1) (32,138.1) (32,142.1) (33,142.1) (33,146.1) (34,146.1) (34,150.1) (35,150.1) (35,154.1) (36,154.1) (36,158.1) (37,158.1) (37,162.1) (38,162.1) (38,165.7) (39,165.7) (39,169.7) (40,169.7) (40,173.7) (41,173.7) (41,177.7) (42,177.7) (42,181.7) (43,181.7) (43,185.7) (44,185.7) (44,189.7) (45,189.7) (45,193.7) (46,193.7) (46,197.7) (47,197.7) (47,201.7) (48,201.7) (48,205.7) (49,205.7) (49,209.7) (50,209.7) (50.000002,213.7)
+i2d((cps_state.position).y):
+[0]: (0,0) (2,0) (2,-1.5) (4,-1.5) (4,-3) (38,-3) (38,-1.4) (50.000002,-1.4)
+i2d(cps_state.head):
+[0]: (0,0) (1,0) (1,-0.392) (2,-0.392) (2,0) (3,0) (3,-0.392) (4,-0.392) (4,0) (37,0) (37,0.392) (38,0.392) (38,0) (50.000002,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,4) (50.000002,4)
+i2d(cps_state.acc):
+[0]: (0,0) (50.000002,0)
+ -- States explored : 0 states
+ -- CPU user time used : 162 ms
+ -- Virtual memory used : 66156 KiB
+ -- Resident memory used : 23848 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748499630
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 2725 states
+ -- States explored : 0 states
+ -- CPU user time used : 3226 ms
+ -- Virtual memory used : 65196 KiB
+ -- Resident memory used : 22160 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 3 ms
+ -- Virtual memory used : 65196 KiB
+ -- Resident memory used : 22288 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,28) (1,28) (1,32) (2,32) (2,35.6) (3,35.6) (3,39.2) (4,39.2) (4,43.2) (5,43.2) (5,47.2) (6,47.2) (6,51.2) (7,51.2) (7,55.2) (8,55.2) (8,59.2) (9,59.2) (9,63.2) (10,63.2) (10,67.2) (11,67.2) (11,71.2) (12,71.2) (12,75.2) (13,75.2) (13,79.2) (14,79.2) (14,83.2) (15,83.2) (15,87.2) (16,87.2) (16,91.2) (17,91.2) (17,95.2) (18,95.2) (18,98.8) (19,98.8) (19,102.8) (20,102.8) (20,106.8) (21,106.8) (21,110.8) (22,110.8) (22,114.8) (23,114.8) (23,118.8) (24,118.8) (24,122.8) (25,122.8) (25,126.8) (26,126.8) (26,130.8) (27,130.8) (27,134.8) (28,134.8) (28,138.8) (29,138.8) (29,142.8) (30,142.8) (30,146.8) (31,146.8) (31,150.8) (32,150.8) (32,154.8) (33,154.8) (33,158.8) (34,158.8) (34,162.8) (35,162.8) (35,166.8) (36,166.8) (36,170.8) (37,170.8) (37,174.8) (38,174.8) (38,178.8) (39,178.8) (39,182.8) (40,182.8) (40,186.8) (41,186.8) (41,190.8) (42,190.8) (42,194.8) (43,194.8) (43,198.8) (44,198.8) (44,202.8) (45,202.8) (45,206.8) (46,206.8) (46,210.8) (47,210.8) (47,214.8) (48,214.8) (48,218.8) (49,218.8) (49,222.8) (50,222.8) (50.000002,226.8)
+i2d((cps_state.position).y):
+[0]: (0,0) (0,-3.336) (1,-3.336) (1,-3.3) (2,-3.3) (2,-1.7) (3,-1.7) (3,-0.1) (18,-0.1) (18,1.4) (50.000002,1.4)
+i2d(cps_state.head):
+[0]: (0,0) (1,0) (1,0.392) (3,0.392) (3,0) (17,0) (17,0.392) (18,0.392) (18,0) (50.000002,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,4) (50.000002,4)
+i2d(cps_state.acc):
+[0]: (0,0) (50.000002,0)
+ -- States explored : 0 states
+ -- CPU user time used : 273 ms
+ -- Virtual memory used : 65364 KiB
+ -- Resident memory used : 23056 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748499953
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 2725 states
+ -- States explored : 0 states
+ -- CPU user time used : 3202 ms
+ -- Virtual memory used : 65200 KiB
+ -- Resident memory used : 22156 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 2 ms
+ -- Virtual memory used : 65200 KiB
+ -- Resident memory used : 22284 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,28) (1,28) (1,32) (2,32) (2,35.6) (3,35.6) (3,39.6) (4,39.6) (4,43.6) (5,43.6) (5,47.6) (6,47.6) (6,51.6) (7,51.6) (7,55.2) (8,55.2) (8,59.2) (9,59.2) (9,63.2) (10,63.2) (10,67.2) (11,67.2) (11,71.2) (12,71.2) (12,75.2) (13,75.2) (13,79.2) (14,79.2) (14,83.2) (15,83.2) (15,87.2) (16,87.2) (16,91.2) (17,91.2) (17,94.8) (18,94.8) (18,98.8) (19,98.8) (19,102.8) (20,102.8) (20,106.8) (21,106.8) (21,110.8) (22,110.8) (22,114.8) (23,114.8) (23,118.8) (24,118.8) (24,122.8) (25,122.8) (25,126.8) (26,126.8) (26,130.8) (27,130.8) (27,134.8) (28,134.8) (28,138.8) (29,138.8) (29,142.8) (30,142.8) (30,146.8) (31,146.8) (31,150.8) (32,150.8) (32,154.8) (33,154.8) (33,158.8) (34,158.8) (34,162.8) (35,162.8) (35,166.8) (36,166.8) (36,170.8) (37,170.8) (37,174.8) (38,174.8) (38,178.8) (39,178.8) (39,182.8) (40,182.8) (40,186.8) (41,186.8) (41,190.8) (42,190.8) (42,194.8) (43,194.8) (43,198.8) (44,198.8) (44,202.8) (45,202.8) (45,206.8) (46,206.8) (46,210.8) (47,210.8) (47,214.8) (48,214.8) (48,218.8) (49,218.8) (49,222.8) (50,222.8) (50.000002,226.8)
+i2d((cps_state.position).y):
+[0]: (0,0) (0,-3.336) (1,-3.336) (1,-3.3) (2,-3.3) (2,-1.7) (7,-1.7) (7,-0.1) (17,-0.1) (17,1.4) (50.000002,1.4)
+i2d(cps_state.head):
+[0]: (0,0) (1,0) (1,0.392) (2,0.392) (2,0) (6,0) (6,0.392) (7,0.392) (7,0) (16,0) (16,0.392) (17,0.392) (17,0) (50.000002,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,4) (50.000002,4)
+i2d(cps_state.acc):
+[0]: (0,0) (50.000002,0)
+ -- States explored : 0 states
+ -- CPU user time used : 258 ms
+ -- Virtual memory used : 65364 KiB
+ -- Resident memory used : 23052 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748500129
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 2725 states
+ -- States explored : 0 states
+ -- CPU user time used : 3196 ms
+ -- Virtual memory used : 65204 KiB
+ -- Resident memory used : 22412 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 2 ms
+ -- Virtual memory used : 65204 KiB
+ -- Resident memory used : 22540 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,28) (1,28) (1,32) (2,32) (2,35.6) (3,35.6) (3,39.6) (4,39.6) (4,43.6) (5,43.6) (5,47.2) (6,47.2) (6,51.2) (7,51.2) (7,55.2) (8,55.2) (8,59.2) (9,59.2) (9,63.2) (10,63.2) (10,67.2) (11,67.2) (11,71.2) (12,71.2) (12,75.2) (13,75.2) (13,79.2) (14,79.2) (14,83.2) (15,83.2) (15,87.2) (16,87.2) (16,91.2) (17,91.2) (17,95.2) (18,95.2) (18,98.8) (19,98.8) (19,102.8) (20,102.8) (20,106.8) (21,106.8) (21,110.8) (22,110.8) (22,114.8) (23,114.8) (23,118.8) (24,118.8) (24,122.8) (25,122.8) (25,126.8) (26,126.8) (26,130.8) (27,130.8) (27,134.8) (28,134.8) (28,138.8) (29,138.8) (29,142.8) (30,142.8) (30,146.8) (31,146.8) (31,150.8) (32,150.8) (32,154.8) (33,154.8) (33,158.8) (34,158.8) (34,162.8) (35,162.8) (35,166.8) (36,166.8) (36,170.8) (37,170.8) (37,174.8) (38,174.8) (38,178.8) (39,178.8) (39,182.8) (40,182.8) (40,186.8) (41,186.8) (41,190.8) (42,190.8) (42,194.8) (43,194.8) (43,198.8) (44,198.8) (44,202.8) (45,202.8) (45,206.8) (46,206.8) (46,210.8) (47,210.8) (47,214.8) (48,214.8) (48,218.8) (49,218.8) (49,222.8) (50,222.8) (50.000002,226.8)
+i2d((cps_state.position).y):
+[0]: (0,0) (0,-3.336) (1,-3.336) (1,-3.3) (2,-3.3) (2,-1.7) (5,-1.7) (5,-0.1) (18,-0.1) (18,1.4) (50.000002,1.4)
+i2d(cps_state.head):
+[0]: (0,0) (1,0) (1,0.392) (2,0.392) (2,0) (4,0) (4,0.392) (5,0.392) (5,0) (17,0) (17,0.392) (18,0.392) (18,0) (50.000002,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,4) (50.000002,4)
+i2d(cps_state.acc):
+[0]: (0,0) (50.000002,0)
+ -- States explored : 0 states
+ -- CPU user time used : 264 ms
+ -- Virtual memory used : 65364 KiB
+ -- Resident memory used : 23180 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748500497
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 5187 states
+ -- States explored : 0 states
+ -- CPU user time used : 5951 ms
+ -- Virtual memory used : 66668 KiB
+ -- Resident memory used : 23952 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 4 ms
+ -- Virtual memory used : 66800 KiB
+ -- Resident memory used : 24080 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,29.447) (1,29.447) (1,32.4) (2,32.4) (2,35.4) (3,35.4) (3,38.4) (4,38.4) (4,41.1) (5,41.1) (5,43.8) (6,43.8) (6,46.5) (7,46.5) (7,49.5) (8,49.5) (8,52.5) (9,52.5) (9,55.5) (10,55.5) (10,58.5) (11,58.5) (11,61.5) (12,61.5) (12,64.5) (13,64.5) (13,67.5) (14,67.5) (14,70.5) (15,70.5) (15,73.5) (16,73.5) (16,76.5) (17,76.5) (17,79.5) (18,79.5) (18,82.5) (19,82.5) (19,85.2) (20,85.2) (20,88.2) (21,88.2) (21,91.2) (22,91.2) (22,94.2) (23,94.2) (23,97.2) (24,97.2) (24,100.2) (25,100.2) (25,103.2) (26,103.2) (26,106.2) (27,106.2) (27,109.2) (28,109.2) (28,112.2) (29,112.2) (29,115.2) (30,115.2) (30,118.2) (31,118.2) (31,121.2) (32,121.2) (32,124.2) (33,124.2) (33,127.2) (34,127.2) (34,130.1) (35,130.1) (35,133.1) (36,133.1) (36,136.1) (37,136.1) (37,139.1) (38,139.1) (38,142.1) (39,142.1) (39,145.1) (40,145.1) (40,148.1) (41,148.1) (41,151.1) (42,151.1) (42,154.1) (43,154.1) (43,157.1) (44,157.1) (44,160.1) (45,160.1) (45,163.1) (46,163.1) (46,166.1) (47,166.1) (47,169.1) (48,169.1) (48,172.1) (49,172.1) (49,175.1) (50,175.1)
+i2d((cps_state.position).y):
+[0]: (0,0) (0,-3.308) (1,-3.308) (1,-3.3) (4,-3.3) (4,-2.1) (5,-2.1) (5,-0.9) (6,-0.9) (6,0.2) (19,0.2) (19,1.3) (50,1.3)
+i2d(cps_state.head):
+[0]: (0,0) (3,0) (3,0.392) (6,0.392) (6,0) (18,0) (18,0.392) (19,0.392) (19,0) (50,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3) (50,3)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 245 ms
+ -- Virtual memory used : 66940 KiB
+ -- Resident memory used : 24720 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748500622
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 3812 states
+ -- States explored : 0 states
+ -- CPU user time used : 4384 ms
+ -- Virtual memory used : 65864 KiB
+ -- Resident memory used : 23188 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 2 ms
+ -- Virtual memory used : 65864 KiB
+ -- Resident memory used : 23316 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,29.447) (1,29.447) (1,32.9) (2,32.9) (2,36.4) (3,36.4) (3,39.9) (4,39.9) (4,43.4) (5,43.4) (5,46.6) (6,46.6) (6,49.8) (7,49.8) (7,53) (8,53) (8,56.5) (9,56.5) (9,60) (10,60) (10,63.5) (11,63.5) (11,67) (12,67) (12,70.5) (13,70.5) (13,74) (14,74) (14,77.5) (15,77.5) (15,81) (16,81) (16,84.5) (17,84.5) (17,88) (18,88) (18,91.5) (19,91.5) (19,95) (20,95) (20,98.5) (21,98.5) (21,102) (22,102) (22,105.5) (23,105.5) (23,109) (24,109) (24,112.5) (25,112.5) (25,116) (26,116) (26,119.5) (27,119.5) (27,123) (28,123) (28,126.5) (29,126.5) (29,130) (30,130) (30,133.5) (31,133.5) (31,137) (32,137) (32,140.5) (33,140.5) (33,144) (34,144) (34,147.5) (35,147.5) (35,151) (36,151) (36,154.5) (37,154.5) (37,158) (38,158) (38,161.5) (39,161.5) (39,165) (40,165) (40,168.2) (41,168.2) (41,171.7) (42,171.7) (42,175.2) (43,175.2) (43,178.7) (44,178.7) (44,182.2) (45,182.2) (45,185.7) (46,185.7) (46,189.2) (47,189.2) (47,192.7) (48,192.7) (48,196.2) (49,196.2) (49,199.7) (50,199.7) (50.000002,203.2)
+i2d((cps_state.position).y):
+[0]: (0,0) (0,-3.308) (1,-3.308) (1,-3.3) (5,-3.3) (5,-1.9) (6,-1.9) (6,-0.5) (7,-0.5) (7,0.8) (40,0.8) (40,2.1) (50.000002,2.1)
+i2d(cps_state.head):
+[0]: (0,0) (4,0) (4,0.392) (7,0.392) (7,0) (39,0) (39,0.392) (40,0.392) (40,0) (50.000002,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.5) (50.000002,3.5)
+i2d(cps_state.acc):
+[0]: (0,0) (50.000002,0)
+ -- States explored : 0 states
+ -- CPU user time used : 247 ms
+ -- Virtual memory used : 66016 KiB
+ -- Resident memory used : 23828 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748500776
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 3812 states
+ -- States explored : 0 states
+ -- CPU user time used : 4516 ms
+ -- Virtual memory used : 66440 KiB
+ -- Resident memory used : 23880 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 3 ms
+ -- Virtual memory used : 66440 KiB
+ -- Resident memory used : 24008 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,29.447) (1,29.447) (1,32.9) (2,32.9) (2,36.4) (3,36.4) (3,39.9) (4,39.9) (4,43.1) (5,43.1) (5,46.3) (6,46.3) (6,49.8) (7,49.8) (7,53.3) (8,53.3) (8,56.8) (9,56.8) (9,60.3) (10,60.3) (10,63.5) (11,63.5) (11,67) (12,67) (12,70.5) (13,70.5) (13,74) (14,74) (14,77.5) (15,77.5) (15,81) (16,81) (16,84.5) (17,84.5) (17,88) (18,88) (18,91.5) (19,91.5) (19,95) (20,95) (20,98.5) (21,98.5) (21,102) (22,102) (22,105.5) (23,105.5) (23,109) (24,109) (24,112.5) (25,112.5) (25,116) (26,116) (26,119.5) (27,119.5) (27,123) (28,123) (28,126.5) (29,126.5) (29,130) (30,130) (30,133.5) (31,133.5) (31,137) (32,137) (32,140.5) (33,140.5) (33,144) (34,144) (34,147.5) (35,147.5) (35,151) (36,151) (36,154.5) (37,154.5) (37,158) (38,158) (38,161.5) (39,161.5) (39,165) (40,165) (40,168.2) (41,168.2) (41,171.7) (42,171.7) (42,175.2) (43,175.2) (43,178.7) (44,178.7) (44,182.2) (45,182.2) (45,185.7) (46,185.7) (46,189.2) (47,189.2) (47,192.7) (48,192.7) (48,196.2) (49,196.2) (49,199.7) (50,199.7) (50.000002,203.2)
+i2d((cps_state.position).y):
+[0]: (0,0) (0,-3.308) (1,-3.308) (1,-3.3) (4,-3.3) (4,-1.9) (5,-1.9) (5,-0.5) (10,-0.5) (10,0.8) (40,0.8) (40,2.1) (50.000002,2.1)
+i2d(cps_state.head):
+[0]: (0,0) (3,0) (3,0.392) (5,0.392) (5,0) (9,0) (9,0.392) (10,0.392) (10,0) (39,0) (39,0.392) (40,0.392) (40,0) (50.000002,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.5) (50.000002,3.5)
+i2d(cps_state.acc):
+[0]: (0,0) (50.000002,0)
+ -- States explored : 0 states
+ -- CPU user time used : 261 ms
+ -- Virtual memory used : 66648 KiB
+ -- Resident memory used : 24648 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748500983
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 3812 states
+ -- States explored : 0 states
+ -- CPU user time used : 4569 ms
+ -- Virtual memory used : 66440 KiB
+ -- Resident memory used : 24392 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 6 ms
+ -- Virtual memory used : 66440 KiB
+ -- Resident memory used : 24392 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,29.447) (1,29.447) (1,32.9) (2,32.9) (2,36.1) (3,36.1) (3,39.3) (4,39.3) (4,42.5) (5,42.5) (5,46) (6,46) (6,49.5) (7,49.5) (7,53) (8,53) (8,56.5) (9,56.5) (9,60) (10,60) (10,63.5) (11,63.5) (11,67) (12,67) (12,70.5) (13,70.5) (13,74) (14,74) (14,77.5) (15,77.5) (15,81) (16,81) (16,84.5) (17,84.5) (17,88) (18,88) (18,91.5) (19,91.5) (19,95) (20,95) (20,98.5) (21,98.5) (21,102) (22,102) (22,105.5) (23,105.5) (23,109) (24,109) (24,112.5) (25,112.5) (25,116) (26,116) (26,119.5) (27,119.5) (27,123) (28,123) (28,126.5) (29,126.5) (29,130) (30,130) (30,133.5) (31,133.5) (31,137) (32,137) (32,140.5) (33,140.5) (33,144) (34,144) (34,147.5) (35,147.5) (35,151) (36,151) (36,154.5) (37,154.5) (37,158) (38,158) (38,161.5) (39,161.5) (39,164.7) (40,164.7) (40,168.2) (41,168.2) (41,171.7) (42,171.7) (42,175.2) (43,175.2) (43,178.7) (44,178.7) (44,182.2) (45,182.2) (45,185.7) (46,185.7) (46,189.2) (47,189.2) (47,192.7) (48,192.7) (48,196.2) (49,196.2) (49,199.7) (50,199.7) (50.000002,203.2)
+i2d((cps_state.position).y):
+[0]: (0,0) (0,-3.308) (1,-3.308) (1,-3.3) (2,-3.3) (2,-1.9) (3,-1.9) (3,-0.5) (4,-0.5) (4,0.8) (39,0.8) (39,2.1) (50.000002,2.1)
+i2d(cps_state.head):
+[0]: (0,0) (1,0) (1,0.392) (4,0.392) (4,0) (38,0) (38,0.392) (39,0.392) (39,0) (50.000002,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.5) (50.000002,3.5)
+i2d(cps_state.acc):
+[0]: (0,0) (50.000002,0)
+ -- States explored : 0 states
+ -- CPU user time used : 263 ms
+ -- Virtual memory used : 66648 KiB
+ -- Resident memory used : 25032 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748501105
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 3338 states
+ -- States explored : 0 states
+ -- CPU user time used : 3903 ms
+ -- Virtual memory used : 66176 KiB
+ -- Resident memory used : 23616 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 6 ms
+ -- Virtual memory used : 66176 KiB
+ -- Resident memory used : 23744 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,29.447) (1,29.447) (1,32.9) (2,32.9) (2,36.4) (3,36.4) (3,39.9) (4,39.9) (4,43.4) (5,43.4) (5,46.9) (6,46.9) (6,50.4) (7,50.4) (7,53.9) (8,53.9) (8,57.4) (9,57.4) (9,60.9) (10,60.9) (10,64.40000000000001) (11,64.40000000000001) (11,67.59999999999999) (12,67.59999999999999) (12,70.8) (13,70.8) (13,74) (14,74) (14,77.5) (15,77.5) (15,81) (16,81) (16,84.5) (17,84.5) (17,88) (18,88) (18,91.5) (19,91.5) (19,95) (20,95) (20,98.5) (21,98.5) (21,102) (22,102) (22,105.5) (23,105.5) (23,109) (24,109) (24,112.5) (25,112.5) (25,116) (26,116) (26,119.5) (27,119.5) (27,123) (28,123) (28,126.5) (29,126.5) (29,130) (30,130) (30,133.5) (31,133.5) (31,137) (32,137) (32,140.5) (33,140.5) (33,144) (34,144) (34,147.5) (35,147.5) (35,151) (36,151) (36,154.5) (37,154.5) (37,158) (38,158) (38,161.2) (39,161.2) (39,164.7) (40,164.7) (40,168.2) (41,168.2) (41,171.7) (42,171.7) (42,175.2) (43,175.2) (43,178.7) (44,178.7) (44,182.2) (45,182.2) (45,185.7) (46,185.7) (46,189.2) (47,189.2) (47,192.7) (48,192.7) (48,196.2) (49,196.2) (49,199.7) (50,199.7) (50.000002,203.2)
+i2d((cps_state.position).y):
+[0]: (0,0) (0,-3.308) (1,-3.308) (1,-3.3) (11,-3.3) (11,-1.9) (12,-1.9) (12,-0.5) (13,-0.5) (13,0.8) (38,0.8) (38,2.1) (50.000002,2.1)
+i2d(cps_state.head):
+[0]: (0,0) (10,0) (10,0.392) (13,0.392) (13,0) (37,0) (37,0.392) (38,0.392) (38,0) (50.000002,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.5) (50.000002,3.5)
+i2d(cps_state.acc):
+[0]: (0,0) (50.000002,0)
+ -- States explored : 0 states
+ -- CPU user time used : 253 ms
+ -- Virtual memory used : 66368 KiB
+ -- Resident memory used : 24384 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748501127
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 3812 states
+ -- States explored : 0 states
+ -- CPU user time used : 4582 ms
+ -- Virtual memory used : 65860 KiB
+ -- Resident memory used : 23176 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 2 ms
+ -- Virtual memory used : 65860 KiB
+ -- Resident memory used : 23304 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,29.447) (1,29.447) (1,32.9) (2,32.9) (2,36.1) (3,36.1) (3,39.3) (4,39.3) (4,42.5) (5,42.5) (5,46) (6,46) (6,49.5) (7,49.5) (7,53) (8,53) (8,56.5) (9,56.5) (9,60) (10,60) (10,63.5) (11,63.5) (11,67) (12,67) (12,70.5) (13,70.5) (13,74) (14,74) (14,77.5) (15,77.5) (15,81) (16,81) (16,84.5) (17,84.5) (17,88) (18,88) (18,91.5) (19,91.5) (19,95) (20,95) (20,98.5) (21,98.5) (21,102) (22,102) (22,105.5) (23,105.5) (23,109) (24,109) (24,112.5) (25,112.5) (25,116) (26,116) (26,119.5) (27,119.5) (27,123) (28,123) (28,126.5) (29,126.5) (29,130) (30,130) (30,133.5) (31,133.5) (31,137) (32,137) (32,140.5) (33,140.5) (33,144) (34,144) (34,147.5) (35,147.5) (35,151) (36,151) (36,154.5) (37,154.5) (37,158) (38,158) (38,161.2) (39,161.2) (39,164.7) (40,164.7) (40,168.2) (41,168.2) (41,171.7) (42,171.7) (42,175.2) (43,175.2) (43,178.7) (44,178.7) (44,182.2) (45,182.2) (45,185.7) (46,185.7) (46,189.2) (47,189.2) (47,192.7) (48,192.7) (48,196.2) (49,196.2) (49,199.7) (50,199.7) (50.000002,203.2)
+i2d((cps_state.position).y):
+[0]: (0,0) (0,-3.308) (1,-3.308) (1,-3.3) (2,-3.3) (2,-1.9) (3,-1.9) (3,-0.5) (4,-0.5) (4,0.8) (38,0.8) (38,2.1) (50.000002,2.1)
+i2d(cps_state.head):
+[0]: (0,0) (1,0) (1,0.392) (4,0.392) (4,0) (37,0) (37,0.392) (38,0.392) (38,0) (50.000002,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.5) (50.000002,3.5)
+i2d(cps_state.acc):
+[0]: (0,0) (50.000002,0)
+ -- States explored : 0 states
+ -- CPU user time used : 257 ms
+ -- Virtual memory used : 66016 KiB
+ -- Resident memory used : 23944 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748501147
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 3338 states
+ -- States explored : 0 states
+ -- CPU user time used : 3954 ms
+ -- Virtual memory used : 66172 KiB
+ -- Resident memory used : 23872 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 2 ms
+ -- Virtual memory used : 66172 KiB
+ -- Resident memory used : 24000 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,29.447) (1,29.447) (1,32.9) (2,32.9) (2,36.4) (3,36.4) (3,39.9) (4,39.9) (4,43.4) (5,43.4) (5,46.9) (6,46.9) (6,50.4) (7,50.4) (7,53.9) (8,53.9) (8,57.4) (9,57.4) (9,60.9) (10,60.9) (10,64.40000000000001) (11,64.40000000000001) (11,67.59999999999999) (12,67.59999999999999) (12,70.8) (13,70.8) (13,74.3) (14,74.3) (14,77.5) (15,77.5) (15,81) (16,81) (16,84.5) (17,84.5) (17,88) (18,88) (18,91.5) (19,91.5) (19,95) (20,95) (20,98.5) (21,98.5) (21,102) (22,102) (22,105.5) (23,105.5) (23,109) (24,109) (24,112.5) (25,112.5) (25,116) (26,116) (26,119.5) (27,119.5) (27,123) (28,123) (28,126.5) (29,126.5) (29,130) (30,130) (30,133.5) (31,133.5) (31,137) (32,137) (32,140.5) (33,140.5) (33,144) (34,144) (34,147.5) (35,147.5) (35,151) (36,151) (36,154.5) (37,154.5) (37,158) (38,158) (38,161.2) (39,161.2) (39,164.7) (40,164.7) (40,168.2) (41,168.2) (41,171.7) (42,171.7) (42,175.2) (43,175.2) (43,178.7) (44,178.7) (44,182.2) (45,182.2) (45,185.7) (46,185.7) (46,189.2) (47,189.2) (47,192.7) (48,192.7) (48,196.2) (49,196.2) (49,199.7) (50,199.7) (50.000002,203.2)
+i2d((cps_state.position).y):
+[0]: (0,0) (0,-3.308) (1,-3.308) (1,-3.3) (11,-3.3) (11,-1.9) (12,-1.9) (12,-0.5) (14,-0.5) (14,0.8) (38,0.8) (38,2.1) (50.000002,2.1)
+i2d(cps_state.head):
+[0]: (0,0) (10,0) (10,0.392) (12,0.392) (12,0) (13,0) (13,0.392) (14,0.392) (14,0) (37,0) (37,0.392) (38,0.392) (38,0) (50.000002,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.5) (50.000002,3.5)
+i2d(cps_state.acc):
+[0]: (0,0) (50.000002,0)
+ -- States explored : 0 states
+ -- CPU user time used : 250 ms
+ -- Virtual memory used : 66368 KiB
+ -- Resident memory used : 24512 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748502027
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 3812 states
+ -- States explored : 0 states
+ -- CPU user time used : 4713 ms
+ -- Virtual memory used : 65868 KiB
+ -- Resident memory used : 23188 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 4 ms
+ -- Virtual memory used : 65868 KiB
+ -- Resident memory used : 23188 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,29.447) (1,29.447) (1,32.9) (2,32.9) (2,36.1) (3,36.1) (3,39.3) (4,39.3) (4,42.5) (5,42.5) (5,46) (6,46) (6,49.5) (7,49.5) (7,53) (8,53) (8,56.5) (9,56.5) (9,60) (10,60) (10,63.5) (11,63.5) (11,67) (12,67) (12,70.5) (13,70.5) (13,74) (14,74) (14,77.5) (15,77.5) (15,81) (16,81) (16,84.5) (17,84.5) (17,88) (18,88) (18,91.5) (19,91.5) (19,95) (20,95) (20,98.5) (21,98.5) (21,102) (22,102) (22,105.5) (23,105.5) (23,109) (24,109) (24,112.5) (25,112.5) (25,116) (26,116) (26,119.5) (27,119.5) (27,123) (28,123) (28,126.5) (29,126.5) (29,130) (30,130) (30,133.5) (31,133.5) (31,137) (32,137) (32,140.5) (33,140.5) (33,144) (34,144) (34,147.5) (35,147.5) (35,151) (36,151) (36,154.5) (37,154.5) (37,158) (38,158) (38,161.2) (39,161.2) (39,164.7) (40,164.7) (40,168.2) (41,168.2) (41,171.7) (42,171.7) (42,175.2) (43,175.2) (43,178.7) (44,178.7) (44,182.2) (45,182.2) (45,185.7) (46,185.7) (46,189.2) (47,189.2) (47,192.7) (48,192.7) (48,196.2) (49,196.2) (49,199.7) (50,199.7) (50.000002,203.2)
+i2d((cps_state.position).y):
+[0]: (0,0) (0,-3.308) (1,-3.308) (1,-3.3) (2,-3.3) (2,-1.9) (3,-1.9) (3,-0.5) (4,-0.5) (4,0.8) (38,0.8) (38,2.1) (50.000002,2.1)
+i2d(cps_state.head):
+[0]: (0,0) (1,0) (1,0.392) (4,0.392) (4,0) (37,0) (37,0.392) (38,0.392) (38,0) (50.000002,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.5) (50.000002,3.5)
+i2d(cps_state.acc):
+[0]: (0,0) (50.000002,0)
+ -- States explored : 0 states
+ -- CPU user time used : 275 ms
+ -- Virtual memory used : 66024 KiB
+ -- Resident memory used : 23828 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748502088
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 4517 states
+ -- States explored : 0 states
+ -- CPU user time used : 5293 ms
+ -- Virtual memory used : 66268 KiB
+ -- Resident memory used : 23564 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 5 ms
+ -- Virtual memory used : 66404 KiB
+ -- Resident memory used : 23564 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,34.846) (1,34.846) (1,38.3) (2,38.3) (2,41.8) (3,41.8) (3,45) (4,45) (4,48.2) (5,48.2) (5,51.7) (6,51.7) (6,55.2) (7,55.2) (7,58.4) (8,58.4) (8,61.9) (9,61.9) (9,65.40000000000001) (10,65.40000000000001) (10,68.90000000000001) (11,68.90000000000001) (11,72.40000000000001) (12,72.40000000000001) (12,75.90000000000001) (13,75.90000000000001) (13,79.40000000000001) (14,79.40000000000001) (14,82.90000000000001) (15,82.90000000000001) (15,86.40000000000001) (16,86.40000000000001) (16,89.90000000000001) (17,89.90000000000001) (17,93.40000000000001) (18,93.40000000000001) (18,96.90000000000001) (19,96.90000000000001) (19,100.4) (20,100.4) (20,103.9) (21,103.9) (21,107.4) (22,107.4) (22,110.9) (23,110.9) (23,114.4) (24,114.4) (24,117.9) (25,117.9) (25,121.4) (26,121.4) (26,124.9) (27,124.9) (27,128.4) (28,128.4) (28,131.9) (29,131.9) (29,135.4) (30,135.4) (30,138.9) (31,138.9) (31,142.4) (32,142.4) (32,145.9) (33,145.9) (33,149.4) (34,149.4) (34,152.9) (35,152.9) (35,156.4) (36,156.4) (36,159.9) (37,159.9) (37,163.4) (38,163.4) (38,166.9) (39,166.9) (39,170.1) (40,170.1) (40,173.6) (41,173.6) (41,177.1) (42,177.1) (42,180.6) (43,180.6) (43,184.1) (44,184.1) (44,187.6) (45,187.6) (45,191.1) (46,191.1) (46,194.6) (47,194.6) (47,198.1) (48,198.1) (48,201.6) (49,201.6) (49,205.1) (50,205.1)
+i2d((cps_state.position).y):
+[0]: (0,0) (0,-3.253) (1,-3.253) (1,-3.2) (3,-3.2) (3,-1.8) (4,-1.8) (4,-0.4) (7,-0.4) (7,0.9) (39,0.9) (39,2.2) (50,2.2)
+i2d(cps_state.head):
+[0]: (0,0) (2,0) (2,0.392) (4,0.392) (4,0) (6,0) (6,0.392) (7,0.392) (7,0) (38,0) (38,0.392) (39,0.392) (39,0) (50,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.5) (50,3.5)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 253 ms
+ -- Virtual memory used : 66404 KiB
+ -- Resident memory used : 24076 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748502140
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 4442 states
+ -- States explored : 0 states
+ -- CPU user time used : 5238 ms
+ -- Virtual memory used : 66832 KiB
+ -- Resident memory used : 24636 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 5 ms
+ -- Virtual memory used : 66832 KiB
+ -- Resident memory used : 24636 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,34.846) (1,34.846) (1,38.3) (2,38.3) (2,41.8) (3,41.8) (3,45.3) (4,45.3) (4,48.8) (5,48.8) (5,52.3) (6,52.3) (6,55.5) (7,55.5) (7,58.7) (8,58.7) (8,61.9) (9,61.9) (9,65.40000000000001) (10,65.40000000000001) (10,68.90000000000001) (11,68.90000000000001) (11,72.40000000000001) (12,72.40000000000001) (12,75.90000000000001) (13,75.90000000000001) (13,79.40000000000001) (14,79.40000000000001) (14,82.90000000000001) (15,82.90000000000001) (15,86.40000000000001) (16,86.40000000000001) (16,89.90000000000001) (17,89.90000000000001) (17,93.40000000000001) (18,93.40000000000001) (18,96.90000000000001) (19,96.90000000000001) (19,100.4) (20,100.4) (20,103.9) (21,103.9) (21,107.4) (22,107.4) (22,110.9) (23,110.9) (23,114.4) (24,114.4) (24,117.9) (25,117.9) (25,121.4) (26,121.4) (26,124.9) (27,124.9) (27,128.4) (28,128.4) (28,131.9) (29,131.9) (29,135.4) (30,135.4) (30,138.9) (31,138.9) (31,142.4) (32,142.4) (32,145.9) (33,145.9) (33,149.4) (34,149.4) (34,152.9) (35,152.9) (35,156.4) (36,156.4) (36,159.9) (37,159.9) (37,163.4) (38,163.4) (38,166.9) (39,166.9) (39,170.4) (40,170.4) (40,173.6) (41,173.6) (41,177.1) (42,177.1) (42,180.6) (43,180.6) (43,184.1) (44,184.1) (44,187.6) (45,187.6) (45,191.1) (46,191.1) (46,194.6) (47,194.6) (47,198.1) (48,198.1) (48,201.6) (49,201.6) (49,205.1) (50,205.1) (50.000002,208.6)
+i2d((cps_state.position).y):
+[0]: (0,0) (0,-3.253) (1,-3.253) (1,-3.2) (6,-3.2) (6,-1.8) (7,-1.8) (7,-0.4) (8,-0.4) (8,0.9) (40,0.9) (40,2.2) (50.000002,2.2)
+i2d(cps_state.head):
+[0]: (0,0) (5,0) (5,0.392) (8,0.392) (8,0) (39,0) (39,0.392) (40,0.392) (40,0) (50.000002,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.5) (50.000002,3.5)
+i2d(cps_state.acc):
+[0]: (0,0) (50.000002,0)
+ -- States explored : 0 states
+ -- CPU user time used : 252 ms
+ -- Virtual memory used : 67136 KiB
+ -- Resident memory used : 25404 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748503743
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 7828 states
+ -- States explored : 0 states
+ -- CPU user time used : 7066 ms
+ -- Virtual memory used : 68312 KiB
+ -- Resident memory used : 25420 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 3 ms
+ -- Virtual memory used : 68312 KiB
+ -- Resident memory used : 25420 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,34.846) (1,34.846) (1,38.3) (2,38.3) (2,40.8) (3,40.8) (3,42.1) (4,42.1) (4,43.6) (50,43.6)
+i2d((cps_state.position).y):
+[0]: (0,0) (0,-3.253) (1,-3.253) (1,-3.2) (3,-3.2) (3,-3.7) (50,-3.7)
+i2d(cps_state.head):
+[0]: (0,0) (2,0) (2,-0.392) (3,-0.392) (3,0) (50,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.5) (2,3.5) (2,2.5) (3,2.5) (3,1.5) (50,1.5)
+i2d(cps_state.acc):
+[0]: (0,0) (1,0) (1,-1) (3,-1) (3,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 14 ms
+ -- Virtual memory used : 68452 KiB
+ -- Resident memory used : 26188 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748505192
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 7828 states
+ -- States explored : 0 states
+ -- CPU user time used : 7153 ms
+ -- Virtual memory used : 68312 KiB
+ -- Resident memory used : 25672 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 5 ms
+ -- Virtual memory used : 68312 KiB
+ -- Resident memory used : 25800 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,34.846) (1,34.846) (1,38.3) (2,38.3) (2,41.8) (3,41.8) (3,44.3) (4,44.3) (4,45.8) (5,45.8) (5,47.1) (50,47.1)
+i2d((cps_state.position).y):
+[0]: (0,0) (0,-3.253) (1,-3.253) (1,-3.2) (5,-3.2) (5,-2.6) (50,-2.6)
+i2d(cps_state.head):
+[0]: (0,0) (4,0) (4,0.392) (50,0.392)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.5) (3,3.5) (3,2.5) (4,2.5) (4,1.5) (50,1.5)
+i2d(cps_state.acc):
+[0]: (0,0) (2,0) (2,-1) (4,-1) (4,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 18 ms
+ -- Virtual memory used : 68460 KiB
+ -- Resident memory used : 26440 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748505285
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 5 states
+ -- States explored : 0 states
+ -- CPU user time used : 1 ms
+ -- Virtual memory used : 63680 KiB
+ -- Resident memory used : 20688 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 0 ms
+ -- Virtual memory used : 63680 KiB
+ -- Resident memory used : 20816 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Aborted.
+i2d((cps_state.position).x):
+[0]: (0,0) (0.01,53.745) (1,53.745) (1,74.40000000000001)
+i2d((cps_state.position).y):
+[0]: (0,0) (0.01,-3.058) (1,-3.058) (1,-3)
+i2d(cps_state.head):
+[0]: (0,0) (1,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0.01,20.7) (1,20.7)
+i2d(cps_state.acc):
+[0]: (0,0) (1,0)
+ -- States explored : 0 states
+ -- CPU user time used : 4 ms
+ -- Virtual memory used : 63836 KiB
+ -- Resident memory used : 21968 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748505990
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 67754 states
+ -- States explored : 0 states
+ -- CPU user time used : 55778 ms
+ -- Virtual memory used : 105912 KiB
+ -- Resident memory used : 62804 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 61 ms
+ -- Virtual memory used : 105912 KiB
+ -- Resident memory used : 63060 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,53.745) (1,53.745) (1,56.2) (2,56.2) (2,57.5) (3,57.5) (3,58) (4,58) (4,58.5) (50,58.5)
+i2d((cps_state.position).y):
+[0]: (0,0) (0,-3.058) (1,-3.058) (1,-3) (2,-3) (2,-3.5) (50,-3.5)
+i2d(cps_state.head):
+[0]: (0,0) (1,0) (1,-0.392) (2,-0.392) (2,0) (50,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,2.5) (2,2.5) (2,1.5) (3,1.5) (3,0.5) (50,0.5)
+i2d(cps_state.acc):
+[0]: (0,0) (1,0) (1,-1) (3,-1) (3,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 18 ms
+ -- Virtual memory used : 106096 KiB
+ -- Resident memory used : 63700 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748872835
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 67754 states
+ -- States explored : 0 states
+ -- CPU user time used : 56710 ms
+ -- Virtual memory used : 105884 KiB
+ -- Resident memory used : 63052 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 47 ms
+ -- Virtual memory used : 105884 KiB
+ -- Resident memory used : 63180 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,53.745) (1,53.745) (1,56.2) (2,56.2) (2,58.7) (3,58.7) (3,61.2) (4,61.2) (4,63.7) (5,63.7) (5,65) (6,65) (6,65.5) (7,65.5) (7,66) (50,66)
+i2d((cps_state.position).y):
+[0]: (0,0) (0,-3.058) (1,-3.058) (1,-3) (5,-3) (5,-2.4) (50,-2.4)
+i2d(cps_state.head):
+[0]: (0,0) (4,0) (4,0.392) (5,0.392) (5,0) (50,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,2.5) (5,2.5) (5,1.5) (6,1.5) (6,0.5) (50,0.5)
+i2d(cps_state.acc):
+[0]: (0,0) (4,0) (4,-1) (6,-1) (6,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 23 ms
+ -- Virtual memory used : 106044 KiB
+ -- Resident memory used : 63692 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748873297
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 7162 states
+ -- States explored : 0 states
+ -- CPU user time used : 7210 ms
+ -- Virtual memory used : 68048 KiB
+ -- Resident memory used : 25308 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 7 ms
+ -- Virtual memory used : 68048 KiB
+ -- Resident memory used : 25308 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,15) (1,15) (1,18.6) (2,18.6) (2,21.9) (3,21.9) (3,25.5) (4,25.5) (4,28.8) (5,28.8) (5,32.4) (6,32.4) (6,36) (7,36) (7,39.6) (8,39.6) (8,43.2) (9,43.2) (9,46.8) (10,46.8) (10,50.4) (11,50.4) (11,54) (12,54) (12,57.6) (13,57.6) (13,61.2) (14,61.2) (14,64.8) (15,64.8) (15,68.3) (16,68.3) (16,71.8) (17,71.8) (17,75.3) (18,75.3) (18,78.8) (19,78.8) (19,82.3) (20,82.3) (20,85.8) (21,85.8) (21,89.3) (22,89.3) (22,92.8) (23,92.8) (23,96.3) (24,96.3) (24,99.8) (25,99.8) (25,103.3) (26,103.3) (26,106.8) (27,106.8) (27,110.3) (28,110.3) (28,113.8) (29,113.8) (29,117.3) (30,117.3) (30,120.8) (31,120.8) (31,124.3) (32,124.3) (32,127.8) (33,127.8) (33,131.4) (34,131.4) (34,135) (35,135) (35,138.6) (36,138.6) (36,142.2) (37,142.2) (37,145.7) (38,145.7) (38,149.2) (39,149.2) (39,152.7) (40,152.7) (40,156.2) (41,156.2) (41,159.7) (42,159.7) (42,163.2) (43,163.2) (43,166.7) (44,166.7) (44,170.2) (45,170.2) (45,173.7) (46,173.7) (46,177.2) (47,177.2) (47,180.5) (48,180.5) (48,184.1) (49,184.1) (49,187.7) (50,187.7)
+i2d((cps_state.position).y):
+[0]: (0,0) (2,0) (2,-1.3) (4,-1.3) (4,-2.6) (47,-2.6) (47,-1.2) (50,-1.2)
+i2d(cps_state.head):
+[0]: (0,0) (1,0) (1,-0.392) (2,-0.392) (2,0) (3,0) (3,-0.392) (4,-0.392) (4,0) (46,0) (46,0.392) (47,0.392) (47,0) (50,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 158 ms
+ -- Virtual memory used : 68204 KiB
+ -- Resident memory used : 25820 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748873490
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 7162 states
+ -- States explored : 0 states
+ -- CPU user time used : 7180 ms
+ -- Virtual memory used : 68056 KiB
+ -- Resident memory used : 25052 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 7 ms
+ -- Virtual memory used : 68056 KiB
+ -- Resident memory used : 25308 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,15) (1,15) (1,18.6) (2,18.6) (2,22.2) (3,22.2) (3,25.5) (4,25.5) (4,29.1) (5,29.1) (5,32.7) (6,32.7) (6,36) (7,36) (7,39.6) (8,39.6) (8,43.2) (9,43.2) (9,46.8) (10,46.8) (10,50.4) (11,50.4) (11,54) (12,54) (12,57.6) (13,57.6) (13,61.2) (14,61.2) (14,64.8) (15,64.8) (15,68.3) (16,68.3) (16,71.8) (17,71.8) (17,75.3) (18,75.3) (18,78.8) (19,78.8) (19,82.3) (20,82.3) (20,85.8) (21,85.8) (21,89.3) (22,89.3) (22,92.8) (23,92.8) (23,96.3) (24,96.3) (24,99.8) (25,99.8) (25,103.3) (26,103.3) (26,106.8) (27,106.8) (27,110.3) (28,110.3) (28,113.8) (29,113.8) (29,117.3) (30,117.3) (30,120.8) (31,120.8) (31,124.3) (32,124.3) (32,127.8) (33,127.8) (33,131.4) (34,131.4) (34,135) (35,135) (35,138.6) (36,138.6) (36,142.2) (37,142.2) (37,145.7) (38,145.7) (38,149.2) (39,149.2) (39,152.7) (40,152.7) (40,156.2) (41,156.2) (41,159.7) (42,159.7) (42,163.2) (43,163.2) (43,166.7) (44,166.7) (44,170.2) (45,170.2) (45,173.7) (46,173.7) (46,177.2) (47,177.2) (47,180.7) (48,180.7) (48,184) (49,184) (49,187.6) (50,187.6)
+i2d((cps_state.position).y):
+[0]: (0,0) (3,0) (3,-1.3) (6,-1.3) (6,-2.6) (48,-2.6) (48,-1.2) (50,-1.2)
+i2d(cps_state.head):
+[0]: (0,0) (2,0) (2,-0.392) (3,-0.392) (3,0) (5,0) (5,-0.392) (6,-0.392) (6,0) (47,0) (47,0.392) (48,0.392) (48,0) (50,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 165 ms
+ -- Virtual memory used : 68200 KiB
+ -- Resident memory used : 25820 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748873540
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 7162 states
+ -- States explored : 0 states
+ -- CPU user time used : 7325 ms
+ -- Virtual memory used : 68608 KiB
+ -- Resident memory used : 26196 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 9 ms
+ -- Virtual memory used : 68608 KiB
+ -- Resident memory used : 26324 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,15) (1,15) (1,18.6) (2,18.6) (2,21.9) (3,21.9) (3,25.5) (4,25.5) (4,28.8) (5,28.8) (5,32.4) (6,32.4) (6,36) (7,36) (7,39.6) (8,39.6) (8,43.2) (9,43.2) (9,46.8) (10,46.8) (10,50.4) (11,50.4) (11,54) (12,54) (12,57.6) (13,57.6) (13,61.2) (14,61.2) (14,64.8) (15,64.8) (15,68.3) (16,68.3) (16,71.8) (17,71.8) (17,75.3) (18,75.3) (18,78.8) (19,78.8) (19,82.3) (20,82.3) (20,85.8) (21,85.8) (21,89.3) (22,89.3) (22,92.8) (23,92.8) (23,96.3) (24,96.3) (24,99.8) (25,99.8) (25,103.3) (26,103.3) (26,106.8) (27,106.8) (27,110.3) (28,110.3) (28,113.8) (29,113.8) (29,117.3) (30,117.3) (30,120.8) (31,120.8) (31,124.3) (32,124.3) (32,127.8) (33,127.8) (33,131.4) (34,131.4) (34,135) (35,135) (35,138.6) (36,138.6) (36,142.2) (37,142.2) (37,145.7) (38,145.7) (38,149.2) (39,149.2) (39,152.7) (40,152.7) (40,156.2) (41,156.2) (41,159.7) (42,159.7) (42,163.2) (43,163.2) (43,166.7) (44,166.7) (44,170.2) (45,170.2) (45,173.7) (46,173.7) (46,177.2) (47,177.2) (47,180.5) (48,180.5) (48,184.1) (49,184.1) (49,187.7) (50,187.7)
+i2d((cps_state.position).y):
+[0]: (0,0) (2,0) (2,-1.3) (4,-1.3) (4,-2.6) (47,-2.6) (47,-1.2) (50,-1.2)
+i2d(cps_state.head):
+[0]: (0,0) (1,0) (1,-0.392) (2,-0.392) (2,0) (3,0) (3,-0.392) (4,-0.392) (4,0) (46,0) (46,0.392) (47,0.392) (47,0) (50,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 160 ms
+ -- Virtual memory used : 68776 KiB
+ -- Resident memory used : 26708 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748873585
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 7162 states
+ -- States explored : 0 states
+ -- CPU user time used : 7273 ms
+ -- Virtual memory used : 68616 KiB
+ -- Resident memory used : 26072 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 9 ms
+ -- Virtual memory used : 68616 KiB
+ -- Resident memory used : 26200 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,15) (1,15) (1,18.6) (2,18.6) (2,21.9) (3,21.9) (3,25.5) (4,25.5) (4,29.1) (5,29.1) (5,32.7) (6,32.7) (6,36.3) (7,36.3) (7,39.6) (8,39.6) (8,43.2) (9,43.2) (9,46.8) (10,46.8) (10,50.4) (11,50.4) (11,54) (12,54) (12,57.6) (13,57.6) (13,61.2) (14,61.2) (14,64.8) (15,64.8) (15,68.3) (16,68.3) (16,71.8) (17,71.8) (17,75.3) (18,75.3) (18,78.8) (19,78.8) (19,82.3) (20,82.3) (20,85.8) (21,85.8) (21,89.3) (22,89.3) (22,92.8) (23,92.8) (23,96.3) (24,96.3) (24,99.8) (25,99.8) (25,103.3) (26,103.3) (26,106.8) (27,106.8) (27,110.3) (28,110.3) (28,113.8) (29,113.8) (29,117.3) (30,117.3) (30,120.8) (31,120.8) (31,124.3) (32,124.3) (32,127.8) (33,127.8) (33,131.4) (34,131.4) (34,135) (35,135) (35,138.6) (36,138.6) (36,142.2) (37,142.2) (37,145.7) (38,145.7) (38,149.2) (39,149.2) (39,152.7) (40,152.7) (40,156.2) (41,156.2) (41,159.7) (42,159.7) (42,163.2) (43,163.2) (43,166.7) (44,166.7) (44,170.2) (45,170.2) (45,173.7) (46,173.7) (46,177.2) (47,177.2) (47,180.5) (48,180.5) (48,184.1) (49,184.1) (49,187.7) (50,187.7)
+i2d((cps_state.position).y):
+[0]: (0,0) (2,0) (2,-1.3) (7,-1.3) (7,-2.6) (47,-2.6) (47,-1.2) (50,-1.2)
+i2d(cps_state.head):
+[0]: (0,0) (1,0) (1,-0.392) (2,-0.392) (2,0) (6,0) (6,-0.392) (7,-0.392) (7,0) (46,0) (46,0.392) (47,0.392) (47,0) (50,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 169 ms
+ -- Virtual memory used : 68780 KiB
+ -- Resident memory used : 26712 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748874058
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 6445 states
+ -- States explored : 0 states
+ -- CPU user time used : 6676 ms
+ -- Virtual memory used : 68296 KiB
+ -- Resident memory used : 25992 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 9 ms
+ -- Virtual memory used : 68296 KiB
+ -- Resident memory used : 26120 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,15) (1,15) (1,18.6) (2,18.6) (2,22.2) (3,22.2) (3,25.8) (4,25.8) (4,29.4) (5,29.4) (5,33) (6,33) (6,36.6) (7,36.6) (7,40.2) (8,40.2) (8,43.8) (9,43.8) (9,47.4) (10,47.4) (10,51) (11,51) (11,54.6) (12,54.6) (12,58.2) (13,58.2) (13,61.8) (14,61.8) (14,65.09999999999999) (15,65.09999999999999) (15,68.59999999999999) (16,68.59999999999999) (16,71.90000000000001) (17,71.90000000000001) (17,75.5) (18,75.5) (18,79.09999999999999) (19,79.09999999999999) (19,82.59999999999999) (20,82.59999999999999) (20,86.09999999999999) (21,86.09999999999999) (21,89.59999999999999) (22,89.59999999999999) (22,93.09999999999999) (23,93.09999999999999) (23,96.59999999999999) (24,96.59999999999999) (24,100.1) (25,100.1) (25,103.6) (26,103.6) (26,107.1) (27,107.1) (27,110.6) (28,110.6) (28,114.1) (29,114.1) (29,117.6) (30,117.6) (30,121.1) (31,121.1) (31,124.6) (32,124.6) (32,128.1) (33,128.1) (33,131.7) (34,131.7) (34,135.2) (35,135.2) (35,138.7) (36,138.7) (36,142.2) (37,142.2) (37,145.7) (38,145.7) (38,149.2) (39,149.2) (39,152.7) (40,152.7) (40,156.2) (41,156.2) (41,159.7) (42,159.7) (42,163.2) (43,163.2) (43,166.7) (44,166.7) (44,170.2) (45,170.2) (45,173.7) (46,173.7) (46,177.2) (47,177.2) (47,180.5) (48,180.5) (48,184.1) (49,184.1) (49,187.7) (50,187.7)
+i2d((cps_state.position).y):
+[0]: (0,0) (14,0) (14,-1.3) (16,-1.3) (16,-2.6) (47,-2.6) (47,-1.2) (50,-1.2)
+i2d(cps_state.head):
+[0]: (0,0) (13,0) (13,-0.392) (14,-0.392) (14,0) (15,0) (15,-0.392) (16,-0.392) (16,0) (46,0) (46,0.392) (47,0.392) (47,0) (50,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 199 ms
+ -- Virtual memory used : 68452 KiB
+ -- Resident memory used : 26760 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748874155
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 6445 states
+ -- States explored : 0 states
+ -- CPU user time used : 6933 ms
+ -- Virtual memory used : 68296 KiB
+ -- Resident memory used : 26124 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 10 ms
+ -- Virtual memory used : 68296 KiB
+ -- Resident memory used : 26252 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,15) (1,15) (1,18.6) (2,18.6) (2,22.2) (3,22.2) (3,25.8) (4,25.8) (4,29.4) (5,29.4) (5,33) (6,33) (6,36.6) (7,36.6) (7,40.2) (8,40.2) (8,43.8) (9,43.8) (9,47.4) (10,47.4) (10,51) (11,51) (11,54.6) (12,54.6) (12,58.2) (13,58.2) (13,61.8) (14,61.8) (14,65.3) (15,65.3) (15,68.8) (16,68.8) (16,72.09999999999999) (17,72.09999999999999) (17,75.59999999999999) (18,75.59999999999999) (18,78.90000000000001) (19,78.90000000000001) (19,82.5) (20,82.5) (20,86.09999999999999) (21,86.09999999999999) (21,89.59999999999999) (22,89.59999999999999) (22,93.09999999999999) (23,93.09999999999999) (23,96.59999999999999) (24,96.59999999999999) (24,100.1) (25,100.1) (25,103.6) (26,103.6) (26,107.1) (27,107.1) (27,110.6) (28,110.6) (28,114.1) (29,114.1) (29,117.6) (30,117.6) (30,121.1) (31,121.1) (31,124.6) (32,124.6) (32,128.1) (33,128.1) (33,131.7) (34,131.7) (34,135.2) (35,135.2) (35,138.7) (36,138.7) (36,142.2) (37,142.2) (37,145.7) (38,145.7) (38,149.2) (39,149.2) (39,152.7) (40,152.7) (40,156.2) (41,156.2) (41,159.7) (42,159.7) (42,163.2) (43,163.2) (43,166.7) (44,166.7) (44,170.2) (45,170.2) (45,173.7) (46,173.7) (46,177.2) (47,177.2) (47,180.5) (48,180.5) (48,184.1) (49,184.1) (49,187.7) (50,187.7)
+i2d((cps_state.position).y):
+[0]: (0,0) (16,0) (16,-1.3) (18,-1.3) (18,-2.6) (47,-2.6) (47,-1.2) (50,-1.2)
+i2d(cps_state.head):
+[0]: (0,0) (15,0) (15,-0.392) (16,-0.392) (16,0) (17,0) (17,-0.392) (18,-0.392) (18,0) (46,0) (46,0.392) (47,0.392) (47,0) (50,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 197 ms
+ -- Virtual memory used : 68452 KiB
+ -- Resident memory used : 26892 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748874196
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 6325 states
+ -- States explored : 0 states
+ -- CPU user time used : 6462 ms
+ -- Virtual memory used : 68128 KiB
+ -- Resident memory used : 26128 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 9 ms
+ -- Virtual memory used : 68260 KiB
+ -- Resident memory used : 26128 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,15) (1,15) (1,18.6) (2,18.6) (2,22.2) (3,22.2) (3,25.8) (4,25.8) (4,29.4) (5,29.4) (5,33) (6,33) (6,36.6) (7,36.6) (7,40.2) (8,40.2) (8,43.8) (9,43.8) (9,47.4) (10,47.4) (10,51) (11,51) (11,54.6) (12,54.6) (12,58.2) (13,58.2) (13,61.8) (14,61.8) (14,65.3) (15,65.3) (15,68.8) (16,68.8) (16,72.09999999999999) (17,72.09999999999999) (17,75.59999999999999) (18,75.59999999999999) (18,78.90000000000001) (19,78.90000000000001) (19,82.5) (20,82.5) (20,86.09999999999999) (21,86.09999999999999) (21,89.59999999999999) (22,89.59999999999999) (22,93.09999999999999) (23,93.09999999999999) (23,96.59999999999999) (24,96.59999999999999) (24,100.1) (25,100.1) (25,103.6) (26,103.6) (26,107.1) (27,107.1) (27,110.6) (28,110.6) (28,114.1) (29,114.1) (29,117.6) (30,117.6) (30,121.1) (31,121.1) (31,124.6) (32,124.6) (32,128.1) (33,128.1) (33,131.7) (34,131.7) (34,135.2) (35,135.2) (35,138.7) (36,138.7) (36,142.2) (37,142.2) (37,145.7) (38,145.7) (38,149.2) (39,149.2) (39,152.7) (40,152.7) (40,156.2) (41,156.2) (41,159.7) (42,159.7) (42,163.2) (43,163.2) (43,166.7) (44,166.7) (44,170.2) (45,170.2) (45,173.7) (46,173.7) (46,177.2) (47,177.2) (47,180.5) (48,180.5) (48,184.1) (49,184.1) (49,187.7) (50,187.7)
+i2d((cps_state.position).y):
+[0]: (0,0) (16,0) (16,-1.3) (18,-1.3) (18,-2.6) (47,-2.6) (47,-1.2) (50,-1.2)
+i2d(cps_state.head):
+[0]: (0,0) (15,0) (15,-0.392) (16,-0.392) (16,0) (17,0) (17,-0.392) (18,-0.392) (18,0) (46,0) (46,0.392) (47,0.392) (47,0) (50,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 200 ms
+ -- Virtual memory used : 68464 KiB
+ -- Resident memory used : 26640 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748874336
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 5446 states
+ -- States explored : 0 states
+ -- CPU user time used : 5540 ms
+ -- Virtual memory used : 67596 KiB
+ -- Resident memory used : 25364 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 6 ms
+ -- Virtual memory used : 67732 KiB
+ -- Resident memory used : 25492 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,15) (1,15) (1,18.6) (2,18.6) (2,22.2) (3,22.2) (3,25.8) (4,25.8) (4,29.4) (5,29.4) (5,33) (6,33) (6,36.6) (7,36.6) (7,40.2) (8,40.2) (8,43.8) (9,43.8) (9,47.4) (10,47.4) (10,51) (11,51) (11,54.6) (12,54.6) (12,58.2) (13,58.2) (13,61.8) (14,61.8) (14,65.3) (15,65.3) (15,68.8) (16,68.8) (16,72.3) (17,72.3) (17,75.8) (18,75.8) (18,79.3) (19,79.3) (19,82.8) (20,82.8) (20,86.3) (21,86.3) (21,89.8) (22,89.8) (22,93.09999999999999) (23,93.09999999999999) (23,96.59999999999999) (24,96.59999999999999) (24,100.1) (25,100.1) (25,103.6) (26,103.6) (26,107.1) (27,107.1) (27,110.4) (28,110.4) (28,113.7) (29,113.7) (29,117.3) (30,117.3) (30,120.6) (31,120.6) (31,124.1) (32,124.1) (32,127.6) (33,127.6) (33,131.2) (34,131.2) (34,134.7) (35,134.7) (35,138.2) (36,138.2) (36,141.7) (37,141.7) (37,145.2) (38,145.2) (38,148.7) (39,148.7) (39,152.2) (40,152.2) (40,155.7) (41,155.7) (41,159.2) (42,159.2) (42,162.7) (43,162.7) (43,166.2) (44,166.2) (44,169.7) (45,169.7) (45,173.2) (46,173.2) (46,176.7) (47,176.7) (47,180) (48,180) (48,183.6) (49,183.6) (49,187.2) (50,187.2)
+i2d((cps_state.position).y):
+[0]: (0,0) (22,0) (22,1.3) (27,1.3) (27,0) (28,0) (28,-1.3) (30,-1.3) (30,-2.6) (47,-2.6) (47,-1.2) (50,-1.2)
+i2d(cps_state.head):
+[0]: (0,0) (21,0) (21,0.392) (22,0.392) (22,0) (26,0) (26,-0.392) (28,-0.392) (28,0) (29,0) (29,-0.392) (30,-0.392) (30,0) (46,0) (46,0.392) (47,0.392) (47,0) (50,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 228 ms
+ -- Virtual memory used : 67904 KiB
+ -- Resident memory used : 26004 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748874365
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 2974 states
+ -- States explored : 0 states
+ -- CPU user time used : 3181 ms
+ -- Virtual memory used : 66000 KiB
+ -- Resident memory used : 23820 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 3 ms
+ -- Virtual memory used : 66132 KiB
+ -- Resident memory used : 23820 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,15) (1,15) (1,18.6) (2,18.6) (2,22.2) (3,22.2) (3,25.8) (4,25.8) (4,29.4) (5,29.4) (5,33) (6,33) (6,36.6) (7,36.6) (7,40.2) (8,40.2) (8,43.8) (9,43.8) (9,47.4) (10,47.4) (10,51) (11,51) (11,54.6) (12,54.6) (12,58.2) (13,58.2) (13,61.8) (14,61.8) (14,65.3) (15,65.3) (15,68.8) (16,68.8) (16,72.3) (17,72.3) (17,75.8) (18,75.8) (18,79.3) (19,79.3) (19,82.8) (20,82.8) (20,86.09999999999999) (21,86.09999999999999) (21,89.59999999999999) (22,89.59999999999999) (22,93.09999999999999) (23,93.09999999999999) (23,96.59999999999999) (24,96.59999999999999) (24,100.1) (25,100.1) (25,103.6) (26,103.6) (26,107.1) (27,107.1) (27,110.6) (28,110.6) (28,114.1) (29,114.1) (29,117.6) (30,117.6) (30,121.1) (31,121.1) (31,124.6) (32,124.6) (32,128.1) (33,128.1) (33,131.7) (34,131.7) (34,135) (35,135) (35,138.3) (36,138.3) (36,141.9) (37,141.9) (37,145.2) (38,145.2) (38,148.7) (39,148.7) (39,152.2) (40,152.2) (40,155.7) (41,155.7) (41,159.2) (42,159.2) (42,162.7) (43,162.7) (43,166.2) (44,166.2) (44,169.7) (45,169.7) (45,173.2) (46,173.2) (46,176.7) (47,176.7) (47,180.2) (48,180.2) (48,183.5) (49,183.5) (49,187.1) (50,187.1)
+i2d((cps_state.position).y):
+[0]: (0,0) (20,0) (20,1.3) (34,1.3) (34,0) (35,0) (35,-1.3) (37,-1.3) (37,-2.6) (48,-2.6) (48,-1.2) (50,-1.2)
+i2d(cps_state.head):
+[0]: (0,0) (19,0) (19,0.392) (20,0.392) (20,0) (33,0) (33,-0.392) (35,-0.392) (35,0) (36,0) (36,-0.392) (37,-0.392) (37,0) (47,0) (47,0.392) (48,0.392) (48,0) (50,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 254 ms
+ -- Virtual memory used : 66328 KiB
+ -- Resident memory used : 24332 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748936760
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 7162 states
+ -- States explored : 0 states
+ -- CPU user time used : 7198 ms
+ -- Virtual memory used : 68464 KiB
+ -- Resident memory used : 29300 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 5 ms
+ -- Virtual memory used : 68464 KiB
+ -- Resident memory used : 29428 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,15) (1,15) (1,18.6) (2,18.6) (2,22.2) (3,22.2) (3,25.5) (4,25.5) (4,28.8) (5,28.8) (5,32.4) (6,32.4) (6,36) (7,36) (7,39.6) (8,39.6) (8,43.2) (9,43.2) (9,46.8) (10,46.8) (10,50.4) (11,50.4) (11,54) (12,54) (12,57.6) (13,57.6) (13,61.2) (14,61.2) (14,64.8) (15,64.8) (15,68.3) (16,68.3) (16,71.8) (17,71.8) (17,75.3) (18,75.3) (18,78.8) (19,78.8) (19,82.3) (20,82.3) (20,85.8) (21,85.8) (21,89.3) (22,89.3) (22,92.8) (23,92.8) (23,96.3) (24,96.3) (24,99.8) (25,99.8) (25,103.3) (26,103.3) (26,106.8) (27,106.8) (27,110.3) (28,110.3) (28,113.8) (29,113.8) (29,117.3) (30,117.3) (30,120.8) (31,120.8) (31,124.3) (32,124.3) (32,127.8) (33,127.8) (33,131.4) (34,131.4) (34,135) (35,135) (35,138.6) (36,138.6) (36,142.2) (37,142.2) (37,145.7) (38,145.7) (38,149.2) (39,149.2) (39,152.7) (40,152.7) (40,156.2) (41,156.2) (41,159.7) (42,159.7) (42,163.2) (43,163.2) (43,166.7) (44,166.7) (44,170.2) (45,170.2) (45,173.7) (46,173.7) (46,177.2) (47,177.2) (47,180.5) (48,180.5) (48,184.1) (49,184.1) (49,187.7) (50,187.7)
+i2d((cps_state.position).y):
+[0]: (0,0) (3,0) (3,-1.3) (4,-1.3) (4,-2.6) (47,-2.6) (47,-1.2) (50,-1.2)
+i2d(cps_state.head):
+[0]: (0,0) (2,0) (2,-0.392) (4,-0.392) (4,0) (46,0) (46,0.392) (47,0.392) (47,0) (50,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 159 ms
+ -- Virtual memory used : 68616 KiB
+ -- Resident memory used : 30068 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748936780
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748936787
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 7162 states
+ -- States explored : 0 states
+ -- CPU user time used : 7093 ms
+ -- Virtual memory used : 68044 KiB
+ -- Resident memory used : 25176 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 5 ms
+ -- Virtual memory used : 68044 KiB
+ -- Resident memory used : 25304 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,15) (1,15) (1,18.6) (2,18.6) (2,21.9) (3,21.9) (3,25.2) (4,25.2) (4,28.8) (5,28.8) (5,32.4) (6,32.4) (6,36) (7,36) (7,39.6) (8,39.6) (8,43.2) (9,43.2) (9,46.8) (10,46.8) (10,50.4) (11,50.4) (11,54) (12,54) (12,57.6) (13,57.6) (13,61.2) (14,61.2) (14,64.8) (15,64.8) (15,68.3) (16,68.3) (16,71.8) (17,71.8) (17,75.3) (18,75.3) (18,78.8) (19,78.8) (19,82.3) (20,82.3) (20,85.8) (21,85.8) (21,89.3) (22,89.3) (22,92.8) (23,92.8) (23,96.3) (24,96.3) (24,99.8) (25,99.8) (25,103.3) (26,103.3) (26,106.8) (27,106.8) (27,110.3) (28,110.3) (28,113.8) (29,113.8) (29,117.3) (30,117.3) (30,120.8) (31,120.8) (31,124.3) (32,124.3) (32,127.8) (33,127.8) (33,131.4) (34,131.4) (34,135) (35,135) (35,138.6) (36,138.6) (36,142.2) (37,142.2) (37,145.7) (38,145.7) (38,149.2) (39,149.2) (39,152.7) (40,152.7) (40,156.2) (41,156.2) (41,159.7) (42,159.7) (42,163.2) (43,163.2) (43,166.7) (44,166.7) (44,170.2) (45,170.2) (45,173.7) (46,173.7) (46,177.2) (47,177.2) (47,180.5) (48,180.5) (48,184.1) (49,184.1) (49,187.7) (50,187.7)
+i2d((cps_state.position).y):
+[0]: (0,0) (2,0) (2,-1.3) (3,-1.3) (3,-2.6) (47,-2.6) (47,-1.2) (50,-1.2)
+i2d(cps_state.head):
+[0]: (0,0) (1,0) (1,-0.392) (3,-0.392) (3,0) (46,0) (46,0.392) (47,0.392) (47,0) (50,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 164 ms
+ -- Virtual memory used : 68200 KiB
+ -- Resident memory used : 25816 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748936851
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 2974 states
+ -- States explored : 0 states
+ -- CPU user time used : 3199 ms
+ -- Virtual memory used : 66000 KiB
+ -- Resident memory used : 23828 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 3 ms
+ -- Virtual memory used : 66132 KiB
+ -- Resident memory used : 23828 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,15) (1,15) (1,18.6) (2,18.6) (2,22.2) (3,22.2) (3,25.8) (4,25.8) (4,29.4) (5,29.4) (5,33) (6,33) (6,36.6) (7,36.6) (7,40.2) (8,40.2) (8,43.8) (9,43.8) (9,47.4) (10,47.4) (10,51) (11,51) (11,54.6) (12,54.6) (12,58.2) (13,58.2) (13,61.8) (14,61.8) (14,65.3) (15,65.3) (15,68.8) (16,68.8) (16,72.3) (17,72.3) (17,75.8) (18,75.8) (18,79.3) (19,79.3) (19,82.8) (20,82.8) (20,86.3) (21,86.3) (21,89.59999999999999) (22,89.59999999999999) (22,93.09999999999999) (23,93.09999999999999) (23,96.59999999999999) (24,96.59999999999999) (24,100.1) (25,100.1) (25,103.6) (26,103.6) (26,107.1) (27,107.1) (27,110.6) (28,110.6) (28,114.1) (29,114.1) (29,117.6) (30,117.6) (30,121.1) (31,121.1) (31,124.6) (32,124.6) (32,128.1) (33,128.1) (33,131.7) (34,131.7) (34,135) (35,135) (35,138.6) (36,138.6) (36,141.9) (37,141.9) (37,145.2) (38,145.2) (38,148.7) (39,148.7) (39,152.2) (40,152.2) (40,155.7) (41,155.7) (41,159.2) (42,159.2) (42,162.7) (43,162.7) (43,166.2) (44,166.2) (44,169.7) (45,169.7) (45,173.2) (46,173.2) (46,176.7) (47,176.7) (47,180.2) (48,180.2) (48,183.7) (49,183.7) (49,187.2) (50,187.2)
+i2d((cps_state.position).y):
+[0]: (0,0) (21,0) (21,1.3) (34,1.3) (34,0) (36,0) (36,-1.3) (37,-1.3) (37,-2.6) (50,-2.6)
+i2d(cps_state.head):
+[0]: (0,0) (20,0) (20,0.392) (21,0.392) (21,0) (33,0) (33,-0.392) (34,-0.392) (34,0) (35,0) (35,-0.392) (37,-0.392) (37,0) (49,0) (49,0.392) (50,0.392)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 254 ms
+ -- Virtual memory used : 66328 KiB
+ -- Resident memory used : 24340 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748940958
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 7162 states
+ -- States explored : 0 states
+ -- CPU user time used : 7229 ms
+ -- Virtual memory used : 68060 KiB
+ -- Resident memory used : 25436 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 4 ms
+ -- Virtual memory used : 68060 KiB
+ -- Resident memory used : 25564 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,15) (1,15) (1,18.6) (2,18.6) (2,21.9) (3,21.9) (3,25.2) (4,25.2) (4,28.8) (5,28.8) (5,32.4) (6,32.4) (6,36) (7,36) (7,39.6) (8,39.6) (8,43.2) (9,43.2) (9,46.8) (10,46.8) (10,50.4) (11,50.4) (11,54) (12,54) (12,57.6) (13,57.6) (13,61.2) (14,61.2) (14,64.8) (15,64.8) (15,68.3) (16,68.3) (16,71.8) (17,71.8) (17,75.3) (18,75.3) (18,78.8) (19,78.8) (19,82.3) (20,82.3) (20,85.8) (21,85.8) (21,89.3) (22,89.3) (22,92.8) (23,92.8) (23,96.3) (24,96.3) (24,99.8) (25,99.8) (25,103.3) (26,103.3) (26,106.8) (27,106.8) (27,110.3) (28,110.3) (28,113.8) (29,113.8) (29,117.3) (30,117.3) (30,120.8) (31,120.8) (31,124.3) (32,124.3) (32,127.8) (33,127.8) (33,131.4) (34,131.4) (34,135) (35,135) (35,138.6) (36,138.6) (36,142.2) (37,142.2) (37,145.7) (38,145.7) (38,149.2) (39,149.2) (39,152.7) (40,152.7) (40,156.2) (41,156.2) (41,159.7) (42,159.7) (42,163.2) (43,163.2) (43,166.7) (44,166.7) (44,170.2) (45,170.2) (45,173.7) (46,173.7) (46,177.2) (47,177.2) (47,180.7) (48,180.7) (48,184.2) (49,184.2) (49,187.5) (50,187.5)
+i2d((cps_state.position).y):
+[0]: (0,0) (2,0) (2,-1.3) (3,-1.3) (3,-2.6) (49,-2.6) (49,-1.2) (50,-1.2)
+i2d(cps_state.head):
+[0]: (0,0) (1,0) (1,-0.392) (3,-0.392) (3,0) (48,0) (48,0.392) (49,0.392) (49,0) (50,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 153 ms
+ -- Virtual memory used : 68196 KiB
+ -- Resident memory used : 25948 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1748941043
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 2974 states
+ -- States explored : 0 states
+ -- CPU user time used : 3138 ms
+ -- Virtual memory used : 66004 KiB
+ -- Resident memory used : 23448 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 3 ms
+ -- Virtual memory used : 66136 KiB
+ -- Resident memory used : 23576 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+i2d((cps_state.position).x):
+[0]: (0,0) (0,15) (1,15) (1,18.6) (2,18.6) (2,22.2) (3,22.2) (3,25.8) (4,25.8) (4,29.4) (5,29.4) (5,33) (6,33) (6,36.6) (7,36.6) (7,40.2) (8,40.2) (8,43.8) (9,43.8) (9,47.4) (10,47.4) (10,51) (11,51) (11,54.6) (12,54.6) (12,58.2) (13,58.2) (13,61.8) (14,61.8) (14,65.3) (15,65.3) (15,68.8) (16,68.8) (16,72.3) (17,72.3) (17,75.8) (18,75.8) (18,79.3) (19,79.3) (19,82.8) (20,82.8) (20,86.09999999999999) (21,86.09999999999999) (21,89.59999999999999) (22,89.59999999999999) (22,93.09999999999999) (23,93.09999999999999) (23,96.59999999999999) (24,96.59999999999999) (24,100.1) (25,100.1) (25,103.6) (26,103.6) (26,107.1) (27,107.1) (27,110.6) (28,110.6) (28,114.1) (29,114.1) (29,117.6) (30,117.6) (30,121.1) (31,121.1) (31,124.6) (32,124.6) (32,128.1) (33,128.1) (33,131.4) (34,131.4) (34,134.7) (35,134.7) (35,138.2) (36,138.2) (36,141.5) (37,141.5) (37,145.1) (38,145.1) (38,148.7) (39,148.7) (39,152.2) (40,152.2) (40,155.7) (41,155.7) (41,159.2) (42,159.2) (42,162.7) (43,162.7) (43,166.2) (44,166.2) (44,169.7) (45,169.7) (45,173.2) (46,173.2) (46,176.7) (47,176.7) (47,180) (48,180) (48,183.6) (49,183.6) (49,187.2) (50,187.2)
+i2d((cps_state.position).y):
+[0]: (0,0) (20,0) (20,1.3) (33,1.3) (33,0) (34,0) (34,-1.3) (36,-1.3) (36,-2.6) (47,-2.6) (47,-1.2) (50,-1.2)
+i2d(cps_state.head):
+[0]: (0,0) (19,0) (19,0.392) (20,0.392) (20,0) (32,0) (32,-0.392) (34,-0.392) (34,0) (35,0) (35,-0.392) (36,-0.392) (36,0) (46,0) (46,0.392) (47,0.392) (47,0) (50,0)
+i2d(cps_state.vel):
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 244 ms
+ -- Virtual memory used : 66332 KiB
+ -- Resident memory used : 24088 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1749549025
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 7162 states
+ -- States explored : 0 states
+ -- CPU user time used : 7204 ms
+ -- Virtual memory used : 68456 KiB
+ -- Resident memory used : 29168 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 6 ms
+ -- Virtual memory used : 68456 KiB
+ -- Resident memory used : 29424 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (3,25.80000000000013) (5,32.45385720275872) (49,190.8538572027569) (50,194.1807858041364)
+cps_dyn.y:
+[0]: (0,0) (3,0) (5,-2.750669795758229) (49,-2.750669795758229) (50,-1.375334897879183)
+i2d(cps_state.head):
+[0]: (0,0) (3,0) (3,-0.392) (5,-0.392) (5,0) (49,0) (49,0.392) (50,0.392)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 161 ms
+ -- Virtual memory used : 68608 KiB
+ -- Resident memory used : 29936 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754483238
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 7162 states
+ -- States explored : 0 states
+ -- CPU user time used : 9394 ms
+ -- Virtual memory used : 68052 KiB
+ -- Resident memory used : 24808 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 10 ms
+ -- Virtual memory used : 68052 KiB
+ -- Resident memory used : 24936 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (5,33) (6,36.32692860137929) (7,39.92692860137925) (8,43.25385720275854) (46,180.0538572027569) (47,183.3807858041366) (50,194.1807858041363)
+cps_dyn.y:
+[0]: (0,0) (5,0) (6,-1.375334897879115) (7,-1.375334897879115) (8,-2.750669795758229) (46,-2.750669795758229) (47,-1.375334897879116) (50,-1.375334897879116)
+i2d(cps_state.head):
+[0]: (0,0) (5,0) (5,-0.392) (6,-0.392) (6,0) (7,0) (7,-0.392) (8,-0.392) (8,0) (46,0) (46,0.392) (47,0.392) (47,0) (50,0)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 211 ms
+ -- Virtual memory used : 68204 KiB
+ -- Resident memory used : 25448 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754483370
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 7162 states
+ -- States explored : 0 states
+ -- CPU user time used : 7676 ms
+ -- Virtual memory used : 68064 KiB
+ -- Resident memory used : 25428 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 8 ms
+ -- Virtual memory used : 68064 KiB
+ -- Resident memory used : 25428 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (3,25.80000000000013) (5,32.45385720275872) (46,180.053857202757) (47,183.3807858041367) (50,194.1807858041363)
+cps_dyn.y:
+[0]: (0,0) (3,0) (5,-2.750669795758229) (46,-2.750669795758229) (47,-1.375334897879116) (50,-1.375334897879116)
+i2d(cps_state.head):
+[0]: (0,0) (3,0) (3,-0.392) (5,-0.392) (5,0) (46,0) (46,0.392) (47,0.392) (47,0) (50,0)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 167 ms
+ -- Virtual memory used : 68208 KiB
+ -- Resident memory used : 26068 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754483584
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 7162 states
+ -- States explored : 0 states
+ -- CPU user time used : 7613 ms
+ -- Virtual memory used : 68064 KiB
+ -- Resident memory used : 25420 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 7 ms
+ -- Virtual memory used : 68064 KiB
+ -- Resident memory used : 25548 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (1,18.60000000000003) (2,21.92692860137933) (4,29.12692860137943) (5,32.45385720275872) (46,180.053857202757) (47,183.3807858041367) (50,194.1807858041363)
+cps_dyn.y:
+[0]: (0,0) (1,0) (2,-1.375334897879115) (4,-1.375334897879115) (5,-2.750669795758229) (46,-2.750669795758229) (47,-1.375334897879116) (50,-1.375334897879116)
+i2d(cps_state.head):
+[0]: (0,0) (1,0) (1,-0.392) (2,-0.392) (2,0) (4,0) (4,-0.392) (5,-0.392) (5,0) (46,0) (46,0.392) (47,0.392) (47,0) (50,0)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 167 ms
+ -- Virtual memory used : 68212 KiB
+ -- Resident memory used : 26060 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754483921
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 7162 states
+ -- States explored : 0 states
+ -- CPU user time used : 8621 ms
+ -- Virtual memory used : 68056 KiB
+ -- Resident memory used : 25172 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 12 ms
+ -- Virtual memory used : 68056 KiB
+ -- Resident memory used : 25300 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (5,33) (6,36.32692860137929) (7,39.92692860137925) (8,43.25385720275854) (46,180.0538572027569) (47,183.3807858041366) (50,194.1807858041363)
+cps_dyn.y:
+[0]: (0,0) (5,0) (6,-1.375334897879115) (7,-1.375334897879115) (8,-2.750669795758229) (46,-2.750669795758229) (47,-1.375334897879116) (50,-1.375334897879116)
+i2d(cps_state.head):
+[0]: (0,0) (5,0) (5,-0.392) (6,-0.392) (6,0) (7,0) (7,-0.392) (8,-0.392) (8,0) (46,0) (46,0.392) (47,0.392) (47,0) (50,0)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 221 ms
+ -- Virtual memory used : 68208 KiB
+ -- Resident memory used : 25812 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754484255
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 2974 states
+ -- States explored : 0 states
+ -- CPU user time used : 3360 ms
+ -- Virtual memory used : 66028 KiB
+ -- Resident memory used : 23828 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 5 ms
+ -- Virtual memory used : 66028 KiB
+ -- Resident memory used : 23828 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (23,97.79999999999986) (24,101.1269286013791) (32,129.9269286013788) (33,133.2538572027585) (34,136.8538572027584) (35,140.1807858041381) (37,147.380785804138) (38,150.7077144055177) (50,193.9077144055171)
+cps_dyn.y:
+[0]: (0,0) (23,0) (24,1.375334897879115) (32,1.375334897879115) (33,0) (34,0) (35,-1.375334897879115) (37,-1.375334897879115) (38,-2.750669795758229) (50,-2.750669795758229)
+i2d(cps_state.head):
+[0]: (0,0) (23,0) (23,0.392) (24,0.392) (24,0) (32,0) (32,-0.392) (33,-0.392) (33,0) (34,0) (34,-0.392) (35,-0.392) (35,0) (37,0) (37,-0.392) (38,-0.392) (38,0) (50,0)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 260 ms
+ -- Virtual memory used : 66324 KiB
+ -- Resident memory used : 24340 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754485409
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 2974 states
+ -- States explored : 0 states
+ -- CPU user time used : 3327 ms
+ -- Virtual memory used : 66024 KiB
+ -- Resident memory used : 23824 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 5 ms
+ -- Virtual memory used : 66024 KiB
+ -- Resident memory used : 23824 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (19,83.39999999999981) (20,86.7269286013791) (34,137.1269286013785) (37,147.1077144055175) (46,179.5077144055172) (47,182.8346430068969) (50,193.6346430068966)
+cps_dyn.y:
+[0]: (0,0) (19,0) (20,1.375334897879115) (34,1.375334897879115) (37,-2.750669795758229) (46,-2.750669795758229) (47,-1.375334897879116) (50,-1.375334897879116)
+i2d(cps_state.head):
+[0]: (0,0) (19,0) (19,0.392) (20,0.392) (20,0) (34,0) (34,-0.392) (37,-0.392) (37,0) (46,0) (46,0.392) (47,0.392) (47,0) (50,0)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 267 ms
+ -- Virtual memory used : 66320 KiB
+ -- Resident memory used : 24464 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754485432
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 2974 states
+ -- States explored : 0 states
+ -- CPU user time used : 3481 ms
+ -- Virtual memory used : 66024 KiB
+ -- Resident memory used : 23444 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 6 ms
+ -- Virtual memory used : 66156 KiB
+ -- Resident memory used : 23572 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (19,83.39999999999981) (20,86.7269286013791) (32,129.9269286013785) (33,133.2538572027582) (34,136.8538572027582) (35,140.1807858041379) (36,143.7807858041378) (37,147.1077144055175) (46,179.5077144055172) (47,182.8346430068969) (50,193.6346430068966)
+cps_dyn.y:
+[0]: (0,0) (19,0) (20,1.375334897879115) (32,1.375334897879115) (33,0) (34,0) (35,-1.375334897879115) (36,-1.375334897879115) (37,-2.750669795758229) (46,-2.750669795758229) (47,-1.375334897879116) (50,-1.375334897879116)
+i2d(cps_state.head):
+[0]: (0,0) (19,0) (19,0.392) (20,0.392) (20,0) (32,0) (32,-0.392) (33,-0.392) (33,0) (34,0) (34,-0.392) (35,-0.392) (35,0) (36,0) (36,-0.392) (37,-0.392) (37,0) (46,0) (46,0.392) (47,0.392) (47,0) (50,0)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 262 ms
+ -- Virtual memory used : 66336 KiB
+ -- Resident memory used : 24212 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754485780
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 2974 states
+ -- States explored : 0 states
+ -- CPU user time used : 3383 ms
+ -- Virtual memory used : 66024 KiB
+ -- Resident memory used : 23572 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 6 ms
+ -- Virtual memory used : 66156 KiB
+ -- Resident memory used : 23700 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (23,97.79999999999986) (24,101.1269286013791) (36,144.3269286013787) (37,147.6538572027583) (38,151.2538572027583) (39,154.580785804138) (50,194.1807858041374)
+cps_dyn.y:
+[0]: (0,0) (23,0) (24,1.375334897879115) (36,1.375334897879115) (37,0) (38,0) (39,-1.375334897879115) (50,-1.375334897879115)
+i2d(cps_state.head):
+[0]: (0,0) (23,0) (23,0.392) (24,0.392) (24,0) (36,0) (36,-0.392) (37,-0.392) (37,0) (38,0) (38,-0.392) (39,-0.392) (39,0) (50,0)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 276 ms
+ -- Virtual memory used : 66336 KiB
+ -- Resident memory used : 24340 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754485808
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 2974 states
+ -- States explored : 0 states
+ -- CPU user time used : 3366 ms
+ -- Virtual memory used : 66024 KiB
+ -- Resident memory used : 23696 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 5 ms
+ -- Virtual memory used : 66024 KiB
+ -- Resident memory used : 23824 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (19,83.39999999999981) (20,86.7269286013791) (33,133.5269286013785) (36,143.5077144055175) (46,179.5077144055172) (47,182.8346430068969) (50,193.6346430068966)
+cps_dyn.y:
+[0]: (0,0) (19,0) (20,1.375334897879115) (33,1.375334897879115) (36,-2.750669795758229) (46,-2.750669795758229) (47,-1.375334897879116) (50,-1.375334897879116)
+i2d(cps_state.head):
+[0]: (0,0) (19,0) (19,0.392) (20,0.392) (20,0) (33,0) (33,-0.392) (36,-0.392) (36,0) (46,0) (46,0.392) (47,0.392) (47,0) (50,0)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 261 ms
+ -- Virtual memory used : 66320 KiB
+ -- Resident memory used : 24464 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754487810
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 2974 states
+ -- States explored : 0 states
+ -- CPU user time used : 3319 ms
+ -- Virtual memory used : 66032 KiB
+ -- Resident memory used : 23828 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 4 ms
+ -- Virtual memory used : 66032 KiB
+ -- Resident memory used : 23828 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (19,83.39999999999981) (20,86.7269286013791) (32,129.9269286013785) (33,133.2538572027582) (35,140.4538572027581) (37,147.1077144055175) (47,183.1077144055172) (48,186.4346430068968) (50,193.6346430068966)
+cps_dyn.y:
+[0]: (0,0) (19,0) (20,1.375334897879115) (32,1.375334897879115) (33,0) (35,0) (37,-2.750669795758229) (47,-2.750669795758229) (48,-1.375334897879116) (50,-1.375334897879116)
+i2d(cps_state.head):
+[0]: (0,0) (19,0) (19,0.392) (20,0.392) (20,0) (32,0) (32,-0.392) (33,-0.392) (33,0) (35,0) (35,-0.392) (37,-0.392) (37,0) (47,0) (47,0.392) (48,0.392) (48,0) (50,0)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 263 ms
+ -- Virtual memory used : 66332 KiB
+ -- Resident memory used : 24468 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754487840
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 2974 states
+ -- States explored : 0 states
+ -- CPU user time used : 3254 ms
+ -- Virtual memory used : 66032 KiB
+ -- Resident memory used : 23700 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 4 ms
+ -- Virtual memory used : 66032 KiB
+ -- Resident memory used : 23828 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (22,94.1999999999999) (23,97.5269286013792) (32,129.9269286013788) (34,136.5807858041381) (37,147.380785804138) (38,150.7077144055177) (46,179.5077144055174) (47,182.8346430068971) (50,193.6346430068968)
+cps_dyn.y:
+[0]: (0,0) (22,0) (23,1.375334897879115) (32,1.375334897879115) (34,-1.375334897879115) (37,-1.375334897879115) (38,-2.750669795758229) (46,-2.750669795758229) (47,-1.375334897879116) (50,-1.375334897879116)
+i2d(cps_state.head):
+[0]: (0,0) (22,0) (22,0.392) (23,0.392) (23,0) (32,0) (32,-0.392) (34,-0.392) (34,0) (37,0) (37,-0.392) (38,-0.392) (38,0) (46,0) (46,0.392) (47,0.392) (47,0) (50,0)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 258 ms
+ -- Virtual memory used : 66336 KiB
+ -- Resident memory used : 24340 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754487957
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 2974 states
+ -- States explored : 0 states
+ -- CPU user time used : 3300 ms
+ -- Virtual memory used : 66028 KiB
+ -- Resident memory used : 23700 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 5 ms
+ -- Virtual memory used : 66028 KiB
+ -- Resident memory used : 23700 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (20,87) (21,90.32692860137929) (33,133.5269286013788) (34,136.8538572027584) (36,144.0538572027584) (37,147.380785804138) (50,194.1807858041374)
+cps_dyn.y:
+[0]: (0,0) (20,0) (21,1.375334897879115) (33,1.375334897879115) (34,0) (36,0) (37,-1.375334897879115) (50,-1.375334897879115)
+i2d(cps_state.head):
+[0]: (0,0) (20,0) (20,0.392) (21,0.392) (21,0) (33,0) (33,-0.392) (34,-0.392) (34,0) (36,0) (36,-0.392) (37,-0.392) (37,0) (50,0)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 263 ms
+ -- Virtual memory used : 66324 KiB
+ -- Resident memory used : 24212 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754488030
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 2974 states
+ -- States explored : 0 states
+ -- CPU user time used : 3315 ms
+ -- Virtual memory used : 66032 KiB
+ -- Resident memory used : 23572 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 5 ms
+ -- Virtual memory used : 66032 KiB
+ -- Resident memory used : 23700 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (19,83.39999999999981) (20,86.7269286013791) (34,137.1269286013785) (36,143.7807858041378) (37,147.3807858041378) (38,150.7077144055175) (47,183.1077144055172) (48,186.4346430068968) (50,193.6346430068966)
+cps_dyn.y:
+[0]: (0,0) (19,0) (20,1.375334897879115) (34,1.375334897879115) (36,-1.375334897879115) (37,-1.375334897879115) (38,-2.750669795758229) (47,-2.750669795758229) (48,-1.375334897879116) (50,-1.375334897879116)
+i2d(cps_state.head):
+[0]: (0,0) (19,0) (19,0.392) (20,0.392) (20,0) (34,0) (34,-0.392) (36,-0.392) (36,0) (37,0) (37,-0.392) (38,-0.392) (38,0) (47,0) (47,0.392) (48,0.392) (48,0) (50,0)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 265 ms
+ -- Virtual memory used : 66328 KiB
+ -- Resident memory used : 24212 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754488175
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 2974 states
+ -- States explored : 0 states
+ -- CPU user time used : 3286 ms
+ -- Virtual memory used : 66020 KiB
+ -- Resident memory used : 23700 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 9 ms
+ -- Virtual memory used : 66152 KiB
+ -- Resident memory used : 23828 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (20,87) (21,90.32692860137929) (32,129.9269286013788) (35,139.9077144055178) (46,179.5077144055174) (47,182.8346430068971) (50,193.6346430068968)
+cps_dyn.y:
+[0]: (0,0) (20,0) (21,1.375334897879115) (32,1.375334897879115) (35,-2.750669795758229) (46,-2.750669795758229) (47,-1.375334897879116) (50,-1.375334897879116)
+i2d(cps_state.head):
+[0]: (0,0) (20,0) (20,0.392) (21,0.392) (21,0) (32,0) (32,-0.392) (35,-0.392) (35,0) (46,0) (46,0.392) (47,0.392) (47,0) (50,0)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 259 ms
+ -- Virtual memory used : 66332 KiB
+ -- Resident memory used : 24340 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754488292
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 2974 states
+ -- States explored : 0 states
+ -- CPU user time used : 3302 ms
+ -- Virtual memory used : 66024 KiB
+ -- Resident memory used : 23824 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 6 ms
+ -- Virtual memory used : 66024 KiB
+ -- Resident memory used : 23824 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (19,83.39999999999981) (20,86.7269286013791) (32,129.9269286013785) (35,139.9077144055176) (48,186.7077144055171) (49,190.0346430068968) (50,193.6346430068966)
+cps_dyn.y:
+[0]: (0,0) (19,0) (20,1.375334897879115) (32,1.375334897879115) (35,-2.750669795758229) (48,-2.750669795758229) (49,-1.375334897879116) (50,-1.375334897879116)
+i2d(cps_state.head):
+[0]: (0,0) (19,0) (19,0.392) (20,0.392) (20,0) (32,0) (32,-0.392) (35,-0.392) (35,0) (48,0) (48,0.392) (49,0.392) (49,0) (50,0)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 256 ms
+ -- Virtual memory used : 66324 KiB
+ -- Resident memory used : 24464 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754490013
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 7162 states
+ -- States explored : 0 states
+ -- CPU user time used : 7991 ms
+ -- Virtual memory used : 68060 KiB
+ -- Resident memory used : 25044 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 8 ms
+ -- Virtual memory used : 68060 KiB
+ -- Resident memory used : 25172 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (3,25.80000000000013) (4,29.12692860137943) (6,36.3269286013794) (7,39.65385720275869) (47,183.653857202757) (48,186.9807858041367) (50,194.1807858041364)
+cps_dyn.y:
+[0]: (0,0) (3,0) (4,-1.375334897879115) (6,-1.375334897879115) (7,-2.750669795758229) (47,-2.750669795758229) (48,-1.375334897879116) (50,-1.375334897879116)
+i2d(cps_state.head):
+[0]: (0,0) (3,0) (3,-0.392) (4,-0.392) (4,0) (6,0) (6,-0.392) (7,-0.392) (7,0) (47,0) (47,0.392) (48,0.392) (48,0) (50,0)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 182 ms
+ -- Virtual memory used : 68212 KiB
+ -- Resident memory used : 25684 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754490213
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 7162 states
+ -- States explored : 0 states
+ -- CPU user time used : 7454 ms
+ -- Virtual memory used : 68064 KiB
+ -- Resident memory used : 25300 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 7 ms
+ -- Virtual memory used : 68064 KiB
+ -- Resident memory used : 25300 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (2,22.20000000000008) (4,28.85385720275868) (49,190.8538572027568) (50,194.1807858041363)
+cps_dyn.y:
+[0]: (0,0) (2,0) (4,-2.750669795758229) (49,-2.750669795758229) (50,-1.375334897879183)
+i2d(cps_state.head):
+[0]: (0,0) (2,0) (2,-0.392) (4,-0.392) (4,0) (49,0) (49,0.392) (50,0.392)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 160 ms
+ -- Virtual memory used : 68208 KiB
+ -- Resident memory used : 25812 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754490273
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 7162 states
+ -- States explored : 0 states
+ -- CPU user time used : 7557 ms
+ -- Virtual memory used : 68060 KiB
+ -- Resident memory used : 24916 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 6 ms
+ -- Virtual memory used : 68060 KiB
+ -- Resident memory used : 25172 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (2,22.20000000000008) (4,28.85385720275868) (47,183.6538572027569) (48,186.9807858041366) (50,194.1807858041363)
+cps_dyn.y:
+[0]: (0,0) (2,0) (4,-2.750669795758229) (47,-2.750669795758229) (48,-1.375334897879116) (50,-1.375334897879116)
+i2d(cps_state.head):
+[0]: (0,0) (2,0) (2,-0.392) (4,-0.392) (4,0) (47,0) (47,0.392) (48,0.392) (48,0) (50,0)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 164 ms
+ -- Virtual memory used : 68208 KiB
+ -- Resident memory used : 25684 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754570397
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is NOT satisfied.
+ -- States explored : 0 states
+ -- CPU user time used : 2061 ms
+ -- Virtual memory used : 64352 KiB
+ -- Resident memory used : 21328 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Aborted.
+ -- States explored : 0 states
+ -- CPU user time used : 1 ms
+ -- Virtual memory used : 64352 KiB
+ -- Resident memory used : 21840 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Aborted.
+cps_dyn.x:
+cps_dyn.y:
+i2d(cps_state.head):
+cps_dyn.vel:
+i2d(cps_state.acc):
+ -- States explored : 0 states
+ -- CPU user time used : 1 ms
+ -- Virtual memory used : 64352 KiB
+ -- Resident memory used : 21840 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754570401
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 7162 states
+ -- States explored : 0 states
+ -- CPU user time used : 7642 ms
+ -- Virtual memory used : 68064 KiB
+ -- Resident memory used : 25176 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 9 ms
+ -- Virtual memory used : 68064 KiB
+ -- Resident memory used : 25304 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (1,18.60000000000003) (2,21.92692860137933) (6,36.3269286013794) (7,39.65385720275869) (47,183.653857202757) (48,186.9807858041367) (50,194.1807858041364)
+cps_dyn.y:
+[0]: (0,0) (1,0) (2,-1.375334897879115) (6,-1.375334897879115) (7,-2.750669795758229) (47,-2.750669795758229) (48,-1.375334897879116) (50,-1.375334897879116)
+i2d(cps_state.head):
+[0]: (0,0) (1,0) (1,-0.392) (2,-0.392) (2,0) (6,0) (6,-0.392) (7,-0.392) (7,0) (47,0) (47,0.392) (48,0.392) (48,0) (50,0)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 171 ms
+ -- Virtual memory used : 68212 KiB
+ -- Resident memory used : 25816 KiB
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1754570441
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+
+Verifying formula 1 at car/shield/synthesis.q:1
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States stored : 7162 states
+ -- States explored : 0 states
+ -- CPU user time used : 7495 ms
+ -- Virtual memory used : 68060 KiB
+ -- Resident memory used : 25304 KiB
+
+Verifying formula 2 at car/shield/synthesis.q:2
+ -- Formula is satisfied.
+ -- Result: $v_gameInfoPlay
+
+ -- States explored : 0 states
+ -- CPU user time used : 9 ms
+ -- Virtual memory used : 68060 KiB
+ -- Resident memory used : 25432 KiB
+
+Verifying formula 3 at car/shield/synthesis.q:3
+ -- Formula is satisfied.
+cps_dyn.x:
+[0]: (0,0) (0,15) (7,40.1999999999999) (8,43.5269286013792) (13,61.52692860137896) (14,64.85385720275825) (49,190.8538572027568) (50,194.1807858041363)
+cps_dyn.y:
+[0]: (0,0) (7,0) (8,-1.375334897879115) (13,-1.375334897879115) (14,-2.750669795758229) (49,-2.750669795758229) (50,-1.375334897879183)
+i2d(cps_state.head):
+[0]: (0,0) (7,0) (7,-0.392) (8,-0.392) (8,0) (13,0) (13,-0.392) (14,-0.392) (14,0) (49,0) (49,0.392) (50,0.392)
+cps_dyn.vel:
+[0]: (0,0) (0,3.6) (50,3.6)
+i2d(cps_state.acc):
+[0]: (0,0) (50,0)
+ -- States explored : 0 states
+ -- CPU user time used : 185 ms
+ -- Virtual memory used : 68212 KiB
+ -- Resident memory used : 25944 KiB

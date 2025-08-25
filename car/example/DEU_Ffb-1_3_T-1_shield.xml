@@ -1,0 +1,1410 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>// Generated scenario starts
+const int P = 1;
+const uint16_t MAXTIME = 40;
+const int MAXP = 22;
+const int NONE = -1;
+const int MAXL = 20;
+const int MAXSO = 1;
+const int MAXDO = 4;
+const int MAXTP = 50;
+const int MAXPRE = 3;
+const int MAXSUC = 3;
+const double THRESHOLD_COLLISION = 2;
+const double THRESHOLD_REACH = 0.5;
+const double TIMESTEPSIZE = 0.1;
+const double RADAR = 100;
+const uint8_t N1 = 1;
+const uint8_t N2 = 4;
+const uint8_t MAXACT = 2;
+typedef int[0,MAXACT-1] act_id_t;
+const uint8_t BASE = 10;
+const uint8_t EXPONENT = 3;
+const uint8_t MAXOBS = 4;
+typedef int[0,MAXOBS-1] obs_id_t;
+
+typedef int[-1,65535] id_t;
+
+typedef struct {
+    int32_t x;
+    int32_t y;
+}ST_IPOINT;
+
+typedef struct {
+    double x;
+    double y;
+}ST_DPOINT;
+
+typedef struct {
+    ST_IPOINT ends[2];
+}ST_DLINE;
+
+typedef struct {
+    ST_IPOINT points[MAXP];
+    bool dashLine;
+}ST_BOUND;
+
+typedef struct {
+    id_t ID;
+    ST_BOUND left;
+    ST_BOUND right;
+    id_t predecessor[MAXPRE];
+    id_t successor[MAXSUC];
+    id_t adjLeft;
+    bool dirLeft;
+    id_t adjRight;
+    bool dirRight;
+}ST_LANE;
+
+typedef struct {
+    bool collide; // collision
+    bool outside; // outside road
+    bool reach;   // reach the goal
+}ST_DETECTION;
+
+typedef struct {
+    ST_DPOINT position;
+    double velocity;
+    double orientation;
+    double acceleration;
+    double accRate;
+    double yawRate;
+}ST_DSTATE;
+
+typedef struct {
+    ST_IPOINT position;
+    int32_t velocity;
+    int32_t orientation;
+    int32_t acceleration;
+    int32_t accRate;
+    int32_t yawRate;
+    ST_DETECTION detection;
+}ST_ISTATE;
+
+typedef struct {
+    hybrid clock x;
+    hybrid clock y;
+    hybrid clock velocity;
+    hybrid clock orientation;
+    hybrid clock acceleration;
+    //hybrid clock accRate;
+    //hybrid clock yawRate;
+}ST_DYNAMICS;
+
+typedef struct {
+    ST_IPOINT center;
+    int32_t width;
+    int32_t length;
+    int32_t orientation;
+}ST_RECTANGLE;
+
+typedef struct {
+    int32_t maxVelocity;
+    int32_t minVelocity;
+    int32_t maxOrientation;
+    int32_t minOrientation;
+}ST_RULES;
+
+typedef struct {
+    ST_IPOINT goal;
+}ST_PLANNING;
+
+typedef struct {
+    int32_t time;
+    ST_DSTATE dState;
+}ST_PAIR;
+const ST_BOUND leftLane1 = {{{-86441, 7747}, {-64025, 6407}, {-62973, 6323}, {-40999, 4561}, {-40646, 4533}, {-20095, 2901}, {-970, 1989}, {24198, 1490}, {48216, 2568}, {55290, 2947}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane1 = {{{-87227, 1610}, {-64135, 1127}, {-63391, 1112}, {-41342, 283}, {-40970, 254}, {-20301, -1310}, {-1047, -1709}, {24056, -2580}, {48282, -2256}, {55992, -2259}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane1 = {49564, leftLane1, rightLane1, {NONE, NONE, NONE}, {49586, 49594, 49602}, 49566, false, NONE, false};
+
+const ST_BOUND leftLane2 = {{{55290, 2947}, {48216, 2568}, {47717, 2545}, {24363, 1497}, {-865, 1987}, {-19963, 2894}, {-40516, 4522}, {-64025, 6407}, {-86441, 7747}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane2 = {{{55808, 7842}, {47738, 6966}, {47519, 6942}, {24183, 5520}, {-794, 5566}, {-19776, 6817}, {-40203, 8460}, {-63625, 10662}, {-86098, 12775}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane2 = {49566, leftLane2, rightLane2, {49584, 49588, 49600}, {NONE, NONE, NONE}, 49564, false, NONE, false};
+
+const ST_BOUND leftLane3 = {{{69032, -9008}, {68454, -22803}, {67871, -36487}, {67487, -48082}, {66152, -77172}, {64376, -97241}, {59360, -141428}, {56304, -163839}, {54950, -174526}, {54412, -180092}, {53482, -185133}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane3 = {{{65530, -8857}, {65021, -22677}, {64369, -36339}, {63984, -47956}, {62560, -76950}, {60634, -96880}, {55851, -141030}, {52971, -163382}, {51533, -174097}, {50823, -179771}, {49524, -183788}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane3 = {49568, leftLane3, rightLane3, {49586, 49590, 49596}, {NONE, NONE, NONE}, 49570, false, NONE, false};
+
+const ST_BOUND leftLane4 = {{{53482, -185133}, {53879, -183148}, {54348, -180805}, {54601, -177980}, {54813, -175620}, {56062, -165681}, {59198, -142690}, {64303, -97885}, {66121, -77519}, {67487, -48082}, {67870, -36520}, {68451, -22883}, {69032, -9008}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane4 = {{{57490, -187100}, {57810, -183935}, {58102, -181207}, {58411, -178321}, {58692, -176114}, {59959, -166171}, {62783, -143181}, {67922, -98296}, {69920, -77855}, {70990, -48208}, {71373, -36636}, {71735, -23023}, {72612, -9588}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane4 = {49570, leftLane4, rightLane4, {NONE, NONE, NONE}, {49580, 49588, 49598}, 49568, false, NONE, false};
+
+const ST_BOUND leftLane5 = {{{82307, 6680}, {95001, 5380}, {96029, 5283}, {114326, 3561}, {114714, 3524}, {140299, 213}, {159941, -2766}, {160435, -2841}, {197014, -8178}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane5 = {{{81369, 1938}, {94787, 1244}, {95645, 1200}, {113950, -434}, {114193, -466}, {139780, -3803}, {159398, -6342}, {159911, -6417}, {196637, -11793}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane5 = {49572, leftLane5, rightLane5, {49580, 49592, 49602}, {NONE, NONE, NONE}, 49574, false, NONE, false};
+
+const ST_BOUND leftLane6 = {{{197014, -8178}, {160564, -2860}, {140437, 195}, {114714, 3524}, {95151, 5366}, {82307, 6680}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane6 = {{{197486, -4414}, {161072, 619}, {140995, 3873}, {115220, 7316}, {95534, 9441}, {83109, 10943}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane6 = {49574, leftLane6, rightLane6, {NONE, NONE, NONE}, {49582, 49590, 49600}, 49572, false, NONE, false};
+
+const ST_BOUND leftLane7 = {{{68058, 19290}, {67179, 41495}, {66165, 68450}, {64751, 102503}, {63896, 117533}, {63231, 129303}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane7 = {{{71478, 19766}, {70335, 41660}, {69232, 68576}, {68039, 102618}, {66992, 117709}, {66515, 129597}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane7 = {49576, leftLane7, rightLane7, {49582, 49594, 49598}, {NONE, NONE, NONE}, 49578, false, NONE, false};
+
+const ST_BOUND leftLane8 = {{{63231, 129303}, {63852, 118319}, {64751, 102503}, {66156, 68655}, {67165, 41852}, {68058, 19290}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane8 = {{{59834, 129061}, {60445, 118127}, {61372, 102305}, {62966, 68523}, {63872, 41728}, {65036, 19385}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane8 = {49578, leftLane8, rightLane8, {NONE, NONE, NONE}, {49584, 49592, 49596}, 49576, false, NONE, false};
+
+const ST_BOUND leftLane9 = {{{69032, -9008}, {69110, -7089}, {69207, -6041}, {69250, -5575}, {69315, -4888}, {69417, -3803}, {69457, -3385}, {69776, -1952}, {69899, -1400}, {70232, -440}, {70335, -142}, {70824, 931}, {71436, 1763}, {71887, 2376}, {73160, 3462}, {73531, 3714}, {74609, 4445}, {76004, 5392}, {76912, 5656}, {78817, 6211}, {82307, 6680}, {NONE, NONE}}, false};
+const ST_BOUND rightLane9 = {{{72612, -9588}, {72849, -7517}, {72978, -6389}, {73009, -6206}, {73169, -5252}, {73382, -4504}, {73473, -4186}, {73913, -2875}, {73913, -2875}, {74208, -2358}, {74466, -1907}, {74793, -1336}, {75047, -890}, {75225, -697}, {75973, 113}, {75973, 113}, {77069, 818}, {77638, 1031}, {78199, 1241}, {79831, 1600}, {81369, 1938}, {NONE, NONE}}, false};
+const ST_LANE lane9 = {49580, leftLane9, rightLane9, {49570, NONE, NONE}, {49572, NONE, NONE}, 49590, false, NONE, false};
+
+const ST_BOUND leftLane10 = {{{82307, 6680}, {80176, 6584}, {78167, 6494}, {76894, 6437}, {75960, 6605}, {75170, 6748}, {73467, 7349}, {72822, 7788}, {71337, 8798}, {70843, 9347}, {69858, 10440}, {69263, 12165}, {68954, 13059}, {68696, 13806}, {68540, 15144}, {68058, 19290}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane10 = {{{83109, 10943}, {79966, 11261}, {77948, 11361}, {77948, 11361}, {76882, 11708}, {76882, 11708}, {75784, 12140}, {75784, 12140}, {74751, 12867}, {74751, 12867}, {73839, 13746}, {73580, 14016}, {73118, 14497}, {72514, 15606}, {72514, 15606}, {71478, 19766}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane10 = {49582, leftLane10, rightLane10, {49574, NONE, NONE}, {49576, NONE, NONE}, 49592, false, NONE, false};
+
+const ST_BOUND leftLane11 = {{{68058, 19290}, {68192, 16456}, {68263, 14940}, {68014, 13112}, {67758, 12105}, {67577, 11396}, {66782, 9674}, {65989, 8449}, {65800, 8158}, {65046, 7008}, {64659, 6505}, {64044, 5708}, {62656, 4685}, {61225, 3953}, {58852, 3512}, {58658, 3475}, {55290, 2947}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane11 = {{{65036, 19385}, {64387, 16277}, {64387, 16277}, {64387, 16277}, {63141, 13281}, {63141, 13281}, {63141, 13281}, {61691, 11233}, {61691, 11233}, {61691, 11233}, {60286, 10004}, {60209, 9936}, {59997, 9827}, {58569, 9088}, {57880, 8732}, {56632, 8196}, {55808, 7842}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane11 = {49584, leftLane11, rightLane11, {49578, NONE, NONE}, {49566, NONE, NONE}, 49594, false, NONE, false};
+
+const ST_BOUND leftLane12 = {{{55290, 2947}, {58187, 3093}, {59900, 3179}, {61685, 2870}, {63304, 2589}, {64326, 2010}, {66113, 999}, {66810, 65}, {67351, -657}, {67824, -1290}, {68427, -2098}, {69044, -4933}, {69044, -4933}, {69044, -4933}, {69046, -4118}, {69032, -9008}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane12 = {{{55992, -2259}, {58452, -2157}, {59614, -2219}, {60791, -2281}, {61815, -2424}, {61815, -2424}, {62875, -2874}, {63203, -3107}, {63649, -3423}, {64142, -4041}, {64359, -4421}, {64644, -4920}, {65035, -5834}, {65047, -5862}, {65302, -6848}, {65530, -8857}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane12 = {49586, leftLane12, rightLane12, {49564, NONE, NONE}, {49568, NONE, NONE}, 49588, false, NONE, false};
+
+const ST_BOUND leftLane13 = {{{69032, -9008}, {69039, -6726}, {69046, -4118}, {69046, -4118}, {69046, -4118}, {68427, -2098}, {68427, -2098}, {68427, -2098}, {67128, -359}, {66140, 963}, {66113, 999}, {66113, 999}, {64393, 1972}, {63528, 2462}, {63304, 2589}, {63304, 2589}, {63304, 2589}, {61531, 2896}, {60318, 3107}, {59900, 3179}, {58955, 3132}, {55290, 2947}}, false};
+const ST_BOUND rightLane13 = {{{72612, -9588}, {72716, -6737}, {72771, -4200}, {72781, -3753}, {72529, -2091}, {72312, -1176}, {72173, -591}, {71670, 962}, {70869, 2436}, {69875, 3754}, {69427, 4215}, {68527, 5142}, {67001, 6580}, {66784, 6761}, {66226, 7227}, {65019, 7872}, {63424, 8413}, {62519, 8587}, {61281, 8656}, {59424, 8489}, {58689, 8423}, {55808, 7842}}, false};
+const ST_LANE lane13 = {49588, leftLane13, rightLane13, {49570, NONE, NONE}, {49566, NONE, NONE}, 49586, false, NONE, false};
+
+const ST_BOUND leftLane14 = {{{82307, 6680}, {78817, 6211}, {78817, 6211}, {76598, 5565}, {76004, 5392}, {75907, 5325}, {74418, 4316}, {73228, 3508}, {73160, 3462}, {71887, 2376}, {71327, 1614}, {70824, 931}, {70412, 26}, {70335, -142}, {70125, -749}, {69899, -1400}, {69866, -1549}, {69457, -3385}, {69281, -5249}, {69250, -5575}, {69110, -7089}, {69032, -9008}}, false};
+const ST_BOUND rightLane14 = {{{83109, 10943}, {78953, 11060}, {77574, 11098}, {75234, 10247}, {73798, 9470}, {73284, 9192}, {71854, 8097}, {70816, 7064}, {69981, 6031}, {68947, 4752}, {68243, 3880}, {67688, 3063}, {67034, 2102}, {66755, 1692}, {66288, 580}, {66055, -117}, {65874, -659}, {65634, -2990}, {65456, -5663}, {65456, -5663}, {65438, -4886}, {65530, -8857}}, false};
+const ST_LANE lane14 = {49590, leftLane14, rightLane14, {49574, NONE, NONE}, {49568, NONE, NONE}, 49580, false, NONE, false};
+
+const ST_BOUND leftLane15 = {{{68058, 19290}, {68696, 13806}, {69768, 10702}, {71000, 9172}, {71337, 8798}, {71931, 8394}, {73467, 7349}, {75170, 6748}, {76453, 6516}, {76894, 6437}, {82307, 6680}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane15 = {{{65036, 19385}, {65333, 13632}, {65741, 9907}, {67606, 6115}, {68214, 5534}, {69286, 4507}, {71118, 3280}, {73768, 2284}, {75590, 1739}, {76621, 1680}, {81369, 1938}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane15 = {49592, leftLane15, rightLane15, {49578, NONE, NONE}, {49572, NONE, NONE}, 49582, false, NONE, false};
+
+const ST_BOUND leftLane16 = {{{55290, 2947}, {58658, 3475}, {60188, 3760}, {61225, 3953}, {62283, 4495}, {62656, 4685}, {64044, 5708}, {65046, 7008}, {65290, 7379}, {65800, 8158}, {66010, 8482}, {66782, 9674}, {67577, 11396}, {67980, 12978}, {68058, 19290}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane16 = {{{55992, -2259}, {59471, -1714}, {61158, -1450}, {62946, -803}, {64583, -2}, {65778, 867}, {67462, 2966}, {68468, 4197}, {69054, 4911}, {69518, 5581}, {69819, 6014}, {70595, 7377}, {71513, 9613}, {71856, 11991}, {71478, 19766}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane16 = {49594, leftLane16, rightLane16, {49564, NONE, NONE}, {49576, NONE, NONE}, 49584, false, NONE, false};
+
+const ST_BOUND leftLane17 = {{{68058, 19290}, {69277, 5174}, {69032, -9008}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane17 = {{{65036, 19385}, {65299, 4864}, {65530, -8857}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane17 = {49596, leftLane17, rightLane17, {49578, NONE, NONE}, {49568, NONE, NONE}, 49598, false, NONE, false};
+
+const ST_BOUND leftLane18 = {{{69032, -9008}, {69292, 4937}, {68497, 15184}, {68058, 19290}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane18 = {{{72612, -9588}, {72962, 4883}, {72030, 15460}, {71478, 19766}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane18 = {49598, leftLane18, rightLane18, {49570, NONE, NONE}, {49576, NONE, NONE}, 49596, false, NONE, false};
+
+const ST_BOUND leftLane19 = {{{82307, 6680}, {79565, 6483}, {77422, 6295}, {75843, 6157}, {71413, 5350}, {70325, 5152}, {64679, 4324}, {60841, 3761}, {55290, 2947}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane19 = {{{83109, 10943}, {79856, 11146}, {76982, 11326}, {75834, 11323}, {70327, 11314}, {69410, 11175}, {63799, 10323}, {60015, 9395}, {55808, 7842}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane19 = {49600, leftLane19, rightLane19, {49574, NONE, NONE}, {49566, NONE, NONE}, 49602, false, NONE, false};
+
+const ST_BOUND leftLane20 = {{{55290, 2947}, {60388, 3695}, {64677, 4324}, {70325, 5152}, {74868, 5980}, {75843, 6157}, {79565, 6483}, {82307, 6680}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_BOUND rightLane20 = {{{55992, -2259}, {61194, -1796}, {65491, -1229}, {71292, -476}, {75816, 779}, {76918, 1009}, {80550, 1767}, {81369, 1938}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}, {NONE, NONE}}, false};
+const ST_LANE lane20 = {49602, leftLane20, rightLane20, {49564, NONE, NONE}, {49572, NONE, NONE}, 49600, false, NONE, false};
+
+const ST_LANE laneNet[MAXL] = {lane1, lane2, lane3, lane4, lane5, lane6, lane7, lane8, lane9, lane10, lane11, lane12, lane13, lane14, lane15, lane16, lane17, lane18, lane19, lane20};
+
+const bool dynamicObsExists = true;
+const bool staticObsExists = false;
+const ST_RECTANGLE staticObs[MAXSO] = {{{NONE, NONE}, NONE, NONE, NONE}};
+
+const ST_PLANNING planning = {{69768, 19528}};
+
+// Generated scenario ends
+const uint8_t M = 77;
+const uint8_t T = 84;
+const uint8_t N = 78;
+const int32_t ALL = -32767;
+
+/** Shielding */
+/*capture 1*/ import "/home/rgu01/Uppaal/StagedShieldSynthesis/car/libshield.so" /* end 1*/
+{
+    bool allow(uint8_t type, int value);
+    int get_action(int &amp;type[5], int32_t &amp;value[5]);
+    int set_cps_state(int32_t x, int32_t y, int32_t velocity, int32_t orientation, int32_t acceleration, int32_t accRate, int32_t yawRate, bool collide, bool outside, bool reach);
+    int set_obs_state(int32_t id, int32_t x, int32_t y, int32_t velocity, int32_t orientation, int32_t acceleration, int32_t accRate, int32_t yawRate, bool collide, bool outside, bool reach);
+    
+    int32_t get_obs_position_x(int id);
+    int32_t get_obs_position_y(int id);
+    int32_t get_obs_velocity(int id);
+    int32_t get_obs_orientation(int id);
+    int32_t get_obs_acceleration(int id);
+    int32_t get_obs_accRate(int id);
+    int32_t get_obs_yawRate(int id);
+    int32_t get_obs_detection_collide(int id);
+    int32_t get_obs_detection_outside(int id);
+    int32_t get_obs_detection_reach(int id);
+
+    int32_t get_cps_position_x();
+    int32_t get_cps_position_y();
+    int32_t get_cps_velocity();
+    int32_t get_cps_orientation();
+    int32_t get_cps_acceleration();
+    int32_t get_cps_accRate();
+    int32_t get_cps_yawRate();
+    int32_t get_cps_detection_collide();
+    int32_t get_cps_detection_outside();
+    int32_t get_cps_detection_reach();
+};
+
+broadcast chan perform[MAXACT],decide,sense,start,end;
+//chan priority decide&lt;default&lt;sense;
+
+//NOTE: when overflow happens, the sign of the number will be changed
+//but this function has no assertion about overflow
+int32_t d2i(double value) {
+    return fint(value*pow(BASE,EXPONENT));
+}
+
+double i2d(int32_t value) {
+    return value/pow(BASE,EXPONENT);
+}
+
+int32_t min(const int32_t v1, const int32_t v2){
+    return v1 &lt; v2? v1:v2;
+}
+
+int32_t max(const int32_t v1, const int32_t v2){
+    return v1 &gt; v2? v1:v2;
+}
+
+const int32_t INC_ACC = d2i(0.2);
+const int32_t DEC_ACC = d2i(-0.1);
+const int32_t CONST_ACC = d2i(0);
+const int32_t INC_DIR = d2i(0.2);
+const int32_t DEC_DIR = d2i(-0.2);
+const int32_t CONST_DIR = d2i(0);
+const int32_t MAX_ACC = d2i(1);
+const int32_t MIN_ACC = d2i(-1);
+const int32_t MAX_V = d2i(10);
+const int32_t MIN_V = d2i(-1);
+const int32_t PI = d2i(M_PI);
+
+typedef int[-1,1] acc_t;
+const double ACC_GRA = 1; //granularity of acceleration
+typedef int[-1,1] dir_t;
+const double DIR_GRA = 1; //granularity of turning
+
+/** variables start **/
+ST_ISTATE cps_i_state, obs_i_state[MAXOBS];
+ST_DYNAMICS cps_dynamic, obs_dynamic[MAXOBS]; 
+ST_RECTANGLE cps_shape, obs_shape[MAXOBS]; 
+clock g_time;
+hybrid clock rSafe, rProgress;
+int count = 0;
+//int32_t reward = 0;
+int32_t distanceToGoal = 100000;
+int[-100,100] FRISKY = 0;     //rate of reward safe
+int[-100,100] FPROGRESS = 0; //rate of reward progress
+bool shielded = true;
+const int stage[4] = {30, 35, 40, -1};
+const int NOW = 3;
+/** variables end **/
+
+/** test start **/
+int32_t distanceToStaticObs = 0;
+int32_t distanceToDynamicObs[MAXOBS];
+/** test end **/
+
+double mTimeStep(const double value) {
+    return value*TIMESTEPSIZE;
+}
+
+int32_t getDisP2P(const ST_IPOINT &amp;p1, const ST_IPOINT &amp;p2) {
+    double distance = 0.0;
+    double rx1 = i2d(p1.x), ry1 = i2d(p1.y);
+    double rx2 = i2d(p2.x), ry2 = i2d(p2.y);
+    distance = sqrt(pow(rx1 - rx2, 2) + pow(ry1 - ry2, 2));
+
+    return d2i(distance);
+}
+
+// Function to count non-zero elements in a 2D array
+int check_pts_num(const ST_IPOINT lane_pts[MAXP]) {
+    uint16_t count = 0;
+    // NONE or 0?
+    while (count &lt; MAXP &amp;&amp; (lane_pts[count].x != NONE || lane_pts[count].y != NONE)){
+        count++;
+    }
+    return count;
+}
+
+// Function to calculate the corner points of a rectangle
+void calculateCornerPoints(ST_RECTANGLE veh_state, ST_IPOINT &amp;corners[4]) {
+    double halfLength = i2d(veh_state.length)/2.0;
+    double halfWidth = i2d(veh_state.width)/2.0;
+    double angle = i2d(veh_state.orientation);
+
+    // Calculate the coordinates of each corner point based on the center, length, width, and orientation
+    corners[0].x = d2i(i2d(veh_state.center.x) + halfLength*cos(angle) - halfWidth*sin(angle));
+    corners[0].y = d2i(i2d(veh_state.center.y) + halfLength*sin(angle) + halfWidth*cos(angle));
+
+    corners[1].x = d2i(i2d(veh_state.center.x) + halfLength*cos(angle) + halfWidth*sin(angle));
+    corners[1].y = d2i(i2d(veh_state.center.y) + halfLength*sin(angle) - halfWidth*cos(angle));
+
+    corners[2].x = d2i(i2d(veh_state.center.x) - halfLength*cos(angle) + halfWidth*sin(angle));
+    corners[2].y = d2i(i2d(veh_state.center.y) - halfLength*sin(angle) - halfWidth*cos(angle));
+
+    corners[3].x = d2i(i2d(veh_state.center.x) - halfLength*cos(angle) - halfWidth*sin(angle));
+    corners[3].y = d2i(i2d(veh_state.center.y) - halfLength*sin(angle) + halfWidth*cos(angle));
+}
+
+// Checking if a point is inside a polygon
+bool point_in_polygon(ST_IPOINT point, ST_IPOINT polygon[4])
+{
+    int num_vertices = 4, i = 0;
+    int32_t x = point.x;
+    int32_t y = point.y;
+    double x_intersection;
+    bool inside = false;
+ 
+    // Store the first point in the polygon and initialize
+    // the second point
+    ST_IPOINT p1 = polygon[0], p2;
+ 
+    // Loop through each edge in the polygon
+    for (i = 1; i &lt;= num_vertices; i++) {
+        // Get the next point in the polygon
+        p2 = polygon[i % num_vertices];
+ 
+        // Check if the point is above the minimum y
+        // coordinate of the edge
+        if (y &gt; min(p1.y, p2.y)) {
+            // Check if the point is below the maximum y
+            // coordinate of the edge
+            if (y &lt;= max(p1.y, p2.y)) {
+                // Check if the point is to the left of the
+                // maximum x coordinate of the edge
+                if (x &lt;= max(p1.x, p2.x)) {
+                    // Calculate the x-intersection of the
+                    // line connecting the point to the edge
+                    x_intersection = (y - p1.y) * (p2.x - p1.x)/(p2.y - p1.y) + p1.x;
+ 
+                    // Check if the point is on the same
+                    // line as the edge or to the left of
+                    // the x-intersection
+                    if (p1.x == p2.x || x &lt;= x_intersection) {
+                        // Flip the inside flag
+                        inside = !inside;
+                    }
+                }
+            }
+        }
+ 
+        // Store the current point as the first point for
+        // the next iteration
+        p1 = p2;
+    }
+ 
+    // Return the value of the inside flag
+    return inside;
+}
+
+// check if veh_state are not covered by a single lane, or if vehicle rectangle touches the edge of the lane
+uint8_t check_inlane_lane_single(const ST_LANE lane, ST_RECTANGLE veh_state) {
+    uint8_t num_box = 0;
+    uint8_t i_box = 0, i_veh = 0;
+    uint8_t inlane_pts_num = 0;
+
+    ST_IPOINT veh_corners[4];
+    ST_IPOINT box_corners[4];
+    // Calculate the corner points
+    calculateCornerPoints(veh_state, veh_corners);
+
+    // check the number of points in the lane
+    num_box = check_pts_num(lane.left.points) - 1;
+    for (i_box = 0; i_box &lt; num_box &amp;&amp; inlane_pts_num &lt; 4; i_box++){
+        // define the corner of the road box
+        box_corners[0] = lane.right.points[i_box];
+        box_corners[1] = lane.right.points[i_box + 1];
+        box_corners[2] = lane.left.points[i_box + 1];
+        box_corners[3] = lane.left.points[i_box];
+        // check if the inlane status of the vehicle box to the current box
+        for(i_veh = 0; i_veh &lt; 4; i_veh++){
+            if(point_in_polygon(veh_corners[i_veh],box_corners)){
+                inlane_pts_num++;
+            }
+        }   
+    }
+
+    return inlane_pts_num;
+}
+
+bool check_inlane_laneNet(const ST_RECTANGLE veh_state) {
+    uint8_t i_lane = 0, inlane_pts_num = 0;
+    bool inside = false;
+
+    for(i_lane = 0; i_lane &lt; MAXL &amp;&amp; inlane_pts_num&lt;4; i_lane++){
+        inlane_pts_num += check_inlane_lane_single(laneNet[i_lane], veh_state);
+    }
+    
+    if(inlane_pts_num &gt;= 4) {
+        inside = true;
+    }
+    else {
+        inside = false;
+    }
+
+    return inside;
+}
+
+int32_t compute_approximating_circle_radius(int32_t ego_length, int32_t ego_width) {
+    double length = i2d(ego_length);
+    double width = i2d(ego_width);
+    double square_length, diagonal_square, approx_radius;
+
+    if (length &lt;= 0 || width &lt;= 0) {
+        return -1;
+    }
+
+    if (fabs(length) &lt; 1e-6 &amp;&amp; fabs(width) &lt; 1e-6) {
+        return 0;
+    }
+    // Divide rectangle into 3 smaller rectangles
+    square_length = length/3.0;
+    // Calculate minimum radius
+    diagonal_square = sqrt(pow(square_length/2.0, 2) + pow(width/2.0, 2));
+    // Round up value
+    approx_radius = round(diagonal_square*10.0) / 10.0 + 0.1;
+
+    return d2i(approx_radius);
+}
+
+void compute_centers_of_approximation_circles(ST_RECTANGLE veh_rect, ST_IPOINT &amp;centers[2]) {
+    double disc_radius, distance_centers, veh_cent_x_double, veh_cent_y_double;
+
+    disc_radius = i2d(compute_approximating_circle_radius(veh_rect.length, veh_rect.width));
+    distance_centers = disc_radius/2.0;
+
+    // Compute the center position of first circle (front)
+    veh_cent_x_double = i2d(veh_rect.center.x);
+    veh_cent_y_double = i2d(veh_rect.center.y);
+    centers[0].x = d2i(veh_cent_x_double + (distance_centers/2.0)*cos(i2d(veh_rect.orientation)));
+    centers[0].y = d2i(veh_cent_y_double + (distance_centers/2.0)*sin(i2d(veh_rect.orientation)));
+
+    // Compute the center position of second circle (rear)
+    centers[1].x = d2i(veh_cent_x_double - (distance_centers/2.0)*cos(i2d(veh_rect.orientation)));
+    centers[1].y = d2i(veh_cent_y_double - (distance_centers/2.0)*sin(i2d(veh_rect.orientation)));
+}
+
+bool check_collision(ST_RECTANGLE veh_st_rect1, ST_RECTANGLE veh_st_rect2, int32_t dis_thres) {    
+    // define two vehicles' circle tuple (front and rear)
+    ST_IPOINT veh_circle_tuple1[2] = {{0, 0}, {0, 0}};
+    ST_IPOINT veh_circle_tuple2[2] = {{0, 0}, {0, 0}};
+    double min_dis = FLT_MAX, dis = 0;
+    int i, j;    
+    
+    // calculate the centers of the vehicles' circles
+    compute_centers_of_approximation_circles(veh_st_rect1, veh_circle_tuple1);
+    compute_centers_of_approximation_circles(veh_st_rect2, veh_circle_tuple2);
+
+    for (i = 0; i &lt; 2; ++i) {
+        for (j = 0; j &lt; 2; ++j) {
+            dis = sqrt(pow(veh_circle_tuple1[i].x - veh_circle_tuple2[j].x, 2) + pow(veh_circle_tuple1[i].y - veh_circle_tuple2[j].y, 2));
+            min_dis = fmin(min_dis, dis);
+        }
+    }
+    if (dis_thres &gt; min_dis)
+        return true;
+    else
+        return false;
+}
+
+void updateAll(int32_t &amp;vx, int32_t &amp;vy, int32_t &amp;vv, int32_t &amp;vacc, int32_t &amp;vdir, 
+            const int32_t vaccRate, const int32_t vdirRate, const int8_t times){
+    int i = 0, LEN = 0;    
+    double rx=0,ry=0,rv=0,racc=0,rdir=0;
+    double dx=0,dy=0,dv=0,dacc=0,ddir=0;
+    double raccRate=0,rdirRate=0,step=0;
+    const double granularity = 0.01;
+    // assign the continuous variables with the discrete variables' values
+    rx = i2d(vx);
+    ry = i2d(vy);
+    rv = i2d(vv);
+    racc = i2d(vacc);
+    rdir = i2d(vdir);
+    raccRate = i2d(vaccRate);
+    rdirRate = i2d(vdirRate);
+    // setup the granularity for calculating integration
+    step = times*granularity;
+    LEN = fint(1/granularity);
+    // integration
+    for(i=0;i&lt;LEN;i++) {
+        dacc = raccRate * step;
+        ddir = rdirRate * step;
+        racc = racc + dacc;
+        rdir = rdir + ddir;
+        //rdir_mod = i2d(d2i(rdir)%PI);
+        dv = racc * step;
+        rv = rv + dv;
+        dx = rv * cos(rdir) * step;
+        rx = rx + dx;
+        dy = rv * sin(rdir) * step;
+        ry = ry + dy;
+    }
+    // update discrete variables with the continuous variables' values
+    vx = d2i(rx);
+    vy = d2i(ry);
+    vv = d2i(rv);
+    vacc = d2i(racc);
+    vdir = d2i(rdir);
+}
+
+void updateVA(int32_t &amp;vv, int32_t &amp;vacc, const int32_t vaccRate, const int8_t times){
+    int i = 0, LEN = 0;
+    double rx,ry,rv,racc;
+    double dx,dy,dv,dacc,raccRate,step;
+    const double granularity = 0.01;
+    // assign the continuous variables with the discrete variables' values
+    rv = i2d(vv);
+    racc = i2d(vacc);
+    raccRate = i2d(vaccRate);
+    // setup the granularity for calculating integration
+    step = times*granularity;
+    LEN = fint(1/granularity);
+    // integration
+    for(i=0;i&lt;LEN;i++) {
+        dacc = raccRate * step;
+        racc = racc + dacc;
+        dv = racc * step;
+        rv = rv + dv;
+    }
+    // update discrete variables with the continuous variables' values
+    vv = d2i(rv);
+    vacc = d2i(racc);
+}
+
+void detect(){
+    int i = 0;
+    int32_t distance = 0;
+
+    for(i = 0; i &lt; MAXOBS &amp;&amp; dynamicObsExists; i++){
+        distance = getDisP2P(cps_i_state.position, obs_i_state[i].position);
+        if(distance &lt;= d2i(RADAR)){
+            cps_i_state.detection.collide |= check_collision(cps_shape, obs_shape[i], d2i(THRESHOLD_COLLISION));
+        }
+        distanceToDynamicObs[i] = distance;
+    }
+    cps_i_state.detection.outside = !check_inlane_laneNet(cps_shape);
+    cps_i_state.detection.reach = (getDisP2P(cps_shape.center, planning.goal) &lt;= d2i(THRESHOLD_REACH));
+    
+    for(i = 0; i &lt; MAXSO &amp;&amp; staticObsExists; i++) {
+        cps_i_state.detection.collide |= check_collision(cps_shape, staticObs[i], d2i(THRESHOLD_COLLISION));
+        distanceToStaticObs = getDisP2P(cps_i_state.position, staticObs[i].center);
+    }
+}
+
+bool isRisky(){
+    int32_t i = 0, co = 12;
+    bool re_risky = true;
+
+    for(i = 0; i &lt; MAXOBS &amp;&amp; re_risky; i++){
+        re_risky = getDisP2P(cps_i_state.position, obs_i_state[i].position) &gt; d2i(co*THRESHOLD_COLLISION); // "co" needs to be tuned in different models
+        re_risky &amp;= check_inlane_laneNet(cps_shape);
+    }
+
+    return re_risky;
+}
+
+bool isProgress(){
+    int32_t dis = 0;
+    bool re_progress = false;
+
+    dis = getDisP2P(cps_shape.center, planning.goal);
+    if(dis &lt; distanceToGoal){
+        re_progress = true;
+    }
+    distanceToGoal = dis;
+
+    return re_progress;
+}
+
+int giveShieldState(){
+    int id = 0, j = 0;
+
+    j = set_cps_state(cps_i_state.position.x, cps_i_state.position.y, cps_i_state.velocity,
+              cps_i_state.orientation, cps_i_state.acceleration, cps_i_state.accRate, 
+              cps_i_state.yawRate, cps_i_state.detection.collide, cps_i_state.detection.outside,
+              cps_i_state.detection.reach);
+    for(id = 0; id&lt;MAXOBS; id++){
+        j = set_obs_state(id, obs_i_state[id].position.x, obs_i_state[id].position.y, obs_i_state[id].velocity,
+              obs_i_state[id].orientation, obs_i_state[id].acceleration, obs_i_state[id].accRate, 
+              obs_i_state[id].yawRate, obs_i_state[id].detection.collide, obs_i_state[id].detection.outside,
+              obs_i_state[id].detection.reach);
+    }
+    
+    return 1;
+}
+
+/*ST_ISTATE cps_i_state_copy;
+ST_ISTATE obs_i_state_copy[MAXOBS];
+int getShieldState(){
+    int id = 0;
+
+    cps_i_state_copy.position.x = get_cps_position_x();
+    cps_i_state_copy.position.y = get_cps_position_y();
+    cps_i_state_copy.velocity = get_cps_velocity();
+    cps_i_state_copy.orientation = get_cps_orientation();
+    cps_i_state_copy.acceleration = get_cps_acceleration();
+    cps_i_state_copy.accRate = get_cps_accRate();
+    cps_i_state_copy.yawRate = get_cps_yawRate();
+    cps_i_state_copy.detection.reach = get_cps_detection_reach();
+    cps_i_state_copy.detection.collide = get_cps_detection_collide();
+    cps_i_state_copy.detection.outside = get_cps_detection_outside();
+    for(id = 0; id&lt;MAXOBS; id++){
+            obs_i_state_copy[id].position.x = get_obs_position_x(id);
+            obs_i_state_copy[id].position.y = get_obs_position_y(id);
+            obs_i_state_copy[id].velocity = get_obs_velocity(id);
+            obs_i_state_copy[id].orientation = get_obs_orientation(id);
+            obs_i_state_copy[id].acceleration = get_obs_acceleration(id);
+            obs_i_state_copy[id].accRate = get_obs_accRate(id);
+            obs_i_state_copy[id].yawRate = get_obs_yawRate(id);
+            obs_i_state_copy[id].detection.reach = get_obs_detection_reach(id);
+            obs_i_state_copy[id].detection.collide = get_obs_detection_collide(id);
+            obs_i_state_copy[id].detection.outside = get_obs_detection_outside(id);
+    }
+    return id;
+}*/
+
+int updateShield(){
+    int i = giveShieldState();
+    //
+    //i = getShieldState();
+
+    return i;
+}</declaration>
+	<template>
+		<name x="5" y="5">Act_Move</name>
+		<parameter>const act_id_t id</parameter>
+		<declaration>int type[5];
+int32_t value[5];
+void shield(){
+    int i = updateShield();
+    //getShieldState();
+    get_action(type,value);
+}
+
+bool gearChanged(const int accRate){
+    return (accRate&gt;0 &amp;&amp; cps_i_state.acceleration&lt;0) || (accRate&lt;0 &amp;&amp; cps_i_state.acceleration&gt;0) || 
+           (accRate==0 &amp;&amp; cps_i_state.acceleration!=0 &amp;&amp; (cps_i_state.velocity&gt;=d2i(MAX_V)||cps_i_state.velocity&lt;=d2i(MIN_V)));
+}
+
+bool permit(acc_t gear){
+    int i = 0;
+    //int type[5];
+    //int32_t value[5];
+
+    //get_action(type,value);
+    for(i = 0; i &lt; 5; i++){
+        if(type[i] == M &amp;&amp; value[i] == gear){
+            return true;
+        }
+    }
+    return false;
+}
+
+bool can(acc_t gear){
+    int32_t pre_v = cps_i_state.velocity, pre_acc = cps_i_state.acceleration, accRate = d2i(mTimeStep(gear)/ACC_GRA);
+
+    if(!permit(gear) &amp;&amp; (shielded &amp;&amp; count &lt; stage[NOW-1])){
+        return false;
+    }
+
+    if(gearChanged(accRate)){
+        pre_acc = 0;
+    }
+    updateVA(pre_v, pre_acc, accRate, N2*P);
+    if(pre_v&lt;=MAX_V &amp;&amp; pre_v&gt;=MIN_V &amp;&amp; pre_acc&lt;=MAX_ACC &amp;&amp; pre_acc&gt;=MIN_ACC){
+        return true;
+    }else{}
+
+    return false;
+}
+
+void act(acc_t gear){
+    cps_i_state.accRate=d2i(mTimeStep(gear)/ACC_GRA);
+    if(gearChanged(cps_i_state.accRate)){
+        cps_i_state.acceleration = 0;
+        cps_dynamic.acceleration = 0.0;
+    }
+
+    //updateShield();
+    //getShieldState();
+}</declaration>
+		<location id="id0" x="-204" y="0">
+			<name x="-221" y="25">Wait</name>
+		</location>
+		<location id="id1" x="-68" y="0">
+			<name x="-93" y="25">Choose</name>
+			<committed/>
+		</location>
+		<init ref="id0"/>
+		<transition id="id2">
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<label kind="select" x="-161" y="-85">g:acc_t</label>
+			<label kind="guard" x="-161" y="-68">can(g)</label>
+			<label kind="assignment" x="-161" y="-51">act(g)</label>
+			<nail x="-68" y="-68"/>
+			<nail x="-204" y="-68"/>
+		</transition>
+		<transition id="id3">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="-178" y="-25">perform[id]?</label>
+			<label kind="assignment" x="-187" y="8">shield()</label>
+		</transition>
+	</template>
+	<template>
+		<name>Act_Turn</name>
+		<parameter>const act_id_t id</parameter>
+		<declaration>int l_type[5];
+int32_t l_value[5];
+void shield(){
+    int i = updateShield();
+    //getShieldState();
+    get_action(l_type,l_value);
+}
+
+bool permit(acc_t gear){
+    int i = 0;
+    //int l_type[5];
+    //int32_t l_value[5];
+
+    //get_action(l_type,l_value);
+    for(i = 0; i &lt; 5; i++){
+        if(l_type[i] == T &amp;&amp; l_value[i] == gear){
+            return true;
+        }
+    }
+    return false;
+}
+
+bool can(dir_t gear){
+    if(gear != 0 &amp;&amp; count &lt;= 20) return false;
+
+    if(!permit(gear) &amp;&amp; (shielded &amp;&amp; count &lt; stage[NOW-1])){
+        return false;
+    }
+
+    if(cps_i_state.velocity == 0 &amp;&amp; gear != 0){
+        // the vehicle cannot turn without a speed
+        return false;
+    }
+    return true;
+}
+
+void act(dir_t gear){
+    cps_i_state.yawRate=d2i(mTimeStep(gear)/DIR_GRA);
+
+    //updateShield();
+    //getShieldState();
+}
+
+void reload(){
+    distanceToGoal = getDisP2P(cps_shape.center, planning.goal);
+}</declaration>
+		<location id="id4" x="170" y="102">
+			<name x="136" y="127">Choose</name>
+			<committed/>
+		</location>
+		<location id="id5" x="34" y="102">
+			<name x="17" y="127">Wait</name>
+		</location>
+		<init ref="id5"/>
+		<transition id="id6">
+			<source ref="id4"/>
+			<target ref="id5"/>
+			<label kind="select" x="76" y="17">g:dir_t</label>
+			<label kind="guard" x="76" y="34">can(g)</label>
+			<label kind="assignment" x="76" y="51">act(g)</label>
+			<nail x="170" y="34"/>
+			<nail x="34" y="34"/>
+		</transition>
+		<transition id="id7">
+			<source ref="id5"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="59" y="76">perform[id]?</label>
+			<label kind="assignment" x="51" y="110">shield()</label>
+		</transition>
+	</template>
+	<template>
+		<name>Controller</name>
+		<parameter>const int[0,MAXL] initLane, const ST_DSTATE &amp;initCS, const ST_RECTANGLE &amp;shape, const ST_RULES &amp;rules</parameter>
+		<declaration>act_id_t actID = 0;
+
+void initDis() {
+    ST_IPOINT leftTop = laneNet[initLane].left.points[0];
+    ST_IPOINT rightTop = laneNet[initLane].left.points[1];
+    ST_IPOINT rightDown = laneNet[initLane].right.points[0];
+    ST_IPOINT leftDown = laneNet[initLane].right.points[1];
+    ST_IPOINT middleDStart, middleDEnd;
+    ST_IPOINT start;
+    int32_t diffX = 0, diffY = 0;
+    double xs, ys, xe, ye, angle;
+
+    diffX = leftDown.x - leftTop.x;
+    diffY = leftDown.y - leftTop.y;
+    middleDStart.x = leftTop.x + diffX/2;
+    middleDStart.y = leftTop.y + diffY/2;
+    diffX = rightDown.x - rightTop.x;
+    diffY = rightDown.y - rightTop.y;
+    middleDEnd.x = rightTop.x + diffX/2;
+    middleDEnd.y = rightTop.y + diffY/2;
+    
+    xs = i2d(middleDStart.x);
+    ys = i2d(middleDStart.y);
+    xe = i2d(middleDEnd.x);
+    ye = i2d(middleDEnd.y);
+
+    angle = atan2(ys-ye,xs-xe);
+
+    if(initCS.position.x != NONE || initCS.position.y != NONE){
+        start.x = d2i(initCS.position.x);
+        start.y = d2i(initCS.position.y);
+        angle = initCS.orientation;
+    }else{
+        start = middleDStart;
+    }
+
+    cps_i_state.position = start;
+    cps_i_state.velocity = d2i(mTimeStep(initCS.velocity));
+    cps_i_state.orientation = d2i(angle);
+    cps_i_state.acceleration = d2i(mTimeStep(initCS.acceleration));
+    cps_i_state.accRate = d2i(mTimeStep(initCS.accRate));
+    cps_i_state.yawRate = d2i(mTimeStep(initCS.yawRate));
+    cps_i_state.detection.collide = false;
+    cps_i_state.detection.outside = false;
+    cps_i_state.detection.reach = false;
+
+    distanceToGoal = getDisP2P(cps_shape.center, planning.goal);
+
+    cps_dynamic.x = i2d(start.x);
+    cps_dynamic.y = i2d(start.y);
+    cps_dynamic.velocity = mTimeStep(initCS.velocity);
+    cps_dynamic.orientation = angle;
+    cps_dynamic.acceleration = mTimeStep(initCS.acceleration);
+
+    rSafe = 0;
+    rProgress = 0;
+}
+
+void followShape(){
+    cps_shape = shape;
+    cps_shape.center = cps_i_state.position;
+    cps_shape.orientation = cps_i_state.orientation;
+}
+
+void initialize(){
+    initDis();
+    followShape();
+}
+
+void sensor(){
+    int i = 0, id = 0;
+
+    updateAll(cps_i_state.position.x,cps_i_state.position.y,cps_i_state.velocity,cps_i_state.acceleration,cps_i_state.orientation,
+           cps_i_state.accRate,cps_i_state.yawRate,P*N1);
+    followShape();
+    detect();
+
+    //updateShield();
+}
+
+void reload(){
+    actID = 0;
+}</declaration>
+		<location id="id8" x="68" y="0">
+			<name x="25" y="-34">Choose</name>
+			<committed/>
+		</location>
+		<location id="id9" x="-136" y="0">
+			<name x="-195" y="-34">Acting</name>
+		</location>
+		<location id="id10" x="-17" y="-85">
+			<name x="-27" y="-119">M1</name>
+			<urgent/>
+		</location>
+		<location id="id11" x="-42" y="0">
+			<name x="-59" y="-42">Ini</name>
+		</location>
+		<init ref="id11"/>
+		<transition id="id12">
+			<source ref="id10"/>
+			<target ref="id8"/>
+			<label kind="guard" x="-76" y="-68">actID&lt;MAXACT-1</label>
+			<nail x="-17" y="0"/>
+		</transition>
+		<transition id="id13" controllable="false">
+			<source ref="id11"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="-102" y="-25">start?</label>
+			<label kind="assignment" x="-119" y="17">initialize()</label>
+		</transition>
+		<transition id="id14">
+			<source ref="id10"/>
+			<target ref="id9"/>
+			<label kind="guard" x="-170" y="-102">actID==MAXACT-1</label>
+			<label kind="synchronisation" x="-170" y="-119">perform[actID]!</label>
+			<label kind="assignment" x="-170" y="-85">reload()</label>
+			<nail x="-136" y="-85"/>
+		</transition>
+		<transition id="id15" controllable="false">
+			<source ref="id9"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="-195" y="-17">sense?</label>
+			<label kind="assignment" x="-195" y="17">sensor()</label>
+			<nail x="-170" y="0"/>
+			<nail x="-170" y="25"/>
+		</transition>
+		<transition id="id16" controllable="false">
+			<source ref="id9"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="-85" y="51">decide?</label>
+			<nail x="-136" y="68"/>
+			<nail x="68" y="68"/>
+		</transition>
+		<transition id="id17">
+			<source ref="id8"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="8" y="-119">perform[actID]!</label>
+			<label kind="assignment" x="8" y="-102">actID++</label>
+			<nail x="68" y="-85"/>
+		</transition>
+	</template>
+	<template>
+		<name>Timer</name>
+		<declaration>clock t;
+
+bool ToDecide(){
+    if(distanceToGoal &lt;= 2*cps_i_state.velocity){
+        return count%N1==0 &amp;&amp; count%MAXTIME!=0;
+    }
+    return count == 1 || (count%N2==0 &amp;&amp; count%MAXTIME!=0);
+}
+
+bool ToEnd(){
+    return cps_i_state.detection.outside || cps_i_state.detection.collide || cps_i_state.detection.reach || count&gt;=MAXTIME;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+</declaration>
+		<location id="id18" x="-68" y="0">
+			<name x="-102" y="-51">Counting</name>
+			<label kind="invariant" x="-59" y="8">t&lt;=P</label>
+		</location>
+		<location id="id19" x="136" y="0">
+			<name x="110" y="-51">Judge</name>
+			<urgent/>
+		</location>
+		<location id="id20" x="-153" y="0">
+			<name x="-163" y="-34">S</name>
+			<urgent/>
+		</location>
+		<location id="id21" x="238" y="0">
+			<name x="221" y="-34">Done</name>
+		</location>
+		<init ref="id20"/>
+		<transition id="id22" controllable="false">
+			<source ref="id19"/>
+			<target ref="id21"/>
+			<label kind="guard" x="153" y="-25">ToEnd()</label>
+			<label kind="synchronisation" x="161" y="0">end!</label>
+		</transition>
+		<transition id="id23" controllable="false">
+			<source ref="id20"/>
+			<target ref="id18"/>
+			<label kind="synchronisation" x="-136" y="-25">start!</label>
+		</transition>
+		<transition id="id24" controllable="false">
+			<source ref="id19"/>
+			<target ref="id18"/>
+			<label kind="guard" x="-51" y="42">!ToEnd()&amp;&amp;ToDecide()</label>
+			<label kind="synchronisation" x="0" y="25">decide!</label>
+			<nail x="136" y="68"/>
+			<nail x="-68" y="68"/>
+		</transition>
+		<transition id="id25" controllable="false">
+			<source ref="id19"/>
+			<target ref="id18"/>
+			<label kind="guard" x="-51" y="-25">!ToEnd()&amp;&amp;!ToDecide()</label>
+		</transition>
+		<transition id="id26" controllable="false">
+			<source ref="id18"/>
+			<target ref="id19"/>
+			<label kind="guard" x="-59" y="-85">t&gt;=P</label>
+			<label kind="synchronisation" x="-8" y="-85">sense!</label>
+			<label kind="assignment" x="59" y="-85">t=0,count++</label>
+			<nail x="-68" y="-68"/>
+			<nail x="136" y="-68"/>
+		</transition>
+	</template>
+	<template>
+		<name>Dynamics</name>
+		<location id="id27" x="95" y="0">
+			<name x="83" y="-34">S1</name>
+			<label kind="invariant" x="-272" y="136">cps_dynamic.x'==0 &amp;&amp;
+cps_dynamic.y'==0 &amp;&amp;
+cps_dynamic.velocity'==0 &amp;&amp;
+cps_dynamic.acceleration'==0 &amp;&amp;
+cps_dynamic.orientation'==0</label>
+		</location>
+		<location id="id28" x="0" y="0">
+			<name x="-10" y="-34">S0</name>
+			<label kind="invariant" x="-272" y="25">cps_dynamic.x'==cos(cps_dynamic.orientation)*cps_dynamic.velocity &amp;&amp;
+cps_dynamic.y'==sin(cps_dynamic.orientation)*cps_dynamic.velocity &amp;&amp;
+cps_dynamic.velocity'==cps_dynamic.acceleration &amp;&amp;
+cps_dynamic.acceleration'==i2d(cps_i_state.accRate) &amp;&amp;
+cps_dynamic.orientation'==i2d(cps_i_state.yawRate)</label>
+		</location>
+		<init ref="id28"/>
+		<transition id="id29" controllable="false">
+			<source ref="id28"/>
+			<target ref="id27"/>
+			<label kind="synchronisation" x="25" y="-25">end?</label>
+		</transition>
+	</template>
+	<template>
+		<name>Obstacle</name>
+		<parameter>const obs_id_t id, const ST_DSTATE &amp;initCS, const ST_RECTANGLE &amp;shape, const ST_PAIR &amp;trajectory[MAXTP]</parameter>
+		<declaration>void followShape(){
+    obs_shape[id].center = obs_i_state[id].position;
+    obs_shape[id].orientation = obs_i_state[id].orientation;
+}
+
+void decisionMaking() {
+    int index = count - 1;
+    if(count == trajectory[index].time) {
+        // predefined trajectory starts
+        obs_dynamic[id].x = trajectory[index].dState.position.x;
+        obs_dynamic[id].y = trajectory[index].dState.position.y;
+        obs_dynamic[id].velocity = mTimeStep(trajectory[index].dState.velocity);
+        obs_dynamic[id].orientation = trajectory[index].dState.orientation;
+
+        obs_i_state[id].position.x = d2i(trajectory[index].dState.position.x);
+        obs_i_state[id].position.y = d2i(trajectory[index].dState.position.y);
+        obs_i_state[id].velocity = d2i(mTimeStep(trajectory[index].dState.velocity));
+        obs_i_state[id].orientation = d2i(trajectory[index].dState.orientation);
+
+        followShape();
+    }
+    else if(count &gt;= MAXTP - 1) {
+        obs_dynamic[id].velocity = 0;
+        obs_dynamic[id].orientation = 0;
+        obs_i_state[id].velocity = 0;
+        obs_i_state[id].orientation = 0;
+        followShape();
+    }
+}
+
+void initCon() {
+    obs_dynamic[id].x = initCS.position.x;
+    obs_dynamic[id].y = initCS.position.y;
+    obs_dynamic[id].velocity = mTimeStep(initCS.velocity);
+    obs_dynamic[id].orientation = initCS.orientation;
+}
+
+void initDis() {
+    obs_i_state[id].position.x = d2i(initCS.position.x);
+    obs_i_state[id].position.y = d2i(initCS.position.y);
+    obs_i_state[id].velocity = d2i(mTimeStep(initCS.velocity));
+    obs_i_state[id].orientation = d2i(initCS.orientation);
+}
+
+void updateDis() {
+    // real numbers of the current state
+    double vx = 0.0, vy = 0.0;
+    double rVelocity = 0.0;
+    double rOrientation = 0.0;
+    // int/real numbers of velocity on X and Y axes
+    int32_t dVx = 0, dVy = 0;
+
+    // update discrete velocity and orientation
+    //obs_i_state[id].velocity = obs_i_state[id].velocity + obs_i_state[id].acceleration * P;
+    //obs_i_state[id].orientation = obs_i_state[id].orientation + obs_i_state[id].yawRate * P;
+    // conversion to real numbers
+    rVelocity = i2d(obs_i_state[id].velocity);
+    rOrientation = i2d(obs_i_state[id].orientation);
+    //rAcceleration = i2d(obs_i_state[id].acceleration);
+    //rYawRate = i2d(obs_i_state[id].yawRate);
+    // velocity projection
+    vx = rVelocity*cos(rOrientation);
+    vy = rVelocity*sin(rOrientation);
+    dVx = d2i(vx);
+    dVy = d2i(vy);
+    // update other discrete varaibles
+    obs_i_state[id].position.x = obs_i_state[id].position.x + dVx * P*N1;
+    obs_i_state[id].position.y = obs_i_state[id].position.y + dVy * P*N1;
+    followShape();
+}
+
+void initialize() {
+    count = 0;
+    initDis();
+    initCon();
+    obs_shape[id] = shape;
+    followShape();
+}
+
+void change(){
+    //updateDis();
+    decisionMaking();
+}</declaration>
+		<location id="id30" x="119" y="0">
+			<name x="109" y="-34">S1</name>
+			<label kind="invariant" x="-323" y="136">obs_dynamic[id].x'==0 &amp;&amp;
+obs_dynamic[id].y'==0 &amp;&amp;
+obs_dynamic[id].velocity'==0 &amp;&amp;
+obs_dynamic[id].acceleration'==0 &amp;&amp;
+obs_dynamic[id].orientation'==0</label>
+		</location>
+		<location id="id31" x="0" y="0">
+			<name x="-10" y="-34">S0</name>
+			<label kind="invariant" x="-323" y="25">obs_dynamic[id].x'==cos(i2d(obs_i_state[id].orientation))*i2d(obs_i_state[id].velocity)&amp;&amp;
+obs_dynamic[id].y'==sin(i2d(obs_i_state[id].orientation))*i2d(obs_i_state[id].velocity)&amp;&amp;
+obs_dynamic[id].velocity'==0 &amp;&amp;
+obs_dynamic[id].acceleration'==0 &amp;&amp;
+obs_dynamic[id].orientation'==0</label>
+			<label kind="comments" x="-144" y="-102">Obstacle with a predefined trajectory</label>
+		</location>
+		<init ref="id31"/>
+		<transition id="id32" controllable="false">
+			<source ref="id31"/>
+			<target ref="id30"/>
+			<label kind="synchronisation" x="42" y="-17">end?</label>
+		</transition>
+		<transition id="id33" controllable="false">
+			<source ref="id31"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="25" y="-68">sense?</label>
+			<label kind="assignment" x="25" y="-51">change()</label>
+			<nail x="34" y="-34"/>
+			<nail x="68" y="-34"/>
+		</transition>
+		<transition id="id34" controllable="false">
+			<source ref="id31"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="-102" y="-68">start?</label>
+			<label kind="assignment" x="-102" y="-51">initialize()</label>
+			<nail x="-34" y="-34"/>
+			<nail x="-68" y="-34"/>
+		</transition>
+	</template>
+	<template>
+		<name>Rewards</name>
+		<declaration>void penalty(){
+    bool re_risky = true;
+    bool re_progress = true;
+
+    //re_risky = isRisky();
+    re_progress = isProgress();
+
+    //normal
+    if(re_risky &amp;&amp; re_progress){
+        FRISKY = 1;
+        FPROGRESS = 1;
+    }
+    //risky
+    if(!re_risky){
+        FRISKY = -10;
+        FPROGRESS = 0;
+    }
+    //no progress
+    if(re_risky &amp;&amp; !re_progress){
+        FRISKY = 1;
+        FPROGRESS = -10;
+    }
+
+    if(cps_i_state.detection.collide || cps_i_state.detection.outside){
+        FRISKY = -100;
+    }
+    if(cps_i_state.detection.reach){
+        FPROGRESS = 100;
+    }
+
+    //reward = 10*re_risky+(5+1000*cps_i_state.detection.reach)*re_progress;
+}
+
+void terminate(){
+    if(!cps_i_state.detection.reach){
+        FPROGRESS = -100;
+        //reward -= 100;
+    }else{
+        FPROGRESS = 100;  
+        //reward += 100;      
+    }
+}</declaration>
+		<location id="id35" x="0" y="0">
+			<name x="-25" y="-8">L</name>
+			<label kind="invariant" x="34" y="-17">rSafe'==FRISKY&amp;&amp;
+rProgress'==FPROGRESS</label>
+		</location>
+		<init ref="id35"/>
+		<transition id="id36" controllable="false">
+			<source ref="id35"/>
+			<target ref="id35"/>
+			<label kind="synchronisation" x="-16" y="17">end?</label>
+			<label kind="assignment" x="-34" y="34">terminate()</label>
+			<nail x="-34" y="34"/>
+			<nail x="34" y="34"/>
+		</transition>
+		<transition id="id37" controllable="false">
+			<source ref="id35"/>
+			<target ref="id35"/>
+			<label kind="synchronisation" x="-25" y="-68">sense?</label>
+			<label kind="assignment" x="-34" y="-51">penalty()</label>
+			<nail x="-34" y="-34"/>
+			<nail x="34" y="-34"/>
+		</transition>
+	</template>
+	<system>// Generated moving obstacles starts
+const ST_DSTATE initCS0 = {{25.8871, -0.3377}, 10.0, 0.0, 0.0, 0.0, 0.0};
+const ST_RECTANGLE shapeObs0 = {{25887, -337}, 2000, 4800, 0};
+const ST_PAIR PHOLDER = {NONE,{{NONE,NONE},NONE,NONE,NONE,NONE,NONE}};
+const ST_PAIR trajectory0[MAXTP] = {{1, {{26.8981, -0.46477}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {2, {{27.8977, -0.4357}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {3, {{28.8973, -0.40663}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {4, {{29.8969, -0.37756}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {5, {{30.8964, -0.34849}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {6, {{31.896, -0.31942}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {7, {{32.8956, -0.29035}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {8, {{33.8952, -0.26128}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {9, {{34.8948, -0.23221}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {10, {{35.8943, -0.20314}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {11, {{36.8939, -0.17408}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {12, {{37.8935, -0.14501}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {13, {{38.8931, -0.11594}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {14, {{39.8926, -0.08687}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {15, {{40.8922, -0.0578}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {16, {{41.8918, -0.02873}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {17, {{42.8914, 0.00034}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {18, {{43.891, 0.02941}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {19, {{44.8905, 0.05848}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {20, {{45.8901, 0.08755}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {21, {{46.8897, 0.11662}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {22, {{47.8893, 0.14569}, 10.0, 0.029074, 0.0, 0.0, 0.0}}, {23, {{48.8889, 0.17243}, 10.0, 0.025433, 0.0, 0.0, 0.0}}, {24, {{49.8886, 0.19786}, 10.0, 0.025433, 0.0, 0.0, 0.0}}, {25, {{50.8883, 0.22329}, 10.0, 0.025433, 0.0, 0.0, 0.0}}, {26, {{51.8879, 0.24872}, 10.0, 0.025433, 0.0, 0.0, 0.0}}, {27, {{52.8876, 0.27415}, 10.0, 0.025433, 0.0, 0.0, 0.0}}, {28, {{53.8873, 0.29958}, 10.0, 0.025433, 0.0, 0.0, 0.0}}, {29, {{54.887, 0.32501}, 10.0, 0.025433, 0.0, 0.0, 0.0}}, {30, {{55.8865, 0.35552}, 10.0, 0.046131, 0.0, 0.0, 0.0}}, {31, {{56.8854, 0.40163}, 10.0, 0.046131, 0.0, 0.0, 0.0}}, {32, {{57.8843, 0.44775}, 10.0, 0.046131, 0.0, 0.0, 0.0}}, {33, {{58.8838, 0.47272}, 10.0, 0.0086253, 0.0, 0.0, 0.0}}, {34, {{59.8828, 0.46449}, 10.0, -0.12497, 0.0, 0.0, 0.0}}, {35, {{60.875, 0.33984}, 10.0, -0.12497, 0.0, 0.0, 0.0}}, {36, {{61.8642, 0.19381}, 10.0, -0.15906, 0.0, 0.0, 0.0}}, {37, {{62.8212, -0.05546}, 10.0, -0.48525, 0.0, 0.0, 0.0}}, {38, {{63.7058, -0.52189}, 10.0, -0.48525, 0.0, 0.0, 0.0}}, {39, {{64.566, -1.0192}, 10.0, -0.84926, 0.0, 0.0, 0.0}}, {40, {{65.2358, -1.7615}, 10.0, -0.8116, 0.0, 0.0, 0.0}}, {41, {{65.8766, -2.5276}, 10.0, -0.91334, 0.0, 0.0, 0.0}}, {42, {{66.4206, -3.3597}, 10.0, -1.3067, 0.0, 0.0, 0.0}}, {43, {{66.6816, -4.325}, 10.0, -1.3067, 0.0, 0.0, 0.0}}, {44, {{66.8852, -5.3012}, 10.0, -1.4621, 0.0, 0.0, 0.0}}, {45, {{66.9937, -6.2953}, 10.0, -1.4621, 0.0, 0.0, 0.0}}, {46, {{67.1021, -7.2894}, 10.0, -1.4621, 0.0, 0.0, 0.0}}, {47, {{67.2106, -8.2835}, 10.0, -1.4621, 0.0, 0.0, 0.0}}, {48, {{67.2678, -9.2794}, 10.0, -1.6101, 0.0, 0.0, 0.0}}, {49, {{67.2284, -10.2786}, 10.0, -1.6101, 0.0, 0.0, 0.0}}, {50, {{67.1891, -11.2778}, 10.0, -1.6101, 0.0, 0.0, 0.0}}};
+obs0 = Obstacle(0, initCS0, shapeObs0, trajectory0);
+const ST_DSTATE initCS1 = {{70.9731, -14.1012}, 12.0, 1.5219, 0.0, 0.0, 0.0};
+const ST_RECTANGLE shapeObs1 = {{70973, -14101}, 2000, 4800, 0};
+const ST_PAIR trajectory1[MAXTP] = {{1, {{70.6301, -12.8984}, 12.0, 1.5175, 0.0, 0.0, 0.0}}, {2, {{70.694, -11.7001}, 12.0, 1.5175, 0.0, 0.0, 0.0}}, {3, {{70.758, -10.5019}, 12.0, 1.5175, 0.0, 0.0, 0.0}}, {4, {{70.822, -9.3036}, 12.0, 1.5175, 0.0, 0.0, 0.0}}, {5, {{70.9164, -8.1073}, 12.0, 1.4919, 0.0, 0.0, 0.0}}, {6, {{71.0207, -6.9119}, 12.0, 1.4673, 0.0, 0.0, 0.0}}, {7, {{71.1534, -5.7193}, 12.0, 1.4344, 0.0, 0.0, 0.0}}, {8, {{71.3349, -4.5333}, 12.0, 1.4003, 0.0, 0.0, 0.0}}, {9, {{71.5829, -3.3606}, 12.0, 1.3009, 0.0, 0.0, 0.0}}, {10, {{71.9205, -2.2097}, 12.0, 1.2161, 0.0, 0.0, 0.0}}, {11, {{72.3666, -1.0969}, 12.0, 1.1214, 0.0, 0.0, 0.0}}, {12, {{72.9225, -0.03516}, 12.0, 0.97499, 0.0, 0.0, 0.0}}, {13, {{73.6433, 0.92107}, 12.0, 0.75411, 0.0, 0.0, 0.0}}, {14, {{74.5179, 1.7426}, 12.0, 0.75411, 0.0, 0.0, 0.0}}, {15, {{75.5112, 2.4144}, 12.0, 0.58528, 0.0, 0.0, 0.0}}, {16, {{76.5337, 3.0418}, 12.0, 0.53328, 0.0, 0.0, 0.0}}, {17, {{77.6469, 3.4726}, 12.0, 0.25286, 0.0, 0.0, 0.0}}, {18, {{78.8088, 3.7728}, 12.0, 0.25286, 0.0, 0.0, 0.0}}, {19, {{79.9834, 4.0118}, 12.0, 0.15909, 0.0, 0.0, 0.0}}, {20, {{81.1682, 4.2019}, 12.0, 0.15909, 0.0, 0.0, 0.0}}, {21, {{82.3582, 4.2696}, 12.0, -0.076203, 0.0, 0.0, 0.0}}, {22, {{83.5547, 4.1783}, 12.0, -0.076203, 0.0, 0.0, 0.0}}, {23, {{84.7512, 4.0869}, 12.0, -0.076203, 0.0, 0.0, 0.0}}, {24, {{85.9477, 3.9956}, 12.0, -0.076203, 0.0, 0.0, 0.0}}, {25, {{87.1442, 3.9042}, 12.0, -0.076203, 0.0, 0.0, 0.0}}, {26, {{88.3407, 3.8129}, 12.0, -0.076203, 0.0, 0.0, 0.0}}, {27, {{89.5373, 3.7215}, 12.0, -0.076203, 0.0, 0.0, 0.0}}, {28, {{90.7338, 3.6301}, 12.0, -0.076203, 0.0, 0.0, 0.0}}, {29, {{91.9303, 3.5388}, 12.0, -0.076203, 0.0, 0.0, 0.0}}, {30, {{93.1268, 3.4474}, 12.0, -0.076203, 0.0, 0.0, 0.0}}, {31, {{94.3233, 3.3561}, 12.0, -0.076203, 0.0, 0.0, 0.0}}, {32, {{95.5199, 3.2657}, 12.0, -0.074688, 0.0, 0.0, 0.0}}, {33, {{96.7153, 3.1614}, 12.0, -0.091472, 0.0, 0.0, 0.0}}, {34, {{97.9103, 3.0518}, 12.0, -0.091472, 0.0, 0.0, 0.0}}, {35, {{99.1053, 2.9422}, 12.0, -0.091472, 0.0, 0.0, 0.0}}, {36, {{100.3003, 2.8325}, 12.0, -0.091472, 0.0, 0.0, 0.0}}, {37, {{101.4953, 2.7229}, 12.0, -0.091472, 0.0, 0.0, 0.0}}, {38, {{102.6903, 2.6133}, 12.0, -0.091472, 0.0, 0.0, 0.0}}, {39, {{103.8852, 2.5037}, 12.0, -0.091472, 0.0, 0.0, 0.0}}, {40, {{105.0802, 2.3941}, 12.0, -0.091472, 0.0, 0.0, 0.0}}, {41, {{106.2752, 2.2845}, 12.0, -0.091472, 0.0, 0.0, 0.0}}, {42, {{107.4702, 2.1749}, 12.0, -0.091472, 0.0, 0.0, 0.0}}, {43, {{108.6652, 2.0652}, 12.0, -0.091472, 0.0, 0.0, 0.0}}, {44, {{109.8602, 1.9556}, 12.0, -0.091472, 0.0, 0.0, 0.0}}, {45, {{111.0551, 1.846}, 12.0, -0.091472, 0.0, 0.0, 0.0}}, {46, {{112.2501, 1.7364}, 12.0, -0.091472, 0.0, 0.0, 0.0}}, {47, {{113.4451, 1.6268}, 12.0, -0.091472, 0.0, 0.0, 0.0}}, {48, {{114.6388, 1.5051}, 12.0, -0.1292, 0.0, 0.0, 0.0}}, {49, {{115.8288, 1.3505}, 12.0, -0.1292, 0.0, 0.0, 0.0}}, {50, {{117.0188, 1.1959}, 12.0, -0.1292, 0.0, 0.0, 0.0}}};
+obs1 = Obstacle(1, initCS1, shapeObs1, trajectory1);
+const ST_DSTATE initCS2 = {{66.2732, 24.9369}, 10.0, -1.5499, 0.0, 0.0, 0.0};
+const ST_RECTANGLE shapeObs2 = {{66273, 24936}, 2000, 4800, 0};
+const ST_PAIR trajectory2[MAXTP] = {{1, {{66.3367, 23.9388}, 10.0, -1.525, 0.0, 0.0, 0.0}}, {2, {{66.3825, 22.9398}, 10.0, -1.525, 0.0, 0.0, 0.0}}, {3, {{66.4283, 21.9409}, 10.0, -1.525, 0.0, 0.0, 0.0}}, {4, {{66.4741, 20.9419}, 10.0, -1.525, 0.0, 0.0, 0.0}}, {5, {{66.5198, 19.943}, 10.0, -1.525, 0.0, 0.0, 0.0}}, {6, {{66.5135, 18.9451}, 10.0, -1.6573, 0.0, 0.0, 0.0}}, {7, {{66.427, 17.9488}, 10.0, -1.6573, 0.0, 0.0, 0.0}}, {8, {{66.3406, 16.9526}, 10.0, -1.6573, 0.0, 0.0, 0.0}}, {9, {{66.1979, 15.9652}, 10.0, -1.7956, 0.0, 0.0, 0.0}}, {10, {{65.975, 14.9903}, 10.0, -1.7956, 0.0, 0.0, 0.0}}, {11, {{65.7521, 14.0155}, 10.0, -1.7956, 0.0, 0.0, 0.0}}, {12, {{65.5291, 13.0406}, 10.0, -1.7956, 0.0, 0.0, 0.0}}, {13, {{65.1334, 12.1327}, 10.0, -2.0846, 0.0, 0.0, 0.0}}, {14, {{64.6419, 11.2618}, 10.0, -2.0846, 0.0, 0.0, 0.0}}, {15, {{64.1504, 10.391}, 10.0, -2.0846, 0.0, 0.0, 0.0}}, {16, {{63.5992, 9.562}, 10.0, -2.2822, 0.0, 0.0, 0.0}}, {17, {{62.9463, 8.8045}, 10.0, -2.2822, 0.0, 0.0, 0.0}}, {18, {{62.3012, 8.0407}, 10.0, -2.2455, 0.0, 0.0, 0.0}}, {19, {{61.5385, 7.4061}, 10.0, -2.5255, 0.0, 0.0, 0.0}}, {20, {{60.6681, 6.9176}, 10.0, -2.6666, 0.0, 0.0, 0.0}}, {21, {{59.7684, 6.4877}, 10.0, -2.8865, 0.0, 0.0, 0.0}}, {22, {{58.8007, 6.2354}, 10.0, -2.8865, 0.0, 0.0, 0.0}}, {23, {{57.8541, 5.9189}, 10.0, -2.7641, 0.0, 0.0, 0.0}}, {24, {{56.8865, 5.6765}, 10.0, -2.9342, 0.0, 0.0, 0.0}}, {25, {{55.9079, 5.4706}, 10.0, -2.9342, 0.0, 0.0, 0.0}}, {26, {{54.9179, 5.3428}, 10.0, -3.0589, 0.0, 0.0, 0.0}}, {27, {{53.9213, 5.2602}, 10.0, -3.0589, 0.0, 0.0, 0.0}}, {28, {{52.9248, 5.1775}, 10.0, -3.0589, 0.0, 0.0, 0.0}}, {29, {{51.9282, 5.0949}, 10.0, -3.0589, 0.0, 0.0, 0.0}}, {30, {{50.9316, 5.0123}, 10.0, -3.0589, 0.0, 0.0, 0.0}}, {31, {{49.935, 4.9297}, 10.0, -3.0589, 0.0, 0.0, 0.0}}, {32, {{48.9384, 4.847}, 10.0, -3.0589, 0.0, 0.0, 0.0}}, {33, {{47.9418, 4.7651}, 10.0, -3.0773, 0.0, 0.0, 0.0}}, {34, {{46.9434, 4.7085}, 10.0, -3.0887, 0.0, 0.0, 0.0}}, {35, {{45.9448, 4.6557}, 10.0, -3.0887, 0.0, 0.0, 0.0}}, {36, {{44.9462, 4.6029}, 10.0, -3.0887, 0.0, 0.0, 0.0}}, {37, {{43.9476, 4.55}, 10.0, -3.0887, 0.0, 0.0, 0.0}}, {38, {{42.949, 4.4972}, 10.0, -3.0887, 0.0, 0.0, 0.0}}, {39, {{41.9504, 4.4443}, 10.0, -3.0887, 0.0, 0.0, 0.0}}, {40, {{40.9518, 4.3915}, 10.0, -3.0887, 0.0, 0.0, 0.0}}, {41, {{39.9532, 4.3386}, 10.0, -3.0887, 0.0, 0.0, 0.0}}, {42, {{38.9546, 4.2858}, 10.0, -3.0887, 0.0, 0.0, 0.0}}, {43, {{37.956, 4.233}, 10.0, -3.0887, 0.0, 0.0, 0.0}}, {44, {{36.9574, 4.1801}, 10.0, -3.0887, 0.0, 0.0, 0.0}}, {45, {{35.9588, 4.1273}, 10.0, -3.0887, 0.0, 0.0, 0.0}}, {46, {{34.9602, 4.0744}, 10.0, -3.0887, 0.0, 0.0, 0.0}}, {47, {{33.9616, 4.0216}, 10.0, -3.0887, 0.0, 0.0, 0.0}}, {48, {{32.963, 3.9687}, 10.0, -3.0887, 0.0, 0.0, 0.0}}, {49, {{31.9644, 3.9159}, 10.0, -3.0887, 0.0, 0.0, 0.0}}, {50, {{30.9658, 3.8631}, 10.0, -3.0887, 0.0, 0.0, 0.0}}};
+obs2 = Obstacle(2, initCS2, shapeObs2, trajectory2);
+const ST_DSTATE initCS3 = {{65.6715, 44.9603}, 9.0, -1.5499, 0.0, 0.0, 0.0};
+const ST_RECTANGLE shapeObs3 = {{65671, 44960}, 2000, 4800, 0};
+const ST_PAIR trajectory3[MAXTP] = {{1, {{65.4377, 44.0625}, 9.0, -1.5351, 0.0, 0.0, 0.0}}, {2, {{65.4699, 43.1631}, 9.0, -1.5351, 0.0, 0.0, 0.0}}, {3, {{65.502, 42.2637}, 9.0, -1.5351, 0.0, 0.0, 0.0}}, {4, {{65.5383, 41.3644}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {5, {{65.5795, 40.4654}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {6, {{65.6207, 39.5663}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {7, {{65.6619, 38.6672}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {8, {{65.7031, 37.7682}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {9, {{65.7443, 36.8691}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {10, {{65.7855, 35.9701}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {11, {{65.8266, 35.071}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {12, {{65.8678, 34.172}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {13, {{65.909, 33.2729}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {14, {{65.9502, 32.3738}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {15, {{65.9914, 31.4748}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {16, {{66.0326, 30.5757}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {17, {{66.0738, 29.6767}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {18, {{66.115, 28.7776}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {19, {{66.1562, 27.8786}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {20, {{66.1974, 26.9795}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {21, {{66.2386, 26.0804}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {22, {{66.2798, 25.1814}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {23, {{66.321, 24.2823}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {24, {{66.3622, 23.3833}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {25, {{66.4034, 22.4842}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {26, {{66.4446, 21.5852}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {27, {{66.4858, 20.6861}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {28, {{66.527, 19.7871}, 9.0, -1.525, 0.0, 0.0, 0.0}}, {29, {{66.5086, 18.8892}, 9.0, -1.6573, 0.0, 0.0, 0.0}}, {30, {{66.4308, 17.9926}, 9.0, -1.6573, 0.0, 0.0, 0.0}}, {31, {{66.353, 17.0959}, 9.0, -1.6573, 0.0, 0.0, 0.0}}, {32, {{66.2523, 16.2029}, 9.0, -1.7956, 0.0, 0.0, 0.0}}, {33, {{66.0516, 15.3256}, 9.0, -1.7956, 0.0, 0.0, 0.0}}, {34, {{65.851, 14.4482}, 9.0, -1.7956, 0.0, 0.0, 0.0}}, {35, {{65.6504, 13.5709}, 9.0, -1.7956, 0.0, 0.0, 0.0}}, {36, {{65.4498, 12.6935}, 9.0, -1.7956, 0.0, 0.0, 0.0}}, {37, {{65.0075, 11.9097}, 9.0, -2.0846, 0.0, 0.0, 0.0}}, {38, {{64.5652, 11.1259}, 9.0, -2.0846, 0.0, 0.0, 0.0}}, {39, {{64.1228, 10.3421}, 9.0, -2.0846, 0.0, 0.0, 0.0}}, {40, {{63.6279, 9.5953}, 9.0, -2.2822, 0.0, 0.0, 0.0}}, {41, {{63.0403, 8.9135}, 9.0, -2.2822, 0.0, 0.0, 0.0}}, {42, {{62.4535, 8.2311}, 9.0, -2.2455, 0.0, 0.0, 0.0}}, {43, {{61.8192, 7.6049}, 9.0, -2.5255, 0.0, 0.0, 0.0}}, {44, {{61.0629, 7.1206}, 9.0, -2.6666, 0.0, 0.0, 0.0}}, {45, {{60.2625, 6.709}, 9.0, -2.6666, 0.0, 0.0, 0.0}}, {46, {{59.4238, 6.3978}, 9.0, -2.8865, 0.0, 0.0, 0.0}}, {47, {{58.5529, 6.1707}, 9.0, -2.8865, 0.0, 0.0, 0.0}}, {48, {{57.709, 5.8614}, 9.0, -2.7641, 0.0, 0.0, 0.0}}, {49, {{56.8316, 5.6649}, 9.0, -2.9342, 0.0, 0.0, 0.0}}, {50, {{55.9509, 5.4796}, 9.0, -2.9342, 0.0, 0.0, 0.0}}};
+obs3 = Obstacle(3, initCS3, shapeObs3, trajectory3);
+// Generated moving obstacles ends
+
+// Generated ego vehicle starts
+const ST_DSTATE initEgo = {{0.0, 0.0}, 12.0, 0.0, 0.0, 0.0, 0.0};
+const ST_RECTANGLE initShapeEgo = {{0, 0}, 1000, 4500, 0};
+const ST_RULES rules = {d2i(4.0), 0, d2i(0.2), d2i(-0.2)}; 
+const int[0,MAXL] initLane = 1;
+move = Act_Move(0);
+turn = Act_Turn(1);
+controller = Controller(initLane,initEgo,initShapeEgo,rules);
+timer = Timer();
+dynamics = Dynamics();
+rewardMachine = Rewards();
+// Generated ego vehicle ends
+
+// Generated model instances starts
+system timer, obs0, obs1, obs2, obs3, move, turn, controller, dynamics, rewardMachine;
+// Generated model instances ends
+</system>
+	<queries>
+		<option key="--total-runs" value="2"/>
+		<option key="--good-runs" value="1"/>
+		<option key="--eval-runs" value="1"/>
+		<option key="--runs-pr-state" value="1"/>
+		<option key="--diagnostic" value="0"/>
+		<query>
+			<formula>//behaviour observation</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>A[] !timer.Done imply !deadlock</formula>
+			<comment/>
+			<result outcome="failure" type="quality" timestamp="2025-02-05 16:20:31 +0100">
+				<option key="--total-runs" value="2"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--eval-runs" value="1"/>
+				<option key="--runs-pr-state" value="1"/>
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] !cps_i_state.detection.collide</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>A[] !cps_i_state.detection.outside</formula>
+			<comment/>
+			<result outcome="failure" type="quality" timestamp="2025-02-04 13:48:44 +0100">
+				<option key="--total-runs" value="2"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--eval-runs" value="1"/>
+				<option key="--runs-pr-state" value="1"/>
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] !cps_i_state.detection.collide &amp;&amp; !cps_i_state.detection.outside</formula>
+			<comment/>
+			<result outcome="failure" type="quality" timestamp="2025-02-05 16:32:30 +0100">
+				<option key="--total-runs" value="2"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--eval-runs" value="1"/>
+				<option key="--runs-pr-state" value="1"/>
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; !cps_i_state.detection.collide &amp;&amp; !cps_i_state.detection.outside &amp;&amp; cps_i_state.detection.reach &amp;&amp; cps_i_state.velocity &gt;= 0</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-02-05 13:49:09 +0100">
+				<option key="--total-runs" value="2"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--eval-runs" value="1"/>
+				<option key="--runs-pr-state" value="1"/>
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+		<query>
+			<formula/>
+			<comment>//Controller synthesis</comment>
+		</query>
+		<query>
+			<formula>strategy safe = control:A[(!cps_i_state.detection.collide &amp;&amp; !cps_i_state.detection.outside) U count == stage[NOW]]</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>saveStrategy("/home/rgu01/Uppaal/StagedShieldSynthesis/car/safeCar.json",safe)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-02-05 16:36:26 +0100">
+				<option key="--total-runs" value="2"/>
+				<option key="--good-runs" value="1"/>
+				<option key="--eval-runs" value="1"/>
+				<option key="--runs-pr-state" value="1"/>
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] !cps_i_state.detection.collide &amp;&amp; !cps_i_state.detection.outside under safe</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>E&lt;&gt; cps_i_state.detection.reach and timer.Done under safe</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula/>
+			<comment>//Reinformcement learning</comment>
+		</query>
+		<query>
+			<formula>strategy reach = maxE(reward) [&lt;=MAXTIME]{controller.location, move.location, turn.location}-&gt;
+{cps_i_state.position.x, cps_i_state.position.y, cps_i_state.velocity, cps_i_state.orientation, cps_i_state.acceleration, cps_i_state.accRate, cps_i_state.yawRate,
+obs_i_state[0].position.x, obs_i_state[0].position.y, obs_i_state[0].velocity, obs_i_state[0].orientation,
+obs_i_state[1].position.x, obs_i_state[1].position.y, obs_i_state[1].velocity, obs_i_state[1].orientation,
+obs_i_state[2].position.x, obs_i_state[2].position.y, obs_i_state[2].velocity, obs_i_state[2].orientation,
+obs_i_state[3].position.x, obs_i_state[3].position.y, obs_i_state[3].velocity, obs_i_state[3].orientation}: &lt;&gt; timer.Done</formula>
+			<comment>strategy reachSafe = minE(cost) [&lt;=MAXTIME] {control.location}-&gt;{cps_i_state.position.x, cps_i_state.position.y, 
+cps_i_state.velocity, cps_i_state.orientation, cps_i_state.acceleration, cps_i_state.accRate, cps_i_state.yawRate,
+obs_i_state[0].position.x, obs_i_state[0].position.y, obs_i_state[0].velocity, obs_i_state[0].orientation,
+obs_i_state[1].position.x, obs_i_state[1].position.y, obs_i_state[1].velocity, obs_i_state[1].orientation}: &lt;&gt; g_time&gt;=MAXTIME under safe</comment>
+		</query>
+		<query>
+			<formula>A[] !cps_i_state.detection.collide &amp;&amp; !cps_i_state.detection.outside under reach</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>A&lt;&gt; cps_i_state.detection.reach under reach</formula>
+			<comment/>
+		</query>
+	</queries>
+</nta>

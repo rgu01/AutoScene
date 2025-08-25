@@ -1,0 +1,1 @@
+simulate [<=MAXTIME] { i2d(cps_state.position.x), i2d(cps_state.position.y), i2d(cps_state.head), i2d(cps_state.vel), i2d(cps_state.acc) }: behavior_shield.Goal

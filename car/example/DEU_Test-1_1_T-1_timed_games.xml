@@ -1,0 +1,4203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>// Generated scenario starts
+const int P = 1;
+const uint16_t MAXTIME = 30;
+const int MAXP = 2;
+const int NONE = -1;
+const int MAXL = 4;
+const int MAXSO = 1;
+const int MAXDO = 1;
+const int MAXTP = 69;
+const int MAXPRE = 1;
+const int MAXSUC = 1;
+const double THRESHOLD_COLLISION = 2;
+const double THRESHOLD_REACH = 0.5;
+const double TIMESTEPSIZE = 0.1;
+const double RADAR = 100;
+const uint8_t N1 = 1;
+const uint8_t N2 = 4;
+const uint8_t MAXACT = 2;
+typedef int[0,MAXACT-1] act_id_t;
+const uint8_t BASE = 10;
+const uint8_t EXPONENT = 3;
+const uint8_t MAXOBS = 1;
+typedef int[0,MAXOBS-1] obs_id_t;
+
+typedef int[-1,65535] id_t;
+
+typedef struct {
+    int32_t x;
+    int32_t y;
+}ST_IPOINT;
+
+typedef struct {
+    double x;
+    double y;
+}ST_DPOINT;
+
+typedef struct {
+    ST_IPOINT ends[2];
+}ST_DLINE;
+
+typedef struct {
+    ST_IPOINT points[MAXP];
+    bool dashLine;
+}ST_BOUND;
+
+typedef struct {
+    id_t ID;
+    ST_BOUND left;
+    ST_BOUND right;
+    id_t predecessor[MAXPRE];
+    id_t successor[MAXSUC];
+    id_t adjLeft;
+    bool dirLeft;
+    id_t adjRight;
+    bool dirRight;
+}ST_LANE;
+
+typedef struct {
+    bool collide; // collision
+    bool outside; // outside road
+    bool reach;   // reach the goal
+}ST_DETECTION;
+
+typedef struct {
+    ST_DPOINT position;
+    double velocity;
+    double orientation;
+    double acceleration;
+    double accRate;
+    double yawRate;
+}ST_DSTATE;
+
+typedef struct {
+    ST_IPOINT position;
+    int32_t velocity;
+    int32_t orientation;
+    int32_t acceleration;
+    int32_t accRate;
+    int32_t yawRate;
+    ST_DETECTION detection;
+}ST_ISTATE;
+
+typedef struct {
+    hybrid clock x;
+    hybrid clock y;
+    hybrid clock velocity;
+    hybrid clock orientation;
+    hybrid clock acceleration;
+    //hybrid clock accRate;
+    //hybrid clock yawRate;
+}ST_DYNAMICS;
+
+typedef struct {
+    ST_IPOINT center;
+    int32_t width;
+    int32_t length;
+    int32_t orientation;
+}ST_RECTANGLE;
+
+typedef struct {
+    int32_t maxVelocity;
+    int32_t minVelocity;
+    int32_t maxOrientation;
+    int32_t minOrientation;
+}ST_RULES;
+
+typedef struct {
+    ST_IPOINT goal;
+}ST_PLANNING;
+
+typedef struct {
+    int32_t time;
+    ST_DSTATE dState;
+}ST_PAIR;
+const ST_BOUND leftLane1 = {{{0, 4000}, {75000, 4000}}, false};
+const ST_BOUND rightLane1 = {{{0, 0}, {75000, 0}}, false};
+const ST_LANE lane1 = {1, leftLane1, rightLane1, {NONE}, {3}, 2, true, NONE, false};
+
+const ST_BOUND leftLane2 = {{{0, 8000}, {75000, 8000}}, false};
+const ST_BOUND rightLane2 = {{{0, 4000}, {75000, 4000}}, false};
+const ST_LANE lane2 = {2, leftLane2, rightLane2, {NONE}, {4}, NONE, false, 1, true};
+
+const ST_BOUND leftLane3 = {{{75000, 4000}, {150000, 4000}}, false};
+const ST_BOUND rightLane3 = {{{75000, 0}, {150000, 0}}, false};
+const ST_LANE lane3 = {3, leftLane3, rightLane3, {1}, {NONE}, 4, true, NONE, false};
+
+const ST_BOUND leftLane4 = {{{75000, 8000}, {150000, 8000}}, false};
+const ST_BOUND rightLane4 = {{{75000, 4000}, {150000, 4000}}, false};
+const ST_LANE lane4 = {4, leftLane4, rightLane4, {2}, {NONE}, NONE, false, 3, true};
+
+const ST_LANE laneNet[MAXL] = {lane1, lane2, lane3, lane4};
+
+const bool staticObsExists = true;
+const ST_RECTANGLE staticObs[MAXSO] = {{{65000, 2250}, 2000, 4500, 300}};
+
+const ST_PLANNING planning = {{85000, 2000}};
+
+
+// Generated scenario ends
+
+broadcast chan perform[MAXACT],decide,sense,start,end;
+//chan priority decide&lt;default&lt;sense;
+
+//NOTE: when overflow happens, the sign of the number will be changed
+//but this function has no assertion about overflow
+int32_t d2i(double value) {
+    return fint(value*pow(BASE,EXPONENT));
+}
+
+double i2d(int32_t value) {
+    return value/pow(BASE,EXPONENT);
+}
+
+int32_t min(const int32_t v1, const int32_t v2){
+    return v1 &lt; v2? v1:v2;
+}
+
+int32_t max(const int32_t v1, const int32_t v2){
+    return v1 &gt; v2? v1:v2;
+}
+
+const int32_t INC_ACC = d2i(0.2);
+const int32_t DEC_ACC = d2i(-0.1);
+const int32_t CONST_ACC = d2i(0);
+const int32_t INC_DIR = d2i(0.2);
+const int32_t DEC_DIR = d2i(-0.2);
+const int32_t CONST_DIR = d2i(0);
+const int32_t MAX_ACC = d2i(1);
+const int32_t MIN_ACC = d2i(-1);
+const int32_t MAX_V = d2i(2);
+const int32_t MIN_V = d2i(-1);
+const int32_t PI = d2i(M_PI);
+
+typedef int[-1,1] acc_t;
+const double ACC_GRA = 1; //granularity of acceleration
+typedef int[-1,1] dir_t;
+const double DIR_GRA = 1; //granularity of turning
+
+/** variables start **/
+ST_ISTATE cps_i_state, obs_i_state[MAXOBS];
+ST_DYNAMICS cps_dynamic, obs_dynamic[MAXOBS]; 
+ST_RECTANGLE cps_shape, obs_shape[MAXOBS]; 
+clock g_time;
+hybrid clock rSafe, rProgress;
+int count = 0;
+//int32_t reward = 0;
+int32_t distanceToGoal = 0;
+int[-100,100] FRISKY = 0;     //rate of reward safe
+int[-100,100] FPROGRESS = 0; //rate of reward progress
+/** variables end **/
+
+/** test start **/
+int32_t distanceToStaticObs = 0;
+/** test end **/
+
+double mTimeStep(const double value) {
+    return value*TIMESTEPSIZE;
+}
+
+int32_t getDisP2P(const ST_IPOINT &amp;p1, const ST_IPOINT &amp;p2) {
+    double distance = 0.0;
+    double rx1 = i2d(p1.x), ry1 = i2d(p1.y);
+    double rx2 = i2d(p2.x), ry2 = i2d(p2.y);
+    distance = sqrt(pow(rx1 - rx2, 2) + pow(ry1 - ry2, 2));
+
+    return d2i(distance);
+}
+
+// Function to count non-zero elements in a 2D array
+int check_pts_num(const ST_IPOINT lane_pts[MAXP]) {
+    uint16_t count = 0;
+    // NONE or 0?
+    while (count &lt; MAXP &amp;&amp; (lane_pts[count].x != NONE || lane_pts[count].y != NONE)){
+        count++;
+    }
+    return count;
+}
+
+// Function to calculate the corner points of a rectangle
+void calculateCornerPoints(ST_RECTANGLE veh_state, ST_IPOINT &amp;corners[4]) {
+    double halfLength = i2d(veh_state.length)/2.0;
+    double halfWidth = i2d(veh_state.width)/2.0;
+    double angle = i2d(veh_state.orientation);
+
+    // Calculate the coordinates of each corner point based on the center, length, width, and orientation
+    corners[0].x = d2i(i2d(veh_state.center.x) + halfLength*cos(angle) - halfWidth*sin(angle));
+    corners[0].y = d2i(i2d(veh_state.center.y) + halfLength*sin(angle) + halfWidth*cos(angle));
+
+    corners[1].x = d2i(i2d(veh_state.center.x) + halfLength*cos(angle) + halfWidth*sin(angle));
+    corners[1].y = d2i(i2d(veh_state.center.y) + halfLength*sin(angle) - halfWidth*cos(angle));
+
+    corners[2].x = d2i(i2d(veh_state.center.x) - halfLength*cos(angle) + halfWidth*sin(angle));
+    corners[2].y = d2i(i2d(veh_state.center.y) - halfLength*sin(angle) - halfWidth*cos(angle));
+
+    corners[3].x = d2i(i2d(veh_state.center.x) - halfLength*cos(angle) - halfWidth*sin(angle));
+    corners[3].y = d2i(i2d(veh_state.center.y) - halfLength*sin(angle) + halfWidth*cos(angle));
+}
+
+// Checking if a point is inside a polygon
+bool point_in_polygon(ST_IPOINT point, ST_IPOINT polygon[4])
+{
+    int num_vertices = 4, i = 0;
+    int32_t x = point.x;
+    int32_t y = point.y;
+    double x_intersection;
+    bool inside = false;
+ 
+    // Store the first point in the polygon and initialize
+    // the second point
+    ST_IPOINT p1 = polygon[0], p2;
+ 
+    // Loop through each edge in the polygon
+    for (i = 1; i &lt;= num_vertices; i++) {
+        // Get the next point in the polygon
+        p2 = polygon[i % num_vertices];
+ 
+        // Check if the point is above the minimum y
+        // coordinate of the edge
+        if (y &gt; min(p1.y, p2.y)) {
+            // Check if the point is below the maximum y
+            // coordinate of the edge
+            if (y &lt;= max(p1.y, p2.y)) {
+                // Check if the point is to the left of the
+                // maximum x coordinate of the edge
+                if (x &lt;= max(p1.x, p2.x)) {
+                    // Calculate the x-intersection of the
+                    // line connecting the point to the edge
+                    x_intersection = (y - p1.y) * (p2.x - p1.x)/(p2.y - p1.y) + p1.x;
+ 
+                    // Check if the point is on the same
+                    // line as the edge or to the left of
+                    // the x-intersection
+                    if (p1.x == p2.x || x &lt;= x_intersection) {
+                        // Flip the inside flag
+                        inside = !inside;
+                    }
+                }
+            }
+        }
+ 
+        // Store the current point as the first point for
+        // the next iteration
+        p1 = p2;
+    }
+ 
+    // Return the value of the inside flag
+    return inside;
+}
+
+// check if veh_state are not covered by a single lane, or if vehicle rectangle touches the edge of the lane
+uint8_t check_inlane_lane_single(const ST_LANE lane, ST_RECTANGLE veh_state) {
+    uint8_t num_box = 0;
+    uint8_t i_box = 0, i_veh = 0;
+    uint8_t inlane_pts_num = 0;
+
+    ST_IPOINT veh_corners[4];
+    ST_IPOINT box_corners[4];
+    // Calculate the corner points
+    calculateCornerPoints(veh_state, veh_corners);
+
+    // check the number of points in the lane
+    num_box = check_pts_num(lane.left.points) - 1;
+    for (i_box = 0; i_box &lt; num_box &amp;&amp; inlane_pts_num &lt; 4; i_box++){
+        // define the corner of the road box
+        box_corners[0] = lane.right.points[i_box];
+        box_corners[1] = lane.right.points[i_box + 1];
+        box_corners[2] = lane.left.points[i_box + 1];
+        box_corners[3] = lane.left.points[i_box];
+        // check if the inlane status of the vehicle box to the current box
+        for(i_veh = 0; i_veh &lt; 4; i_veh++){
+            if(point_in_polygon(veh_corners[i_veh],box_corners)){
+                inlane_pts_num++;
+            }
+        }   
+    }
+
+    return inlane_pts_num;
+}
+
+bool check_inlane_laneNet(const ST_RECTANGLE veh_state) {
+    uint8_t i_lane = 0, inlane_pts_num = 0;
+    bool inside = false;
+
+    for(i_lane = 0; i_lane &lt; MAXL &amp;&amp; inlane_pts_num&lt;4; i_lane++){
+        inlane_pts_num += check_inlane_lane_single(laneNet[i_lane], veh_state);
+    }
+    
+    if(inlane_pts_num &gt;= 4) {
+        inside = true;
+    }
+    else {
+        inside = false;
+    }
+
+    return inside;
+}
+
+int32_t compute_approximating_circle_radius(int32_t ego_length, int32_t ego_width) {
+    double length = i2d(ego_length);
+    double width = i2d(ego_width);
+    double square_length, diagonal_square, approx_radius;
+
+    if (length &lt;= 0 || width &lt;= 0) {
+        return -1;
+    }
+
+    if (fabs(length) &lt; 1e-6 &amp;&amp; fabs(width) &lt; 1e-6) {
+        return 0;
+    }
+    // Divide rectangle into 3 smaller rectangles
+    square_length = length/3.0;
+    // Calculate minimum radius
+    diagonal_square = sqrt(pow(square_length/2.0, 2) + pow(width/2.0, 2));
+    // Round up value
+    approx_radius = round(diagonal_square*10.0) / 10.0 + 0.1;
+
+    return d2i(approx_radius);
+}
+
+void compute_centers_of_approximation_circles(ST_RECTANGLE veh_rect, ST_IPOINT &amp;centers[2]) {
+    double disc_radius, distance_centers, veh_cent_x_double, veh_cent_y_double;
+
+    disc_radius = i2d(compute_approximating_circle_radius(veh_rect.length, veh_rect.width));
+    distance_centers = disc_radius/2.0;
+
+    // Compute the center position of first circle (front)
+    veh_cent_x_double = i2d(veh_rect.center.x);
+    veh_cent_y_double = i2d(veh_rect.center.y);
+    centers[0].x = d2i(veh_cent_x_double + (distance_centers/2.0)*cos(i2d(veh_rect.orientation)));
+    centers[0].y = d2i(veh_cent_y_double + (distance_centers/2.0)*sin(i2d(veh_rect.orientation)));
+
+    // Compute the center position of second circle (rear)
+    centers[1].x = d2i(veh_cent_x_double - (distance_centers/2.0)*cos(i2d(veh_rect.orientation)));
+    centers[1].y = d2i(veh_cent_y_double - (distance_centers/2.0)*sin(i2d(veh_rect.orientation)));
+}
+
+bool check_collision(ST_RECTANGLE veh_st_rect1, ST_RECTANGLE veh_st_rect2, int32_t dis_thres) {    
+    // define two vehicles' circle tuple (front and rear)
+    ST_IPOINT veh_circle_tuple1[2] = {{0, 0}, {0, 0}};
+    ST_IPOINT veh_circle_tuple2[2] = {{0, 0}, {0, 0}};
+    double min_dis = FLT_MAX, dis = 0;
+    int i, j;    
+    
+    // calculate the centers of the vehicles' circles
+    compute_centers_of_approximation_circles(veh_st_rect1, veh_circle_tuple1);
+    compute_centers_of_approximation_circles(veh_st_rect2, veh_circle_tuple2);
+
+    for (i = 0; i &lt; 2; ++i) {
+        for (j = 0; j &lt; 2; ++j) {
+            dis = sqrt(pow(veh_circle_tuple1[i].x - veh_circle_tuple2[j].x, 2) + pow(veh_circle_tuple1[i].y - veh_circle_tuple2[j].y, 2));
+            min_dis = fmin(min_dis, dis);
+        }
+    }
+    if (dis_thres &gt; min_dis)
+        return true;
+    else
+        return false;
+}
+
+void updateAll(int32_t &amp;vx, int32_t &amp;vy, int32_t &amp;vv, int32_t &amp;vacc, int32_t &amp;vdir, 
+            const int32_t vaccRate, const int32_t vdirRate, const int8_t times){
+    int i = 0, LEN = 0;    
+    double rx=0,ry=0,rv=0,racc=0,rdir=0;
+    double dx=0,dy=0,dv=0,dacc=0,ddir=0;
+    double raccRate=0,rdirRate=0,step=0;
+    const double granularity = 0.01;
+    // assign the continuous variables with the discrete variables' values
+    rx = i2d(vx);
+    ry = i2d(vy);
+    rv = i2d(vv);
+    racc = i2d(vacc);
+    rdir = i2d(vdir);
+    raccRate = i2d(vaccRate);
+    rdirRate = i2d(vdirRate);
+    // setup the granularity for calculating integration
+    step = times*granularity;
+    LEN = fint(1/granularity);
+    // integration
+    for(i=0;i&lt;LEN;i++) {
+        dacc = raccRate * step;
+        ddir = rdirRate * step;
+        racc = racc + dacc;
+        rdir = rdir + ddir;
+        //rdir_mod = i2d(d2i(rdir)%PI);
+        dv = racc * step;
+        rv = rv + dv;
+        dx = rv * cos(rdir) * step;
+        rx = rx + dx;
+        dy = rv * sin(rdir) * step;
+        ry = ry + dy;
+    }
+    // update discrete variables with the continuous variables' values
+    vx = d2i(rx);
+    vy = d2i(ry);
+    vv = d2i(rv);
+    vacc = d2i(racc);
+    vdir = d2i(rdir);
+}
+
+void updateVA(int32_t &amp;vv, int32_t &amp;vacc, const int32_t vaccRate, const int8_t times){
+    int i = 0, LEN = 0;
+    double rx,ry,rv,racc;
+    double dx,dy,dv,dacc,raccRate,step;
+    const double granularity = 0.01;
+    // assign the continuous variables with the discrete variables' values
+    rv = i2d(vv);
+    racc = i2d(vacc);
+    raccRate = i2d(vaccRate);
+    // setup the granularity for calculating integration
+    step = times*granularity;
+    LEN = fint(1/granularity);
+    // integration
+    for(i=0;i&lt;LEN;i++) {
+        dacc = raccRate * step;
+        racc = racc + dacc;
+        dv = racc * step;
+        rv = rv + dv;
+    }
+    // update discrete variables with the continuous variables' values
+    vv = d2i(rv);
+    vacc = d2i(racc);
+}
+
+void detect(){
+    int i = 0;
+    int32_t distance = 0;
+
+    for(i = 0; i &lt; MAXOBS; i++){
+        distance = getDisP2P(cps_i_state.position, obs_i_state[i].position);
+        if(distance &lt;= d2i(RADAR)){
+            cps_i_state.detection.collide |= check_collision(cps_shape, obs_shape[i], d2i(THRESHOLD_COLLISION));
+        }
+    }
+    cps_i_state.detection.outside = !check_inlane_laneNet(cps_shape);
+    cps_i_state.detection.reach = (getDisP2P(cps_shape.center, planning.goal) &lt;= d2i(THRESHOLD_REACH));
+    if(staticObsExists) {
+        for(i = 0; i &lt; MAXSO; i++) {
+            cps_i_state.detection.collide |= check_collision(cps_shape, staticObs[i], d2i(THRESHOLD_COLLISION));
+            distanceToStaticObs = getDisP2P(cps_i_state.position, staticObs[i].center);
+        }
+    }
+}
+
+bool isRisky(){
+    int32_t i = 0, co = 16;
+    bool re_risky = true;
+
+    for(i = 0; i &lt; MAXOBS &amp;&amp; re_risky; i++){
+        re_risky = getDisP2P(cps_i_state.position, obs_i_state[i].position) &gt; d2i(co*THRESHOLD_COLLISION); // "co" needs to be tuned in different models
+        re_risky &amp;= check_inlane_laneNet(cps_shape);
+    }
+
+    return re_risky;
+}
+
+bool isProgress(){
+    int32_t dis = 0;
+    bool re_progress = false;
+
+    dis = getDisP2P(cps_shape.center, planning.goal);
+    if(dis &lt; distanceToGoal){
+        re_progress = true;
+    }
+    distanceToGoal = dis;
+
+    return re_progress;
+}
+</declaration>
+	<template>
+		<name x="5" y="5">Act_Move</name>
+		<parameter>const act_id_t id</parameter>
+		<declaration>bool gearChanged(const int accRate){
+    return (accRate&gt;0 &amp;&amp; cps_i_state.acceleration&lt;0) || (accRate&lt;0 &amp;&amp; cps_i_state.acceleration&gt;0) || 
+           (accRate==0 &amp;&amp; cps_i_state.acceleration!=0 &amp;&amp; (cps_i_state.velocity&gt;=d2i(MAX_V)||cps_i_state.velocity&lt;=d2i(MIN_V)));
+}
+
+bool can(acc_t gear){
+    int32_t pre_v = cps_i_state.velocity, pre_acc = cps_i_state.acceleration, accRate = d2i(mTimeStep(gear)/ACC_GRA);
+
+    if(gearChanged(accRate)){
+        pre_acc = 0;
+    }
+    updateVA(pre_v, pre_acc, accRate, N2*P);
+    if(pre_v&lt;=MAX_V &amp;&amp; pre_v&gt;=MIN_V &amp;&amp; pre_acc&lt;=MAX_ACC &amp;&amp; pre_acc&gt;=MIN_ACC){
+        return true;
+    }else{}
+
+    return false;
+}
+
+void act(acc_t gear){
+    cps_i_state.accRate=d2i(mTimeStep(gear)/ACC_GRA);
+    if(gearChanged(cps_i_state.accRate)){
+        cps_i_state.acceleration = 0;
+        cps_dynamic.acceleration = 0.0;
+    }
+}</declaration>
+		<location id="id0" x="-204" y="0">
+			<name x="-221" y="17">Wait</name>
+		</location>
+		<location id="id1" x="-68" y="0">
+			<name x="-102" y="17">Choose</name>
+			<committed/>
+		</location>
+		<init ref="id0"/>
+		<transition id="id2">
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<label kind="select" x="-161" y="-85">g:acc_t</label>
+			<label kind="guard" x="-161" y="-68">can(g)</label>
+			<label kind="assignment" x="-161" y="-51">act(g)</label>
+			<nail x="-68" y="-68"/>
+			<nail x="-204" y="-68"/>
+		</transition>
+		<transition id="id3">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="-178" y="-25">perform[id]?</label>
+		</transition>
+	</template>
+	<template>
+		<name>Act_Turn</name>
+		<parameter>const act_id_t id</parameter>
+		<declaration>bool can(dir_t gear){
+    if(cps_i_state.velocity == 0 &amp;&amp; gear != 0){
+        // the vehicle cannot turn without a speed
+        return false;
+    }
+    return true;
+}
+
+void act(dir_t gear){
+    cps_i_state.yawRate=d2i(mTimeStep(gear)/DIR_GRA);
+}
+
+void reload(){
+    distanceToGoal = getDisP2P(cps_shape.center, planning.goal);
+}</declaration>
+		<location id="id4" x="170" y="102">
+			<name x="136" y="119">Choose</name>
+			<committed/>
+		</location>
+		<location id="id5" x="34" y="102">
+			<name x="17" y="119">Wait</name>
+		</location>
+		<init ref="id5"/>
+		<transition id="id6">
+			<source ref="id4"/>
+			<target ref="id5"/>
+			<label kind="select" x="76" y="17">g:dir_t</label>
+			<label kind="guard" x="76" y="34">can(g)</label>
+			<label kind="assignment" x="76" y="51">act(g)</label>
+			<nail x="170" y="34"/>
+			<nail x="34" y="34"/>
+		</transition>
+		<transition id="id7">
+			<source ref="id5"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="59" y="76">perform[id]?</label>
+		</transition>
+	</template>
+	<template>
+		<name>Controller</name>
+		<parameter>const int[0,MAXL] initLane, const ST_DSTATE &amp;initCS, const ST_RECTANGLE &amp;shape, const ST_RULES &amp;rules</parameter>
+		<declaration>act_id_t actID = 0;
+
+void initDis() {
+    ST_IPOINT leftTop = laneNet[initLane].left.points[0];
+    ST_IPOINT rightTop = laneNet[initLane].left.points[1];
+    ST_IPOINT rightDown = laneNet[initLane].right.points[0];
+    ST_IPOINT leftDown = laneNet[initLane].right.points[1];
+    ST_IPOINT middleDStart, middleDEnd;
+    ST_IPOINT start;
+    int32_t diffX = 0, diffY = 0;
+    double xs, ys, xe, ye, angle;
+
+    diffX = leftDown.x - leftTop.x;
+    diffY = leftDown.y - leftTop.y;
+    middleDStart.x = leftTop.x + diffX/2;
+    middleDStart.y = leftTop.y + diffY/2;
+    diffX = rightDown.x - rightTop.x;
+    diffY = rightDown.y - rightTop.y;
+    middleDEnd.x = rightTop.x + diffX/2;
+    middleDEnd.y = rightTop.y + diffY/2;
+    
+    xs = i2d(middleDStart.x);
+    ys = i2d(middleDStart.y);
+    xe = i2d(middleDEnd.x);
+    ye = i2d(middleDEnd.y);
+
+    angle = atan2(ys-ye,xs-xe);
+
+    if(initCS.position.x != NONE || initCS.position.y != NONE){
+        start.x = d2i(initCS.position.x);
+        start.y = d2i(initCS.position.y);
+        angle = initCS.orientation;
+    }else{
+        start = middleDStart;
+    }
+
+    cps_i_state.position = start;
+    cps_i_state.velocity = d2i(mTimeStep(initCS.velocity));
+    cps_i_state.orientation = d2i(angle);
+    cps_i_state.acceleration = d2i(mTimeStep(initCS.acceleration));
+    cps_i_state.accRate = d2i(mTimeStep(initCS.accRate));
+    cps_i_state.yawRate = d2i(mTimeStep(initCS.yawRate));
+    cps_i_state.detection.collide = false;
+    cps_i_state.detection.outside = false;
+    cps_i_state.detection.reach = false;
+
+    distanceToGoal = getDisP2P(cps_shape.center, planning.goal);
+
+    cps_dynamic.x = i2d(start.x);
+    cps_dynamic.y = i2d(start.y);
+    cps_dynamic.velocity = mTimeStep(initCS.velocity);
+    cps_dynamic.orientation = angle;
+    cps_dynamic.acceleration = mTimeStep(initCS.acceleration);
+
+    rSafe = 0;
+    rProgress = 0;
+}
+
+void followShape(){
+    cps_shape = shape;
+    cps_shape.center = cps_i_state.position;
+    cps_shape.orientation = cps_i_state.orientation;
+}
+
+void initialize(){
+    initDis();
+    followShape();
+}
+
+void sensor(){
+    int i = 0;
+
+    updateAll(cps_i_state.position.x,cps_i_state.position.y,cps_i_state.velocity,cps_i_state.acceleration,cps_i_state.orientation,
+           cps_i_state.accRate,cps_i_state.yawRate,P*N1);
+    followShape();
+    detect();
+}
+
+void reload(){
+    actID = 0;
+}</declaration>
+		<location id="id8" x="68" y="0">
+			<name x="25" y="-34">Choose</name>
+			<committed/>
+		</location>
+		<location id="id9" x="-136" y="0">
+			<name x="-195" y="-34">Acting</name>
+		</location>
+		<location id="id10" x="-17" y="-85">
+			<name x="-27" y="-119">M1</name>
+			<urgent/>
+		</location>
+		<location id="id11" x="-42" y="0">
+			<name x="-59" y="-42">Ini</name>
+		</location>
+		<init ref="id11"/>
+		<transition id="id12">
+			<source ref="id10"/>
+			<target ref="id8"/>
+			<label kind="guard" x="-76" y="-68">actID&lt;MAXACT-1</label>
+			<nail x="-17" y="0"/>
+		</transition>
+		<transition id="id13" controllable="false">
+			<source ref="id11"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="-102" y="-25">start?</label>
+			<label kind="assignment" x="-119" y="17">initialize()</label>
+		</transition>
+		<transition id="id14">
+			<source ref="id10"/>
+			<target ref="id9"/>
+			<label kind="guard" x="-170" y="-102">actID==MAXACT-1</label>
+			<label kind="synchronisation" x="-170" y="-119">perform[actID]!</label>
+			<label kind="assignment" x="-170" y="-85">reload()</label>
+			<nail x="-136" y="-85"/>
+		</transition>
+		<transition id="id15" controllable="false">
+			<source ref="id9"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="-195" y="-17">sense?</label>
+			<label kind="assignment" x="-195" y="17">sensor()</label>
+			<nail x="-170" y="0"/>
+			<nail x="-170" y="25"/>
+		</transition>
+		<transition id="id16" controllable="false">
+			<source ref="id9"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="-85" y="51">decide?</label>
+			<nail x="-136" y="68"/>
+			<nail x="68" y="68"/>
+		</transition>
+		<transition id="id17">
+			<source ref="id8"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="8" y="-119">perform[actID]!</label>
+			<label kind="assignment" x="8" y="-102">actID++</label>
+			<nail x="68" y="-85"/>
+		</transition>
+	</template>
+	<template>
+		<name>Timer</name>
+		<declaration>clock t;
+
+bool ToDecide(){
+    if(distanceToGoal &lt;= 2*cps_i_state.velocity){
+        return count%N1==0 &amp;&amp; count%MAXTIME!=0;
+    }
+    return count == 1 || (count%N2==0 &amp;&amp; count%MAXTIME!=0);
+}
+
+bool ToEnd(){
+    return FRISKY &lt; 0 || FPROGRESS &lt; 0 || cps_i_state.detection.outside || cps_i_state.detection.collide || cps_i_state.detection.reach || count&gt;=MAXTIME;
+}</declaration>
+		<location id="id18" x="-68" y="0">
+			<name x="-102" y="-51">Counting</name>
+			<label kind="invariant" x="-59" y="8">t&lt;=P</label>
+		</location>
+		<location id="id19" x="136" y="0">
+			<name x="110" y="-51">Judge</name>
+			<urgent/>
+		</location>
+		<location id="id20" x="-136" y="0">
+			<name x="-146" y="-34">S</name>
+			<urgent/>
+		</location>
+		<location id="id21" x="238" y="0">
+			<name x="221" y="-34">Done</name>
+		</location>
+		<init ref="id20"/>
+		<transition id="id22" controllable="false">
+			<source ref="id19"/>
+			<target ref="id21"/>
+			<label kind="guard" x="153" y="-25">ToEnd()</label>
+			<label kind="synchronisation" x="161" y="0">end!</label>
+		</transition>
+		<transition id="id23" controllable="false">
+			<source ref="id20"/>
+			<target ref="id18"/>
+			<label kind="synchronisation" x="-127" y="8">start!</label>
+		</transition>
+		<transition id="id24" controllable="false">
+			<source ref="id19"/>
+			<target ref="id18"/>
+			<label kind="guard" x="-51" y="42">!ToEnd()&amp;&amp;ToDecide()</label>
+			<label kind="synchronisation" x="0" y="25">decide!</label>
+			<nail x="136" y="68"/>
+			<nail x="-68" y="68"/>
+		</transition>
+		<transition id="id25" controllable="false">
+			<source ref="id19"/>
+			<target ref="id18"/>
+			<label kind="guard" x="-51" y="-25">!ToEnd()&amp;&amp;!ToDecide()</label>
+		</transition>
+		<transition id="id26" controllable="false">
+			<source ref="id18"/>
+			<target ref="id19"/>
+			<label kind="guard" x="-59" y="-85">t&gt;=P</label>
+			<label kind="synchronisation" x="-8" y="-85">sense!</label>
+			<label kind="assignment" x="59" y="-85">t=0,count++</label>
+			<nail x="-68" y="-68"/>
+			<nail x="136" y="-68"/>
+		</transition>
+	</template>
+	<template>
+		<name>Dynamics</name>
+		<location id="id27" x="95" y="0">
+			<name x="83" y="-34">S1</name>
+			<label kind="invariant" x="-272" y="136">cps_dynamic.x'==0 &amp;&amp;
+cps_dynamic.y'==0 &amp;&amp;
+cps_dynamic.velocity'==0 &amp;&amp;
+cps_dynamic.acceleration'==0 &amp;&amp;
+cps_dynamic.orientation'==0</label>
+		</location>
+		<location id="id28" x="0" y="0">
+			<name x="-10" y="-34">S0</name>
+			<label kind="invariant" x="-272" y="25">cps_dynamic.x'==cos(cps_dynamic.orientation)*cps_dynamic.velocity &amp;&amp;
+cps_dynamic.y'==sin(cps_dynamic.orientation)*cps_dynamic.velocity &amp;&amp;
+cps_dynamic.velocity'==cps_dynamic.acceleration &amp;&amp;
+cps_dynamic.acceleration'==i2d(cps_i_state.accRate) &amp;&amp;
+cps_dynamic.orientation'==i2d(cps_i_state.yawRate)</label>
+		</location>
+		<init ref="id28"/>
+		<transition id="id29" controllable="false">
+			<source ref="id28"/>
+			<target ref="id27"/>
+			<label kind="synchronisation" x="25" y="-25">end?</label>
+		</transition>
+	</template>
+	<template>
+		<name>Obstacle</name>
+		<parameter>const obs_id_t id, const ST_DSTATE &amp;initCS, const ST_RECTANGLE &amp;shape, const ST_PAIR &amp;trajectory[MAXTP]</parameter>
+		<declaration>uint8_t pc = 0;     // policy counter
+uint8_t tc = 0;     // time counter
+
+void followShape(){
+    obs_shape[id].center = obs_i_state[id].position;
+    obs_shape[id].orientation = obs_i_state[id].orientation;
+}
+
+void decisionMaking() {
+    if(pc &lt; MAXTP &amp;&amp; tc == trajectory[pc].time) {
+        // predefined trajectory starts
+        obs_dynamic[id].x = trajectory[pc].dState.position.x;
+        obs_dynamic[id].y = trajectory[pc].dState.position.y;
+        obs_dynamic[id].velocity = mTimeStep(trajectory[pc].dState.velocity);
+        obs_dynamic[id].orientation = trajectory[pc].dState.orientation;
+
+        obs_i_state[id].position.x = d2i(trajectory[pc].dState.position.x);
+        obs_i_state[id].position.y = d2i(trajectory[pc].dState.position.y);
+        obs_i_state[id].velocity = d2i(mTimeStep(trajectory[pc].dState.velocity));
+        obs_i_state[id].orientation = d2i(trajectory[pc].dState.orientation);
+
+        followShape();
+
+        //obs_dynamic[id].acceleration = mTimeStep(trajectory[pc].dState.acceleration);
+        //obs_dynamic[id].yawRate = mTimeStep(trajectory[pc].dState.yawRate);
+
+        //obs_i_state[id].acceleration = d2i(mTimeStep(trajectory[pc].dState.acceleration));
+        //obs_i_state[id].yawRate = d2i(mTimeStep(trajectory[pc].dState.yawRate));
+        pc++;
+    }
+    else if(pc &lt; MAXTP) {
+        tc++;
+    }
+    else if(pc &gt;= MAXTP - 1) {
+        obs_dynamic[id].velocity = 0;
+        obs_dynamic[id].orientation = 0;
+        //obs_dynamic[id].acceleration = 0;
+        //obs_dynamic[id].yawRate = 0;
+        obs_i_state[id].velocity = 0;
+        obs_i_state[id].orientation = 0;
+        //obs_i_state[id].acceleration = 0;
+        //obs_i_state[id].yawRate = 0;
+        followShape();
+    }
+}
+
+void initCon() {
+    obs_dynamic[id].x = initCS.position.x;
+    obs_dynamic[id].y = initCS.position.y;
+    obs_dynamic[id].velocity = mTimeStep(initCS.velocity);
+    obs_dynamic[id].orientation = initCS.orientation;
+    //obs_dynamic[id].acceleration = mTimeStep(initCS.acceleration);
+    //obs_dynamic[id].yawRate = mTimeStep(initCS.yawRate); 
+}
+
+void initDis() {
+    obs_i_state[id].position.x = d2i(initCS.position.x);
+    obs_i_state[id].position.y = d2i(initCS.position.y);
+    obs_i_state[id].velocity = d2i(mTimeStep(initCS.velocity));
+    obs_i_state[id].orientation = d2i(initCS.orientation);
+    //obs_i_state[id].acceleration = d2i(mTimeStep(initCS.acceleration));
+    //obs_i_state[id].yawRate = d2i(mTimeStep(initCS.yawRate));
+}
+
+void updateDis() {
+    // real numbers of the current state
+    double vx = 0.0, vy = 0.0;
+    double rVelocity = 0.0;
+    double rOrientation = 0.0;
+    // int/real numbers of velocity on X and Y axes
+    int32_t dVx = 0, dVy = 0;
+
+    // update discrete velocity and orientation
+    //obs_i_state[id].velocity = obs_i_state[id].velocity + obs_i_state[id].acceleration * P;
+    //obs_i_state[id].orientation = obs_i_state[id].orientation + obs_i_state[id].yawRate * P;
+    // conversion to real numbers
+    rVelocity = i2d(obs_i_state[id].velocity);
+    rOrientation = i2d(obs_i_state[id].orientation);
+    //rAcceleration = i2d(obs_i_state[id].acceleration);
+    //rYawRate = i2d(obs_i_state[id].yawRate);
+    // velocity projection
+    vx = rVelocity*cos(rOrientation);
+    vy = rVelocity*sin(rOrientation);
+    dVx = d2i(vx);
+    dVy = d2i(vy);
+    // update other discrete varaibles
+    obs_i_state[id].position.x = obs_i_state[id].position.x + dVx * P*N1;
+    obs_i_state[id].position.y = obs_i_state[id].position.y + dVy * P*N1;
+    followShape();
+}
+
+void initialize() {
+    pc = 0;
+    tc = 0;
+    initDis();
+    initCon();
+    obs_shape[id] = shape;
+    followShape();
+}
+
+void change(){
+    updateDis();
+    decisionMaking();
+}</declaration>
+		<location id="id30" x="119" y="0">
+			<name x="109" y="-34">S1</name>
+			<label kind="invariant" x="-323" y="136">obs_dynamic[id].x'==0 &amp;&amp;
+obs_dynamic[id].y'==0 &amp;&amp;
+obs_dynamic[id].velocity'==0 &amp;&amp;
+obs_dynamic[id].acceleration'==0 &amp;&amp;
+obs_dynamic[id].orientation'==0</label>
+		</location>
+		<location id="id31" x="0" y="0">
+			<name x="-10" y="-34">S0</name>
+			<label kind="invariant" x="-323" y="25">obs_dynamic[id].x'==cos(i2d(obs_i_state[id].orientation))*i2d(obs_i_state[id].velocity)&amp;&amp;
+obs_dynamic[id].y'==sin(i2d(obs_i_state[id].orientation))*i2d(obs_i_state[id].velocity)&amp;&amp;
+obs_dynamic[id].velocity'==0 &amp;&amp;
+obs_dynamic[id].acceleration'==0 &amp;&amp;
+obs_dynamic[id].orientation'==0</label>
+			<label kind="comments" x="-144" y="-102">Obstacle with a predefined trajectory</label>
+		</location>
+		<init ref="id31"/>
+		<transition id="id32" controllable="false">
+			<source ref="id31"/>
+			<target ref="id30"/>
+			<label kind="synchronisation" x="42" y="-17">end?</label>
+		</transition>
+		<transition id="id33" controllable="false">
+			<source ref="id31"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="25" y="-68">sense?</label>
+			<label kind="assignment" x="25" y="-51">change()</label>
+			<nail x="34" y="-34"/>
+			<nail x="68" y="-34"/>
+		</transition>
+		<transition id="id34" controllable="false">
+			<source ref="id31"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="-102" y="-68">start?</label>
+			<label kind="assignment" x="-102" y="-51">initialize()</label>
+			<nail x="-34" y="-34"/>
+			<nail x="-68" y="-34"/>
+		</transition>
+	</template>
+	<template>
+		<name>Rewards</name>
+		<declaration>void penalty(){
+    bool re_risky = false;
+    bool re_progress = false;
+
+    re_risky = isRisky();
+    re_progress = isProgress();
+
+    //normal
+    if(re_risky &amp;&amp; re_progress){
+        FRISKY = 1;
+        FPROGRESS = 1;
+    }
+    //risky
+    if(!re_risky){
+        FRISKY = -10;
+        FPROGRESS = 0;
+    }
+    //no progress
+    if(re_risky &amp;&amp; !re_progress){
+        FRISKY = 1;
+        FPROGRESS = -10;
+    }
+
+    if(cps_i_state.detection.collide || cps_i_state.detection.outside){
+        FRISKY = -100;
+    }
+    if(cps_i_state.detection.reach){
+        FPROGRESS = 100;
+    }
+
+    //reward = 10*re_risky+(5+1000*cps_i_state.detection.reach)*re_progress;
+}
+
+void terminate(){
+    if(!cps_i_state.detection.reach){
+        FPROGRESS = -100;
+        //reward -= 100;
+    }else{
+        FPROGRESS = 100;  
+        //reward += 100;      
+    }
+}</declaration>
+		<location id="id35" x="0" y="0">
+			<name x="-25" y="-8">L</name>
+			<label kind="invariant" x="34" y="-17">rSafe'==FRISKY&amp;&amp;
+rProgress'==FPROGRESS</label>
+		</location>
+		<init ref="id35"/>
+		<transition id="id36" controllable="false">
+			<source ref="id35"/>
+			<target ref="id35"/>
+			<label kind="synchronisation" x="-16" y="17">end?</label>
+			<label kind="assignment" x="-34" y="34">terminate()</label>
+			<nail x="-34" y="34"/>
+			<nail x="34" y="34"/>
+		</transition>
+		<transition id="id37" controllable="false">
+			<source ref="id35"/>
+			<target ref="id35"/>
+			<label kind="synchronisation" x="-25" y="-68">sense?</label>
+			<label kind="assignment" x="-34" y="-51">penalty()</label>
+			<nail x="-34" y="-34"/>
+			<nail x="34" y="-34"/>
+		</transition>
+	</template>
+	<system>// Generated moving obstacles starts
+const ST_DSTATE initCS0 = {{17.0, 2.0}, 10.0, 0.0, 0.0, 0.0, 0.0};
+const ST_RECTANGLE shapeObs0 = {{17000, 2000}, 2100, 4500, 0};
+const ST_PAIR PHOLDER = {NONE,{{NONE,NONE},NONE,NONE,NONE,NONE,NONE}};
+const ST_PAIR trajectory0[MAXTP] = {{1, {{18.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {2, {{19.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {3, {{20.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {4, {{21.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {5, {{22.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {6, {{23.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {7, {{24.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {8, {{25.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {9, {{26.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {10, {{27.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {11, {{28.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {12, {{29.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {13, {{30.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {14, {{31.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {15, {{32.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {16, {{33.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {17, {{34.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {18, {{35.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {19, {{36.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {20, {{37.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {21, {{38.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {22, {{39.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {23, {{40.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {24, {{41.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {25, {{42.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {26, {{43.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {27, {{44.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {28, {{45.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {29, {{46.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {30, {{47.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {31, {{48.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {32, {{49.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {33, {{50.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {34, {{51.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {35, {{52.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {36, {{53.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {37, {{54.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {38, {{55.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {39, {{56.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {40, {{57.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {41, {{58.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {42, {{59.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {43, {{60.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {44, {{61.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {45, {{62.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {46, {{63.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {47, {{64.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {48, {{65.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {49, {{66.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {50, {{67.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {51, {{68.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {52, {{69.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {53, {{70.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {54, {{71.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {55, {{72.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {56, {{73.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {57, {{74.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {58, {{75.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {59, {{76.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {60, {{77.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {61, {{78.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {62, {{79.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {63, {{80.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {64, {{81.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {65, {{82.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {66, {{83.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {67, {{84.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {68, {{85.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}, {69, {{86.0, 2.0}, 10.0, 0.02, 0.0, 0.0, 0.0}}};
+obs0 = Obstacle(0, initCS0, shapeObs0, trajectory0);
+
+// Generated moving obstacles ends
+
+// Generated ego vehicle starts
+const ST_DSTATE initEgo = {{50.1, 6.1}, 12.0, 0.0, 0.0, 0.0, 0.0};
+const ST_RECTANGLE initShapeEgo = {{50100, 6100}, 1000, 3500, 0};
+const ST_RULES rules = {d2i(4.0), 0, d2i(0.2), d2i(-0.2)}; 
+const int[0,MAXL] initLane = 1;
+move = Act_Move(0);
+turn = Act_Turn(1);
+controller = Controller(initLane,initEgo,initShapeEgo,rules);
+timer = Timer();
+dynamics = Dynamics();
+rewardMachine = Rewards();
+// Generated ego vehicle ends
+
+// Generated model instances starts
+system timer, obs0, move, turn, controller, dynamics, rewardMachine;
+
+// Generated model instances ends
+</system>
+	<queries>
+		<option key="--total-runs" value="200"/>
+		<option key="--max-iterations" value="10"/>
+		<option key="--good-runs" value="100"/>
+		<option key="--eval-runs" value="200"/>
+		<option key="--diagnostic" value="1"/>
+		<query>
+			<formula>//behaviour observation</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>simulate[&lt;=MAXTIME;1]{cps_dynamic.x,i2d(cps_i_state.position.x),cps_dynamic.y,i2d(cps_i_state.position.y)}</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2024-12-30 16:52:14 +0100">
+				<option key="--total-runs" value="200"/>
+				<option key="--max-iterations" value="10"/>
+				<option key="--good-runs" value="100"/>
+				<option key="--eval-runs" value="200"/>
+				<option key="--diagnostic" value="1"/>
+				<plot title="Simulations (1)" xaxis="time" yaxis="value">
+					<series title="cps_dynamic.x" type="l" color="0xff0000" encoding="csv">0.0,0.0
+0.0,50.1
+12.0,64.49999999999982
+12.07888012884855,64.59465386738384
+12.157760257697099,64.68920075317416
+12.236640386545648,64.78358573298814
+12.315534717989191,64.87777085850588
+12.394465649101779,64.97172774791335
+12.473461532808765,65.06543466033739
+12.552555307986674,65.1588745812474
+12.631783529664032,65.25203376439408
+12.71118570441656,65.34490061969643
+12.79080385932067,65.43746486122537
+12.870682290987997,65.52971684894278
+12.950867455295235,65.62164707303579
+13.0,65.67752548055986
+13.081345873494664,65.76954279077547
+13.162991815897554,65.86104498019306
+13.245028528080757,65.95206301066963
+13.327540459370155,66.04261542063414
+13.410608495361258,66.13271092950438
+13.494312114340396,66.22235030010467
+13.578731175330546,66.31152763874171
+13.663947462258072,66.40023126199303
+13.750046082220887,66.48844422185081
+13.837116798169426,66.5761445525563
+13.925255365465103,66.66330528036217
+14.0,66.73577297367014
+14.09159188074867,66.82298259997035
+14.183940402303737,66.90891954951638
+14.276860503611127,66.99329218150969
+14.370211610167809,67.07586212021914
+14.46388728212764,67.15643177635
+14.557807118475358,67.23483466936274
+14.651910495668206,67.31092801310231
+14.746151763840873,67.3845870879538
+14.840496582829866,67.45570100021781
+14.934919139592397,67.524169505952
+15.0,67.56944679432198
+15.094557535129944,67.63326272276858
+15.189139715495056,67.69419035923873
+15.283740384001858,67.75215517236752
+15.378354920986528,67.80708570790165
+15.47297986066382,67.85891321926763
+15.567612603111161,67.90757140519665
+15.66225119805826,67.95299622658138
+15.756894182617716,67.99512578184942
+15.851540459520052,68.03390022545943
+15.94618920575471,68.06926171809896
+16.0,68.08739335785191
+16.094653029135664,68.1172806939338
+16.189306839632287,68.14361539325974
+16.283961236153846,68.16634673028642
+16.378616072196472,68.18542595537026
+16.473271237881256,68.20080632085434
+16.567926650798427,68.21244310948825
+16.662582249140307,68.22029366441977
+16.757237986550958,68.22431742019866
+16.851893828263314,68.2244759343808
+16.94654974820203,68.22073291942975
+17.0,68.21639694931247
+17.01,68.21571472035708
+17.020000000000003,68.21498885891025
+17.030000000000005,68.21421932639423
+17.040000000000006,68.2134060845076
+17.050000000000008,68.2125490952257
+17.06000000000001,68.21164832080105
+17.07000000000001,68.21070372376374
+17.080000000000013,68.20971526692193
+17.090000000000014,68.20868291336221
+17.100000000000016,68.20760662645003
+17.110000000000017,68.20648636983017
+17.12000000000002,68.20532210742712
+17.13000000000002,68.20411380344552
+17.140000000000022,68.20286142237057
+17.150000000000023,68.20156492896847
+17.160000000000025,68.2002242882868
+17.170000000000027,68.19883946565501
+17.180000000000028,68.19741042668475
+17.19000000000003,68.19593713727038
+17.20000000000003,68.19441956358929
+17.210000000000033,68.1928576721024
+17.220000000000034,68.19125142955454
+17.230000000000036,68.18960080297487
+17.240000000000038,68.18790575967726
+17.25000000000004,68.18616626726079
+17.26000000000004,68.18438229361006
+17.270000000000042,68.18255380689568
+17.280000000000044,68.18068077557464
+17.290000000000045,68.17876316839073
+17.300000000000047,68.17680095437497
+17.31000000000005,68.17479410284596
+17.32000000000005,68.1727425834104
+17.33000000000005,68.17064636596335
+17.340000000000053,68.16850542068876
+17.350000000000055,68.16631971805984
+17.360000000000056,68.16408922883942
+17.370000000000058,68.1618139240804
+17.38000000000006,68.1594937751262
+17.39000000000006,68.15712875361102
+17.400000000000063,68.15471883146039
+17.410000000000064,68.15226398089149
+17.420000000000066,68.1497641744136
+17.430000000000067,68.14721938482846
+17.44000000000007,68.14462958523066
+17.45000000000007,68.14199474900809
+17.460000000000072,68.13931484984231
+17.470000000000073,68.13658986170893
+17.480000000000075,68.13381975887803
+17.490000000000077,68.13100451591458
+17.500000000000078,68.12814410767878
+17.51000000000008,68.12523850932646
+17.52000000000008,68.12228769630956
+17.530000000000083,68.11929164437636
+17.540000000000084,68.11625032957205
+17.550000000000086,68.11316372823902
+17.560000000000088,68.11003181701723
+17.57000000000009,68.1068545728447
+17.58000000000009,68.10363197295779
+17.590000000000092,68.10036399489165
+17.600000000000094,68.09705061648063
+17.610000000000095,68.09369181585858
+17.620000000000097,68.09028757145931
+17.6300000000001,68.08683786201696
+17.6400000000001,68.08334266656637
+17.6500000000001,68.07980196444346
+17.660000000000103,68.07621573528564
+17.670000000000105,68.07258395903217
+17.680000000000106,68.06890661592455
+17.690000000000108,68.06518368650687
+17.70000000000011,68.06141515162625
+17.71000000000011,68.05760099243318
+17.720000000000113,68.0537411903819
+17.730000000000114,68.04983572723079
+17.740000000000116,68.04588458504271
+17.750000000000117,68.04188774618544
+17.76000000000012,68.037845193332
+17.77000000000012,68.03375690946105
+17.780000000000122,68.02962287785725
+17.790000000000123,68.02544308211165
+17.800000000000125,68.02121750612204
+17.810000000000127,68.01694613409336
+17.820000000000128,68.012628950538
+17.83000000000013,68.00826594027626
+17.84000000000013,68.00385708843663
+17.850000000000133,67.99940238045623
+17.860000000000134,67.99490180208115
+17.870000000000136,67.99035533936677
+17.880000000000138,67.98576297867824
+17.89000000000014,67.98112470669071
+17.90000000000014,67.97644051038978
+17.910000000000142,67.97171037707186
+17.920000000000144,67.9669342943445
+17.930000000000145,67.96211225012675
+17.940000000000147,67.95724423264957
+17.95000000000015,67.95233023045613
+17.96000000000015,67.94737023240219
+17.97000000000015,67.94236422765651
+17.980000000000153,67.9373122057011
+17.990000000000155,67.9322141563317
+18.01,67.92192589823927
+18.020000000000003,67.91678189188762
+18.030000000000005,67.91163813313666
+18.040000000000006,67.90649470451996
+18.050000000000008,67.90135168857105
+18.06000000000001,67.89620916782353
+18.07000000000001,67.89106722481093
+18.080000000000013,67.88592594206682
+18.090000000000014,67.88078540212476
+18.100000000000016,67.87564568751831
+18.110000000000017,67.87050688078105
+18.12000000000002,67.86536906444653
+18.13000000000002,67.8602323210483
+18.140000000000022,67.85509673311994
+18.150000000000023,67.84996238319499
+18.160000000000025,67.84482935380703
+18.170000000000027,67.83969772748961
+18.180000000000028,67.8345675867763
+18.19000000000003,67.82943901420066
+18.20000000000003,67.82431209229625
+18.210000000000033,67.81918690359663
+18.220000000000034,67.81406353063537
+18.230000000000036,67.80894205594602
+18.240000000000038,67.80382256206214
+18.25000000000004,67.7987051315173
+18.26000000000004,67.79358984684505
+18.270000000000042,67.78847679057897
+18.280000000000044,67.7833660452526
+18.290000000000045,67.77825769339952
+18.300000000000047,67.7731518175533
+18.31000000000005,67.76804850024747
+18.32000000000005,67.76294782401561
+18.33000000000005,67.75784987139129
+18.340000000000053,67.75275472490804
+18.350000000000055,67.74766246709946
+18.360000000000056,67.7425731804991
+18.370000000000058,67.73748694764049
+18.38000000000006,67.73240385105723
+18.39000000000006,67.72732397328286
+18.400000000000063,67.72224739685096
+18.410000000000064,67.71717420429508
+18.420000000000066,67.71210447814877
+18.430000000000067,67.70703830094563
+18.44000000000007,67.70197575521918
+18.45000000000007,67.696916923503
+18.460000000000072,67.69186188833065
+18.470000000000073,67.68681073223568
+18.480000000000075,67.68176353775168
+18.490000000000077,67.67672038741217
+18.500000000000078,67.67168136375075
+18.51000000000008,67.66664654930096
+18.52000000000008,67.66161602659638
+18.530000000000083,67.65658987817055
+18.540000000000084,67.65156818655704
+18.550000000000086,67.64655103428942
+18.560000000000088,67.64153850390123
+18.57000000000009,67.63653067792605
+18.58000000000009,67.63152763889744
+18.590000000000092,67.62652946934895
+18.600000000000094,67.62153625181416
+18.610000000000095,67.61654806882662
+18.620000000000097,67.61156500291989
+18.6300000000001,67.60658713662752
+18.6400000000001,67.6016145524831
+18.6500000000001,67.59664733302017
+18.660000000000103,67.5916855607723
+18.670000000000105,67.58672931827306
+18.680000000000106,67.58177868805599
+18.690000000000108,67.57683375265466
+18.70000000000011,67.57189459460264
+18.71000000000011,67.56696129643349
+18.720000000000113,67.56203394068076
+18.730000000000114,67.55711260987803
+18.740000000000116,67.55219738655884
+18.750000000000117,67.54728835325677
+18.76000000000012,67.54238559250537
+18.77000000000012,67.5374891868382
+18.780000000000122,67.53259921878883
+18.790000000000123,67.52771577089082
+18.800000000000125,67.52283892567773
+18.810000000000127,67.51796876568312
+18.820000000000128,67.51310537344055
+18.83000000000013,67.50824883148358
+18.84000000000013,67.50339922234578
+18.850000000000133,67.4985566285607
+18.860000000000134,67.49372113266192
+18.870000000000136,67.48889281718299
+18.880000000000138,67.48407176465746
+18.89000000000014,67.4792580576189
+18.90000000000014,67.4744517786009
+18.910000000000142,67.46965301013697
+18.920000000000144,67.4648618347607
+18.930000000000145,67.46007833500565
+18.940000000000147,67.45530259340538
+18.95000000000015,67.45053469249345
+18.96000000000015,67.44577471480342
+18.97000000000015,67.44102274286887
+18.980000000000153,67.43627885922334
+18.990000000000155,67.43154314640039
+19.0,67.4268156869336
+19.01,67.4220965633565
+19.020000000000003,67.41738585820269
+19.030000000000005,67.41268365400572
+19.040000000000006,67.40799003329913
+19.050000000000008,67.4033050786165
+19.06000000000001,67.39862887249139
+19.07000000000001,67.39396149745735
+19.080000000000013,67.38930303604796
+19.090000000000014,67.38465357079677
+19.100000000000016,67.38001318423736
+19.110000000000017,67.37538195890326
+19.12000000000002,67.37075997732805
+19.13000000000002,67.3661473220453
+19.140000000000022,67.36154407558854
+19.150000000000023,67.35695032049136
+19.160000000000025,67.35236613928731
+19.170000000000027,67.34779161450996
+19.180000000000028,67.34322682869286
+19.19000000000003,67.33867186436959
+19.20000000000003,67.33412680407369
+19.210000000000033,67.32959173033873
+19.220000000000034,67.32506672569828
+19.230000000000036,67.32055187268588
+19.240000000000038,67.31604725383511
+19.25000000000004,67.31155295167953
+19.26000000000004,67.3070690487527
+19.270000000000042,67.30259562758818
+19.280000000000044,67.29813277071952
+19.290000000000045,67.2936805606803
+19.300000000000047,67.28923908000407
+19.31000000000005,67.28480841122439
+19.32000000000005,67.28038863687483
+19.33000000000005,67.27597983948895
+19.340000000000053,67.27158210160032
+19.350000000000055,67.26719550574248
+19.360000000000056,67.262820134449
+19.370000000000058,67.25845607025344
+19.38000000000006,67.25410339568938
+19.39000000000006,67.24976219329037
+19.400000000000063,67.24543254558996
+19.410000000000064,67.24111453512172
+19.420000000000066,67.23680824441922
+19.430000000000067,67.232513756016
+19.44000000000007,67.22823115244564
+19.45000000000007,67.2239605162417
+19.460000000000072,67.21970192993774
+19.470000000000073,67.21545547606732
+19.480000000000075,67.211221237164
+19.490000000000077,67.20699929576134
+19.500000000000078,67.2027897343929
+19.51000000000008,67.19859263559223
+19.52000000000008,67.19440808189293
+19.530000000000083,67.19023615582853
+19.540000000000084,67.1860769399326
+19.550000000000086,67.1819305167387
+19.560000000000088,67.1777969687804
+19.57000000000009,67.17367637859125
+19.58000000000009,67.16956882870481
+19.590000000000092,67.16547440165465
+19.600000000000094,67.16139317997433
+19.610000000000095,67.1573252461974
+19.620000000000097,67.15327068285744
+19.6300000000001,67.149229572488
+19.6400000000001,67.14520199762265
+19.6500000000001,67.14118804079494
+19.660000000000103,67.13718778453844
+19.670000000000105,67.13320131138671
+19.680000000000106,67.12922870387331
+19.690000000000108,67.1252700445318
+19.70000000000011,67.12132541589575
+19.71000000000011,67.11739490049871
+19.720000000000113,67.11347858087424
+19.730000000000114,67.10957653955592
+19.740000000000116,67.10568885907729
+19.750000000000117,67.10181562197192
+19.76000000000012,67.09795691077338
+19.77000000000012,67.09411280801523
+19.780000000000122,67.09028339623102
+19.790000000000123,67.08646875795431
+19.800000000000125,67.08266897571868
+19.810000000000127,67.07888413205767
+19.820000000000128,67.07511430950485
+19.83000000000013,67.07135959059379
+19.84000000000013,67.06762005785804
+19.850000000000133,67.06389579383116
+19.860000000000134,67.06018688104673
+19.870000000000136,67.0564934020383
+19.880000000000138,67.05281543933943
+19.89000000000014,67.04915307548367
+19.90000000000014,67.0455063930046
+19.910000000000142,67.04187547443577
+19.920000000000144,67.03826040231075
+19.930000000000145,67.0346612591631
+19.940000000000147,67.03107812752638
+19.95000000000015,67.02751108993415
+19.96000000000015,67.02396022891998
+19.97000000000015,67.0204256270174
+19.980000000000153,67.01690736676001
+19.990000000000155,67.01340553068135
+20.0,67.009920201315
+20.01,67.0064514611945
+20.020000000000003,67.00299939285343
+20.030000000000005,66.99956407882533
+20.040000000000006,66.99614560164378
+20.050000000000008,66.99274404384234
+20.06000000000001,66.98935948795456
+20.07000000000001,66.98599201651402
+20.080000000000013,66.98264171205426
+20.090000000000014,66.97930865710886
+20.100000000000016,66.97599293421136
+20.110000000000017,66.97269462589534
+20.12000000000002,66.96941381469436
+20.13000000000002,66.96615058314198
+20.140000000000022,66.96290501377176
+20.150000000000023,66.95967718911726
+20.160000000000025,66.95646719171204
+20.170000000000027,66.95327510408966
+20.180000000000028,66.95010100878368
+20.19000000000003,66.94694498832767
+20.20000000000003,66.94380712525519
+20.210000000000033,66.9406875020998
+20.220000000000034,66.93758620139506
+20.230000000000036,66.93450330567454
+20.240000000000038,66.93143889747179
+20.25000000000004,66.92839305932037
+20.26000000000004,66.92536587375385
+20.270000000000042,66.92235742330578
+20.280000000000044,66.91936779050974
+20.290000000000045,66.91639705789927
+20.300000000000047,66.91344530800795
+20.31000000000005,66.91051262336934
+20.32000000000005,66.907599086517
+20.33000000000005,66.90470477998447
+20.340000000000053,66.90182978630534
+20.350000000000055,66.89897418801316
+20.360000000000056,66.89613806764149
+20.370000000000058,66.8933215077239
+20.38000000000006,66.89052459079393
+20.39000000000006,66.88774739938516
+20.400000000000063,66.88499001603115
+20.410000000000064,66.88225252326546
+20.420000000000066,66.87953500362165
+20.430000000000067,66.87683753963329
+20.44000000000007,66.87416021383393
+20.45000000000007,66.87150310875714
+20.460000000000072,66.86886630693647
+20.470000000000073,66.8662498909055
+20.480000000000075,66.86365394319776
+20.490000000000077,66.86107854634685
+20.500000000000078,66.8585237828863
+20.51000000000008,66.85598973534968
+20.52000000000008,66.85347648627057
+20.530000000000083,66.85098411818251
+20.540000000000084,66.84851271361907
+20.550000000000086,66.84606235511382
+20.560000000000088,66.8436331252003
+20.57000000000009,66.84122510641208
+20.58000000000009,66.83883838128273
+20.590000000000092,66.83647303234581
+20.600000000000094,66.83412914213487
+20.610000000000095,66.83180679318349
+20.620000000000097,66.82950606802521
+20.6300000000001,66.82722704919361
+20.6400000000001,66.82496981922223
+20.6500000000001,66.82273446064465
+20.660000000000103,66.82052105599443
+20.670000000000105,66.81832968780513
+20.680000000000106,66.81616043861031
+20.690000000000108,66.81401339094353
+20.70000000000011,66.81188862733835
+20.71000000000011,66.80978623032833
+20.720000000000113,66.80770628244704
+20.730000000000114,66.80564886622804
+20.740000000000116,66.8036140642049
+20.750000000000117,66.80160195891115
+20.76000000000012,66.79961263288038
+20.77000000000012,66.79764616864614
+20.780000000000122,66.795702648742
+20.790000000000123,66.7937821557015
+20.800000000000125,66.79188477205824
+20.810000000000127,66.79001058034575
+20.820000000000128,66.7881596630976
+20.83000000000013,66.78633210284735
+20.84000000000013,66.78452798212857
+20.850000000000133,66.7827473834748
+20.860000000000134,66.78099038941963
+20.870000000000136,66.7792570824966
+20.880000000000138,66.77754754523929
+20.89000000000014,66.77586186018124
+20.90000000000014,66.77420010985603
+20.910000000000142,66.77256237679721
+20.920000000000144,66.77094874353834
+20.930000000000145,66.76935929261299
+20.940000000000147,66.76779410655472
+20.95000000000015,66.76625326789708
+20.96000000000015,66.76473685917365
+20.97000000000015,66.763244962918
+20.980000000000153,66.76177766166366
+20.990000000000155,66.7603350379442
+21.0,66.75891717429319
+21.01,66.75752415324419
+21.020000000000003,66.75615605733076
+21.030000000000005,66.75481296908646
+21.040000000000006,66.75349497104486
+21.050000000000008,66.75220214573952
+21.06000000000001,66.75093457570398
+21.07000000000001,66.74969234347182
+21.080000000000013,66.7484755315766
+21.090000000000014,66.74728422255188
+21.100000000000016,66.74611849893122
+21.110000000000017,66.7449784432482
+21.12000000000002,66.74386413803636
+21.13000000000002,66.74277566582926
+21.140000000000022,66.74171310916047
+21.150000000000023,66.74067655056355
+21.160000000000025,66.73966607257206
+21.170000000000027,66.73868175771956
+21.180000000000028,66.73772368853962
+21.19000000000003,66.73679194756579
+21.20000000000003,66.73588661733164
+21.210000000000033,66.73500778037074
+21.220000000000034,66.73415551921663
+21.230000000000036,66.73332991640288
+21.240000000000038,66.73253105446305
+21.25000000000004,66.7317590159307
+21.26000000000004,66.73101388333941
+21.270000000000042,66.73029573922273
+21.280000000000044,66.72960466611421
+21.290000000000045,66.72894074654742
+21.300000000000047,66.72830406305593
+21.31000000000005,66.7276946981733
+21.32000000000005,66.72711273443306
+21.33000000000005,66.72655825436881
+21.340000000000053,66.7260313405141
+21.350000000000055,66.72553207540248
+21.360000000000056,66.72506054156753
+21.370000000000058,66.7246168215428
+21.38000000000006,66.72420099786186
+21.39000000000006,66.72381315305826
+21.400000000000063,66.72345336966556
+21.410000000000064,66.72312173021734
+21.420000000000066,66.72281831724715
+21.430000000000067,66.72254321328855
+21.44000000000007,66.72229650087509
+21.45000000000007,66.72207826254035
+21.460000000000072,66.72188858081789
+21.470000000000073,66.72172753824127
+21.480000000000075,66.72159521734405
+21.490000000000077,66.72149170065978
+21.500000000000078,66.72141707072204
+21.51000000000008,66.72137141006438
+21.52000000000008,66.72135480122037
+21.530000000000083,66.72136732672357
+21.540000000000084,66.72140906910752
+21.550000000000086,66.72148011090582
+21.560000000000088,66.72158053465199
+21.57000000000009,66.72171042287962
+21.58000000000009,66.72186985812228
+21.590000000000092,66.7220589229135
+21.600000000000094,66.72227769978686
+21.610000000000095,66.72252627127591
+21.620000000000097,66.72280471991422
+21.6300000000001,66.72311312823535
+21.6400000000001,66.72345157877288
+21.6500000000001,66.72382015406035
+21.660000000000103,66.72421893663132
+21.670000000000105,66.72464800901936
+21.680000000000106,66.72510745375803
+21.690000000000108,66.72559735338089
+21.70000000000011,66.7261177904215
+21.71000000000011,66.72666884741342
+21.720000000000113,66.72725060689022
+21.730000000000114,66.72786315138545
+21.740000000000116,66.72850656343267
+21.750000000000117,66.72918092556546
+21.76000000000012,66.72988632031736
+21.77000000000012,66.73062283022196
+21.780000000000122,66.7313905378128
+21.790000000000123,66.73218952562344
+21.800000000000125,66.73301987618744
+21.810000000000127,66.73388167203838
+21.820000000000128,66.7347749957098
+21.83000000000013,66.73569992973528
+21.84000000000013,66.73665655664837
+21.850000000000133,66.73764495898263
+21.860000000000134,66.73866521927162
+21.870000000000136,66.73971742004892
+21.880000000000138,66.74080164384807
+21.89000000000014,66.74191797320265
+21.90000000000014,66.7430664906462
+21.910000000000142,66.7442472787123
+21.920000000000144,66.7454604199345
+21.930000000000145,66.74670599684637
+21.940000000000147,66.74798409198146
+21.95000000000015,66.74929478787335
+21.96000000000015,66.75063816705558
+21.97000000000015,66.75201431206173
+21.980000000000153,66.75342330542536
+21.990000000000155,66.75486522968001
+22.0,66.75634016735926
+22.01,66.75784820099666
+22.020000000000003,66.75938941312579
+22.030000000000005,66.7609638862802
+22.040000000000006,66.76257170299344
+22.050000000000008,66.7642129457991
+22.06000000000001,66.76588769723072
+22.07000000000001,66.76759603982187
+22.080000000000013,66.76933805610611
+22.090000000000014,66.77111382861699
+22.100000000000016,66.77292343988809
+22.110000000000017,66.77476697245297
+22.12000000000002,66.77664450884517
+22.13000000000002,66.77855613159826
+22.140000000000022,66.78050192324582
+22.150000000000023,66.7824819663214
+22.160000000000025,66.78449634335855
+22.170000000000027,66.78654513689085
+22.180000000000028,66.78862842945185
+22.19000000000003,66.79074630357512
+22.20000000000003,66.79289884179421
+22.210000000000033,66.79508612664269
+22.220000000000034,66.79730824065412
+22.230000000000036,66.79956526636205
+22.240000000000038,66.80185728630006
+22.25000000000004,66.80418438300171
+22.26000000000004,66.80654663900056
+22.270000000000042,66.80894413683015
+22.280000000000044,66.81137695902406
+22.290000000000045,66.81384518811585
+22.300000000000047,66.81634890663908
+22.31000000000005,66.81888819712732
+22.32000000000005,66.82146314211413
+22.33000000000005,66.82407382413305
+22.340000000000053,66.82672032571767
+22.350000000000055,66.82940272940154
+22.360000000000056,66.83212111771822
+22.370000000000058,66.83487557320126
+22.38000000000006,66.83766617838424
+22.39000000000006,66.84049301580072
+22.400000000000063,66.84335616798424
+22.410000000000064,66.84625571746838
+22.420000000000066,66.8491917467867
+22.430000000000067,66.85216433847276
+22.44000000000007,66.85517357506014
+22.45000000000007,66.85821953908237
+22.460000000000072,66.86130231307303
+22.470000000000073,66.86442197956566
+22.480000000000075,66.86757862109386
+22.490000000000077,66.87077232019115
+22.500000000000078,66.87400315939112
+22.51000000000008,66.87727122122733
+22.52000000000008,66.88057658823332
+22.530000000000083,66.88391934294268
+22.540000000000084,66.88729956788895
+22.550000000000086,66.8907173456057
+22.560000000000088,66.89417275862648
+22.57000000000009,66.89766588948487
+22.58000000000009,66.90119682071442
+22.590000000000092,66.9047656348487
+22.600000000000094,66.90837241442127
+22.610000000000095,66.91201724196567
+22.620000000000097,66.9157002000155
+22.6300000000001,66.91942137110428
+22.6400000000001,66.9231808377656
+22.6500000000001,66.92697868253302
+22.660000000000103,66.93081498794008
+22.670000000000105,66.93468983652036
+22.680000000000106,66.93860331080742
+22.690000000000108,66.94255549333482
+22.70000000000011,66.94654646663612
+22.71000000000011,66.95057631324488
+22.720000000000113,66.95464511569467
+22.730000000000114,66.95875295651905
+22.740000000000116,66.96289991825157
+22.750000000000117,66.9670860834258
+22.76000000000012,66.97131153457529
+22.77000000000012,66.97557635423362
+22.780000000000122,66.97988062493435
+22.790000000000123,66.98422442921103
+22.800000000000125,66.98860784959722
+22.810000000000127,66.99303096862648
+22.820000000000128,66.9974938688324
+22.83000000000013,67.0019966327485
+22.84000000000013,67.00653934290837
+22.850000000000133,67.01112208184556
+22.860000000000134,67.01574493209364
+22.870000000000136,67.02040797618616
+22.880000000000138,67.02511129665669
+22.89000000000014,67.02985497603879
+22.90000000000014,67.03463909686602
+22.910000000000142,67.03946374167194
+22.920000000000144,67.04432899299012
+22.930000000000145,67.04923493335411
+22.940000000000147,67.05418164529749
+22.95000000000015,67.05916921135379
+22.96000000000015,67.06419771405659
+22.97000000000015,67.06926723593946
+22.980000000000153,67.07437785953596
+22.990000000000155,67.07952966737963
+23.0,67.08472274200405
+23.01,67.08995716594278
+23.020000000000003,67.09523302172937
+23.030000000000005,67.1005503918974
+23.040000000000006,67.10590935898041
+23.050000000000008,67.11131000551198
+23.06000000000001,67.11675241402567
+23.07000000000001,67.12223666705503
+23.080000000000013,67.12776284713362
+23.090000000000014,67.13333103679501
+23.100000000000016,67.13894131857278
+23.110000000000017,67.14459377500046
+23.12000000000002,67.15028848861162
+23.13000000000002,67.15602554193983
+23.140000000000022,67.16180501751865
+23.150000000000023,67.16762699788163
+23.160000000000025,67.17349156556233
+23.170000000000027,67.17939880309433
+23.180000000000028,67.18534879301119
+23.19000000000003,67.19134161784645
+23.20000000000003,67.19737736013369
+23.210000000000033,67.20345610240646
+23.220000000000034,67.20957792719834
+23.230000000000036,67.21574291704287
+23.240000000000038,67.22195115447363
+23.25000000000004,67.22820272202416
+23.26000000000004,67.23449770222805
+23.270000000000042,67.24083617761885
+23.280000000000044,67.2472182307301
+23.290000000000045,67.25364394409539
+23.300000000000047,67.26011340024826
+23.31000000000005,67.26662668172229
+23.32000000000005,67.27318387105103
+23.33000000000005,67.27978505076806
+23.340000000000053,67.2864303034069
+23.350000000000055,67.29311971150115
+23.360000000000056,67.29985335758435
+23.370000000000058,67.30663132419008
+23.38000000000006,67.3134536938519
+23.39000000000006,67.32032054910336
+23.400000000000063,67.32723197247802
+23.410000000000064,67.33418804650944
+23.420000000000066,67.3411888537312
+23.430000000000067,67.34823447667684
+23.44000000000007,67.35532499787993
+23.45000000000007,67.36246049987405
+23.460000000000072,67.36964106519272
+23.470000000000073,67.37686677636954
+23.480000000000075,67.38413771593805
+23.490000000000077,67.39145396643183
+23.500000000000078,67.39881561038442
+23.51000000000008,67.40622273032939
+23.52000000000008,67.4136754088003
+23.530000000000083,67.42117372833073
+23.540000000000084,67.42871777145422
+23.550000000000086,67.43630762070434
+23.560000000000088,67.44394335861465
+23.57000000000009,67.45162506771871
+23.58000000000009,67.45935283055007
+23.590000000000092,67.46712672964232
+23.600000000000094,67.474946847529
+23.610000000000095,67.48281326674368
+23.620000000000097,67.49072606981991
+23.6300000000001,67.49868533929127
+23.6400000000001,67.50669115769131
+23.6500000000001,67.51474360755358
+23.660000000000103,67.52284277141166
+23.670000000000105,67.5309887317991
+23.680000000000106,67.53918157124947
+23.690000000000108,67.54742137229633
+23.70000000000011,67.55570821747324
+23.71000000000011,67.56404218931375
+23.720000000000113,67.57242337035144
+23.730000000000114,67.58085184311987
+23.740000000000116,67.5893276901526
+23.750000000000117,67.59785099398319
+23.76000000000012,67.60642183714519
+23.77000000000012,67.61504030217218
+23.780000000000122,67.6237064715977
+23.790000000000123,67.63242042795532
+23.800000000000125,67.64118225377861
+23.810000000000127,67.64999203160113
+23.820000000000128,67.65884984395643
+23.83000000000013,67.66775577337809
+23.84000000000013,67.67670990239965
+23.850000000000133,67.68571231355469
+23.860000000000134,67.69476308937676
+23.870000000000136,67.70386231239942
+23.880000000000138,67.71301006515624
+23.89000000000014,67.72220643018078
+23.90000000000014,67.73145149000659
+23.910000000000142,67.74074532716725
+23.920000000000144,67.75008802419632
+23.930000000000145,67.75947966362735
+23.940000000000147,67.7689203279939
+23.95000000000015,67.77841009982953
+23.96000000000015,67.78794906166782
+23.97000000000015,67.79753729604232
+23.980000000000153,67.80717488548659
+23.990000000000155,67.8168619125342
+24.0,67.8265984597187
+24.01,67.83632842559278
+24.020000000000003,67.84605155084047
+24.030000000000005,67.85576774360136
+24.040000000000006,67.86547691219248
+24.050000000000008,67.8751789651088
+24.06000000000001,67.88487381102374
+24.07000000000001,67.89456135878966
+24.080000000000013,67.90424151743838
+24.090000000000014,67.91391419618165
+24.100000000000016,67.92357930441167
+24.110000000000017,67.9332367517016
+24.12000000000002,67.94288644780605
+24.13000000000002,67.95252830266153
+24.140000000000022,67.96216222638706
+24.150000000000023,67.97178812928458
+24.160000000000025,67.98140592183942
+24.170000000000027,67.9910155147209
+24.180000000000028,68.00061681878273
+24.19000000000003,68.01020974506358
+24.20000000000003,68.0197942047875
+24.210000000000033,68.02937010936449
+24.220000000000034,68.03893737039093
+24.230000000000036,68.04849589965008
+24.240000000000038,68.05804560911264
+24.25000000000004,68.06758641093714
+24.26000000000004,68.07711821747051
+24.270000000000042,68.08664094124855
+24.280000000000044,68.09615449499637
+24.290000000000045,68.10565879162897
+24.300000000000047,68.11515374425163
+24.31000000000005,68.12463926616049
+24.32000000000005,68.13411527084295
+24.33000000000005,68.14358167197825
+24.340000000000053,68.15303838343787
+24.350000000000055,68.16248531928606
+24.360000000000056,68.1719223937803
+24.370000000000058,68.18134952137184
+24.38000000000006,68.1907666167061
+24.39000000000006,68.20017359462322
+24.400000000000063,68.20957037015852
+24.410000000000064,68.21895685854295
+24.420000000000066,68.22833297520364
+24.430000000000067,68.23769863576432
+24.44000000000007,68.24705375604582
+24.45000000000007,68.25639825206656
+24.460000000000072,68.265732040043
+24.470000000000073,68.27505503639017
+24.480000000000075,68.28436715772209
+24.490000000000077,68.29366832085226
+24.500000000000078,68.30295844279416
+24.51000000000008,68.31223744076172
+24.52000000000008,68.32150523216977
+24.530000000000083,68.33076173463454
+24.540000000000084,68.34000686597412
+24.550000000000086,68.34924054420894
+24.560000000000088,68.35846268756222
+24.57000000000009,68.3676732144605
+24.58000000000009,68.37687204353404
+24.590000000000092,68.38605909361732
+24.600000000000094,68.39523428374952
+24.610000000000095,68.40439753317499
+24.620000000000097,68.41354876134369
+24.6300000000001,68.42268788791169
+24.6400000000001,68.43181483274161
+24.6500000000001,68.44092951590311
+24.660000000000103,68.45003185767334
+24.670000000000105,68.45912177853741
+24.680000000000106,68.46819919918886
+24.690000000000108,68.47726404053012
+24.70000000000011,68.48631622367296
+24.71000000000011,68.49535566993897
+24.720000000000113,68.50438230086003
+24.730000000000114,68.51339603817873
+24.740000000000116,68.52239680384886
+24.750000000000117,68.53138452003591
+24.76000000000012,68.54035910911745
+24.77000000000012,68.54932049368361
+24.780000000000122,68.5582685965376
+24.790000000000123,68.56720334069608
+24.800000000000125,68.57612464938968
+24.810000000000127,68.58503244606342
+24.820000000000128,68.59392665437719
+24.83000000000013,68.60280719820618
+24.84000000000013,68.61167400164135
+24.850000000000133,68.62052698898988
+24.860000000000134,68.62936608477564
+24.870000000000136,68.63819121373959
+24.880000000000138,68.64700230084028
+24.89000000000014,68.65579927125432
+24.90000000000014,68.66458205037674
+24.910000000000142,68.67335056382151
+24.920000000000144,68.68210473742201
+24.930000000000145,68.6908444972314
+24.940000000000147,68.69956976952312
+24.95000000000015,68.70828048079134
+24.96000000000015,68.71697655775137
+24.97000000000015,68.72565792734012
+24.980000000000153,68.73432451671658
+24.990000000000155,68.74297625326221
+25.0,68.75161306458142
+25.01,68.76023487850199
+25.020000000000003,68.76884162307552
+25.030000000000005,68.77743322657787
+25.040000000000006,68.7860096175096
+25.050000000000008,68.79457072459645
+25.06000000000001,68.80311647678968
+25.07000000000001,68.8116468032666
+25.080000000000013,68.82016163343097
+25.090000000000014,68.82866089691346
+25.100000000000016,68.83714452357205
+25.110000000000017,68.84561244349247
+25.12000000000002,68.85406458698868
+25.13000000000002,68.86250088460328
+25.140000000000022,68.87092126710789
+25.150000000000023,68.87932566550366
+25.160000000000025,68.88771401102166
+25.170000000000027,68.89608623512333
+25.180000000000028,68.90444226950092
+25.19000000000003,68.91278204607787
+25.20000000000003,68.92110549700926
+25.210000000000033,68.92941255468232
+25.220000000000034,68.93770315171669
+25.230000000000036,68.94597722096502
+25.240000000000038,68.95423469551329
+25.25000000000004,68.96247550868127
+25.26000000000004,68.97069959402293
+25.270000000000042,68.97890688532691
+25.280000000000044,68.98709731661685
+25.290000000000045,68.99527082215192
+25.300000000000047,69.00342733642717
+25.31000000000005,69.01156679417397
+25.32000000000005,69.01968913036046
+25.33000000000005,69.02779428019191
+25.340000000000053,69.0358821791112
+25.350000000000055,69.0439527627992
+25.360000000000056,69.05200596717518
+25.370000000000058,69.06004172839727
+25.38000000000006,69.06805998286285
+25.39000000000006,69.07606066720896
+25.400000000000063,69.08404371831273
+25.410000000000064,69.09200907329176
+25.420000000000066,69.09995666950459
+25.430000000000067,69.10788644455106
+25.44000000000007,69.11579833627275
+25.45000000000007,69.12369228275338
+25.460000000000072,69.13156822231925
+25.470000000000073,69.13942609353957
+25.480000000000075,69.14726583522697
+25.490000000000077,69.15508738643784
+25.500000000000078,69.16289068647275
+25.51000000000008,69.17067567487689
+25.52000000000008,69.17844229144042
+25.530000000000083,69.18619047619892
+25.540000000000084,69.19392016943378
+25.550000000000086,69.2016313116726
+25.560000000000088,69.20932384368959
+25.57000000000009,69.21699770650599
+25.58000000000009,69.22465284139045
+25.590000000000092,69.23228918985943
+25.600000000000094,69.23990669367763
+25.610000000000095,69.24750529485834
+25.620000000000097,69.2550849356639
+25.6300000000001,69.26264555860604
+25.6400000000001,69.2701871064463
+25.6500000000001,69.27770952219645
+25.660000000000103,69.28521274911883
+25.670000000000105,69.2926967307268
+25.680000000000106,69.30016141078511
+25.690000000000108,69.30760673331028
+25.70000000000011,69.315032642571
+25.71000000000011,69.32243908308855
+25.720000000000113,69.32982599963717
+25.730000000000114,69.3371933372444
+25.740000000000116,69.34454104119156
+25.750000000000117,69.3518690570141
+25.76000000000012,69.35917733050195
+25.77000000000012,69.36646580769997
+25.780000000000122,69.37373443490829
+25.790000000000123,69.3809831586827
+25.800000000000125,69.38821192583507
+25.810000000000127,69.3954206834337
+25.820000000000128,69.4026093788037
+25.83000000000013,69.40977795952742
+25.84000000000013,69.41692637344474
+25.850000000000133,69.42405456865355
+25.860000000000134,69.43116249351007
+25.870000000000136,69.43825009662926
+25.880000000000138,69.44531732688516
+25.89000000000014,69.45236413341132
+25.90000000000014,69.45939046560112
+25.910000000000142,69.46639627310819
+25.920000000000144,69.47338150584676
+25.930000000000145,69.48034611399207
+25.940000000000147,69.48729004798068
+25.95000000000015,69.4942132585109
+25.96000000000015,69.50111569654314
+25.97000000000015,69.5079973133003
+25.980000000000153,69.5148580602681
+25.990000000000155,69.52169788919548
+26.0,69.52851675209496
+26.01,69.53531460124302
+26.020000000000003,69.54209138918046
+26.030000000000005,69.54884706871275
+26.040000000000006,69.55558159291043
+26.050000000000008,69.56229491510943
+26.06000000000001,69.56898698891149
+26.07000000000001,69.57565776818447
+26.080000000000013,69.58230720706274
+26.090000000000014,69.58893525994753
+26.100000000000016,69.59554188150733
+26.110000000000017,69.60212702667818
+26.12000000000002,69.60869065066407
+26.13000000000002,69.61523270893734
+26.140000000000022,69.62175315723894
+26.150000000000023,69.62825195157887
+26.160000000000025,69.63472904823651
+26.170000000000027,69.64118440376093
+26.180000000000028,69.64761797497134
+26.19000000000003,69.65402971895736
+26.20000000000003,69.66041959307942
+26.210000000000033,69.66678755496909
+26.220000000000034,69.67313356252942
+26.230000000000036,69.67945757393531
+26.240000000000038,69.68575954763388
+26.25000000000004,69.69203944234476
+26.26000000000004,69.69829721706051
+26.270000000000042,69.70453283104692
+26.280000000000044,69.71074624384335
+26.290000000000045,69.71693741526309
+26.300000000000047,69.72310630539373
+26.31000000000005,69.72925287459746
+26.32000000000005,69.73537708351147
+26.33000000000005,69.7414788930482
+26.340000000000053,69.74755826439576
+26.350000000000055,69.75361515901828
+26.360000000000056,69.75964953865618
+26.370000000000058,69.76566136532654
+26.38000000000006,69.77165060132347
+26.39000000000006,69.77761720921843
+26.400000000000063,69.78356115186054
+26.410000000000064,69.78948239237693
+26.420000000000066,69.79538089417308
+26.430000000000067,69.80125662093317
+26.44000000000007,69.80710953662039
+26.45000000000007,69.81293960547725
+26.460000000000072,69.81874679202598
+26.470000000000073,69.82453106106878
+26.480000000000075,69.83029237768824
+26.490000000000077,69.83603070724757
+26.500000000000078,69.84174601539102
+26.51000000000008,69.84743826804413
+26.52000000000008,69.8531074314141
+26.530000000000083,69.85875347199011
+26.540000000000084,69.86437635654366
+26.550000000000086,69.86997605212883
+26.560000000000088,69.87555252608269
+26.57000000000009,69.88110574602555
+26.58000000000009,69.88663567986134
+26.590000000000092,69.89214229577789
+26.600000000000094,69.89762556224724
+26.610000000000095,69.90308544802603
+26.620000000000097,69.90852192215573
+26.6300000000001,69.913934953963
+26.6400000000001,69.91932451305999
+26.6500000000001,69.9246905693447
+26.660000000000103,69.93003309300126
+26.670000000000105,69.93535205450021
+26.680000000000106,69.9406474245989
+26.690000000000108,69.94591917434168
+26.70000000000011,69.95116727506036
+26.71000000000011,69.95639169837439
+26.720000000000113,69.96159241619124
+26.730000000000114,69.9667694007067
+26.740000000000116,69.97192262440514
+26.750000000000117,69.9770520600599
+26.76000000000012,69.98215768073352
+26.77000000000012,69.9872394597781
+26.780000000000122,69.99229737083554
+26.790000000000123,69.99733138783795
+26.800000000000125,70.00234148500782
+26.810000000000127,70.00732763685842
+26.820000000000128,70.01228981819406
+26.83000000000013,70.01722800411041
+26.84000000000013,70.02214216999478
+26.850000000000133,70.02703229152641
+26.860000000000134,70.03189834467682
+26.870000000000136,70.03674030571003
+26.880000000000138,70.04155815118293
+26.89000000000014,70.04635185794551
+26.90000000000014,70.05112140314121
+26.910000000000142,70.05586676420717
+26.920000000000144,70.06058791887453
+26.930000000000145,70.06528484516878
+26.940000000000147,70.06995752140993
+26.95000000000015,70.07460592621293
+26.96000000000015,70.07923003848785
+26.97000000000015,70.08382983744025
+26.980000000000153,70.08840530257143
+26.990000000000155,70.09295641367872
+27.0,70.09748315085574
+27.01,70.10198549449274
+27.020000000000003,70.10646342527683
+27.030000000000005,70.1109169241923
+27.040000000000006,70.11534597252087
+27.050000000000008,70.11975055184202
+27.06000000000001,70.12413064403319
+27.07000000000001,70.12848623127013
+27.080000000000013,70.13281729602717
+27.090000000000014,70.13712382107745
+27.100000000000016,70.14140578949323
+27.110000000000017,70.1456631846462
+27.12000000000002,70.14989599020765
+27.13000000000002,70.15410419014889
+27.140000000000022,70.15828776874136
+27.150000000000023,70.16244671055706
+27.160000000000025,70.1665810004687
+27.170000000000027,70.17069062365002
+27.180000000000028,70.17477556557607
+27.19000000000003,70.17883581202346
+27.20000000000003,70.18287134907062
+27.210000000000033,70.18688216309809
+27.220000000000034,70.19086824078876
+27.230000000000036,70.19482956912816
+27.240000000000038,70.1987661354047
+27.25000000000004,70.20267792720993
+27.26000000000004,70.20656493243887
+27.270000000000042,70.21042713929015
+27.280000000000044,70.21426453626637
+27.290000000000045,70.21807711217431
+27.300000000000047,70.22186485612524
+27.31000000000005,70.22562775753511
+27.32000000000005,70.22936580612483
+27.33000000000005,70.23307899192056
+27.340000000000053,70.23676730525393
+27.350000000000055,70.2404307367623
+27.360000000000056,70.24406927738903
+27.370000000000058,70.24768291838367
+27.38000000000006,70.25127165130232
+27.39000000000006,70.25483546800776
+27.400000000000063,70.2583743606698
+27.410000000000064,70.26188832176548
+27.420000000000066,70.26537734407931
+27.430000000000067,70.26884142070352
+27.44000000000007,70.27228054503836
+27.45000000000007,70.27569471079224
+27.460000000000072,70.27908391198208
+27.470000000000073,70.2824481429335
+27.480000000000075,70.28578739828106
+27.490000000000077,70.28910167296848
+27.500000000000078,70.29239096224897
+27.51000000000008,70.29565526168537
+27.52000000000008,70.29889456715043
+27.530000000000083,70.30210887482706
+27.540000000000084,70.30529818120853
+27.550000000000086,70.30846248309875
+27.560000000000088,70.31160177761247
+27.57000000000009,70.3147160621755
+27.58000000000009,70.31780533452502
+27.590000000000092,70.32086959270971
+27.600000000000094,70.32390883509007
+27.610000000000095,70.32692306033856
+27.620000000000097,70.32991226743994
+27.6300000000001,70.33287645569138
+27.6400000000001,70.33581562470279
+27.6500000000001,70.33872977439697
+27.660000000000103,70.34161890500988
+27.670000000000105,70.34448301709085
+27.680000000000106,70.3473221115028
+27.690000000000108,70.35013618942249
+27.70000000000011,70.35292525234065
+27.71000000000011,70.35568930206234
+27.720000000000113,70.35842834070708
+27.730000000000114,70.36114237070906
+27.740000000000116,70.36383139481741
+27.750000000000117,70.36649541609638
+27.76000000000012,70.3691344379256
+27.77000000000012,70.37174846400019
+27.780000000000122,70.37433749833113
+27.790000000000123,70.37690154524535
+27.800000000000125,70.37944060938597
+27.810000000000127,70.38195469571254
+27.820000000000128,70.38444380950124
+27.83000000000013,70.38690795634507
+27.84000000000013,70.38934714215408
+27.850000000000133,70.39176137315557
+27.860000000000134,70.3941506558943
+27.870000000000136,70.39651499723266
+27.880000000000138,70.39885440435094
+27.89000000000014,70.4011688847475
+27.90000000000014,70.40345844623897
+27.910000000000142,70.40572309696043
+27.920000000000144,70.40796284536566
+27.930000000000145,70.41017770022731
+27.940000000000147,70.41236767063711
+27.95000000000015,70.41453276600605
+27.96000000000015,70.41667299606459
+27.97000000000015,70.41878837086287
+27.980000000000153,70.42087890077089
+27.990000000000155,70.42294459647869
+28.0,70.42498546899657
+28.01,70.42700152965526
+28.020000000000003,70.42899279010614
+28.030000000000005,70.43095926232141
+28.040000000000006,70.43290095859427
+28.050000000000008,70.43481789153913
+28.06000000000001,70.43671007409178
+28.07000000000001,70.4385775195096
+28.080000000000013,70.44042024137171
+28.090000000000014,70.4422382535792
+28.100000000000016,70.44403157035529
+28.110000000000017,70.44580020624548
+28.12000000000002,70.44754417611779
+28.13000000000002,70.44926349516291
+28.140000000000022,70.4509581788944
+28.150000000000023,70.45262824314882
+28.160000000000025,70.45427370408598
+28.170000000000027,70.45589457818903
+28.180000000000028,70.45749088226475
+28.19000000000003,70.45906263344361
+28.20000000000003,70.46060984918
+28.210000000000033,70.46213254725242
+28.220000000000034,70.46363074576362
+28.230000000000036,70.46510446314078
+28.240000000000038,70.46655371813567
+28.25000000000004,70.46797852982485
+28.26000000000004,70.4693789176098
+28.270000000000042,70.47075490121713
+28.280000000000044,70.47210650069871
+28.290000000000045,70.47343373643186
+28.300000000000047,70.47473662911946
+28.31000000000005,70.47601519979023
+28.32000000000005,70.47726946979874
+28.33000000000005,70.47849946082572
+28.340000000000053,70.47970519487811
+28.350000000000055,70.48088669428927
+28.360000000000056,70.48204398171913
+28.370000000000058,70.48317708015435
+28.38000000000006,70.48428601290847
+28.39000000000006,70.48537080362209
+28.400000000000063,70.48643147626296
+28.410000000000064,70.48746805512624
+28.420000000000066,70.48848056483453
+28.430000000000067,70.48946903033813
+28.44000000000007,70.49043347691511
+28.45000000000007,70.49137393017153
+28.460000000000072,70.49229041604153
+28.470000000000073,70.49318296078748
+28.480000000000075,70.49405159100019
+28.490000000000077,70.49489633359899
+28.500000000000078,70.4957172158319
+28.51000000000008,70.49651426527579
+28.52000000000008,70.4972875098365
+28.530000000000083,70.49803697774895
+28.540000000000084,70.49876269757738
+28.550000000000086,70.49946469821539
+28.560000000000088,70.50014300888613
+28.57000000000009,70.50079765914242
+28.58000000000009,70.5014286788669
+28.590000000000092,70.50203609827217
+28.600000000000094,70.5026199479009
+28.610000000000095,70.50318025862597
+28.620000000000097,70.50371706165065
+28.6300000000001,70.50423038850865
+28.6400000000001,70.50472027106431
+28.6500000000001,70.50518674151274
+28.660000000000103,70.50562983237991
+28.670000000000105,70.50604957652278
+28.680000000000106,70.50644600712945
+28.690000000000108,70.5068191577193
+28.70000000000011,70.50716906214306
+28.71000000000011,70.50749575458299
+28.720000000000113,70.50779926955295
+28.730000000000114,70.50807964189859
+28.740000000000116,70.50833690679741
+28.750000000000117,70.50857109975892
+28.76000000000012,70.50878225662474
+28.77000000000012,70.5089704135687
+28.780000000000122,70.50913560709702
+28.790000000000123,70.50927787404835
+28.800000000000125,70.50939725159394
+28.810000000000127,70.50949377723772
+28.820000000000128,70.50956748881644
+28.83000000000013,70.50961842449979
+28.84000000000013,70.50964662279046
+28.850000000000133,70.5096521225243
+28.860000000000134,70.50963496287041
+28.870000000000136,70.50959518333126
+28.880000000000138,70.50953282374277
+28.89000000000014,70.50944792427445
+28.90000000000014,70.5093405254295
+28.910000000000142,70.50921066804486
+28.920000000000144,70.50905839329141
+28.930000000000145,70.508883742674
+28.940000000000147,70.50868675803157
+28.95000000000015,70.50846748153725
+28.96000000000015,70.50822595569848
+28.97000000000015,70.50796222335705
+28.980000000000153,70.5076763276893
+28.990000000000155,70.5073683122061
+29.0,70.50703822075302
+29.01,70.50668609751041
+29.020000000000003,70.50631198699348
+29.030000000000005,70.50591593405241
+29.040000000000006,70.5054979838724
+29.050000000000008,70.50505818197384
+29.06000000000001,70.5045965742123
+29.07000000000001,70.50411320677873
+29.080000000000013,70.50360812619941
+29.090000000000014,70.5030813793362
+29.100000000000016,70.50253301338645
+29.110000000000017,70.50196307588325
+29.12000000000002,70.50137161469539
+29.13000000000002,70.5007586780275
+29.140000000000022,70.50012431442012
+29.150000000000023,70.49946857274979
+29.160000000000025,70.49879150222911
+29.170000000000027,70.49809315240684
+29.180000000000028,70.49737357316793
+29.19000000000003,70.49663281473369
+29.20000000000003,70.49587092766174
+29.210000000000033,70.4950879628462
+29.220000000000034,70.4942839715177
+29.230000000000036,70.49345900524347
+29.240000000000038,70.49261311592738
+29.25000000000004,70.4917463558101
+29.26000000000004,70.49085877746903
+29.270000000000042,70.4899504338185
+29.280000000000044,70.48902137810978
+29.290000000000045,70.48807166393112
+29.300000000000047,70.48710134520786
+29.31000000000005,70.48611047620247
+29.32000000000005,70.48509911151463
+29.33000000000005,70.48406730608129
+29.340000000000053,70.4830151151767
+29.350000000000055,70.48194259441253
+29.360000000000056,70.48084979973785
+29.370000000000058,70.47973678743928
+29.38000000000006,70.47860361414095
+29.39000000000006,70.47745033680464
+29.400000000000063,70.47627701272977
+29.410000000000064,70.47508369955351
+29.420000000000066,70.47387045525079
+29.430000000000067,70.47263733813438
+29.44000000000007,70.47138440685491
+29.45000000000007,70.47011172040096
+29.460000000000072,70.4688193380991
+29.470000000000073,70.46750731961386
+29.480000000000075,70.46617572494792
+29.490000000000077,70.46482461444202
+29.500000000000078,70.46345404877512
+29.51000000000008,70.46206408896434
+29.52000000000008,70.46065479636506
+29.530000000000083,70.45922623267096
+29.540000000000084,70.45777845991404
+29.550000000000086,70.45631154046468
+29.560000000000088,70.45482553703168
+29.57000000000009,70.45332051266227
+29.58000000000009,70.45179653074219
+29.590000000000092,70.45025365499565
+29.600000000000094,70.44869194948546
+29.610000000000095,70.44711147861301
+29.620000000000097,70.44551230711829
+29.6300000000001,70.44389450007998
+29.6400000000001,70.44225812291539
+29.6500000000001,70.44060324138059
+29.660000000000103,70.43892992157036
+29.670000000000105,70.43723822991826
+29.680000000000106,70.43552823319665
+29.690000000000108,70.43379999851669
+29.70000000000011,70.4320535933284
+29.71000000000011,70.43028908542067
+29.720000000000113,70.42850654292126
+29.730000000000114,70.42670603429686
+29.740000000000116,70.42488762835306
+29.750000000000117,70.42305139423445
+29.76000000000012,70.42119740142455
+29.77000000000012,70.41932571974587
+29.780000000000122,70.41743641935992
+29.790000000000123,70.41552957076723
+29.800000000000125,70.41360524480737
+29.810000000000127,70.41166351265893
+29.820000000000128,70.40970444583958
+29.83000000000013,70.40772811620603
+29.84000000000013,70.40573459595409
+29.850000000000133,70.40372395761862
+29.860000000000134,70.40169627407363
+29.870000000000136,70.39965161853216
+29.880000000000138,70.39759006454642
+29.89000000000014,70.39551168600768
+29.90000000000014,70.39341655714634
+29.910000000000142,70.39130475253192
+29.920000000000144,70.38917634707306
+29.930000000000145,70.3870314160175
+29.940000000000147,70.38487003495213
+29.95000000000015,70.38269227980291
+29.96000000000015,70.38049822683494
+29.97000000000015,70.37828795265246
+29.980000000000153,70.37606153419875
+29.990000000000155,70.37381904875625
+30.0,70.37156057394648
+					</series>
+					<series title="i2d((cps_i_state.position).x)" type="l" color="0x80ff00" encoding="csv">0.0,0.0
+0.0,50.1
+1.0,50.1
+1.0,51.3
+2.0,51.3
+2.0,52.5
+3.0,52.5
+3.0,53.7
+4.0,53.7
+4.0,54.9
+5.0,54.9
+5.0,56.1
+6.0,56.1
+6.0,57.3
+7.0,57.3
+7.0,58.5
+8.0,58.5
+8.0,59.7
+9.0,59.7
+9.0,60.9
+10.0,60.9
+10.0,62.1
+11.0,62.1
+11.0,63.3
+12.0,63.3
+12.0,64.5
+13.0,64.5
+13.0,65.6
+14.0,65.6
+14.0,66.6
+15.0,66.6
+15.0,67.3
+16.0,67.3
+16.0,67.7
+17.0,67.7
+17.0,67.6
+18.0,67.6
+18.0,67.2
+19.0,67.2
+19.0,66.6
+20.0,66.6
+20.0,66.1
+21.0,66.1
+21.0,65.8
+23.0,65.8
+23.0,66.1
+24.0,66.1
+24.0,66.8
+25.0,66.8
+25.0,67.6
+26.0,67.6
+26.0,68.2
+27.0,68.2
+27.0,68.6
+28.0,68.6
+28.0,68.7
+29.0,68.7
+29.0,68.6
+30.0,68.6
+					</series>
+					<series title="cps_dynamic.y" type="l" color="0x00ffff" encoding="csv">0.0,0.0
+0.0,6.1
+12.0,6.1
+12.07888012884855,6.099253353588776
+12.157760257697099,6.097761655727308
+12.236640386545648,6.095527708907491
+12.315534717989191,6.092554854527436
+12.394465649101779,6.088846654432419
+12.473461532808765,6.0844066744581875
+12.552555307986674,6.079238341019693
+12.631783529664032,6.073344853884377
+12.71118570441656,6.066729138363186
+12.79080385932067,6.05939382507299
+12.870682290987997,6.051341249052025
+12.950867455295235,6.042573462670414
+13.0,6.036789594985682
+13.081345873494664,6.026800375788377
+13.162991815897554,6.016110507260743
+13.245028528080757,6.004719585153095
+13.327540459370155,5.99262726587811
+13.410608495361258,5.979833345570115
+13.494312114340396,5.966337825731164
+13.578731175330546,5.952140977780632
+13.663947462258072,5.937243415797007
+13.750046082220887,5.9216461851386155
+13.837116798169426,5.905350874111822
+13.925255365465103,5.88835975624084
+14.0,5.873559909150151
+14.09159188074867,5.855048480621921
+14.183940402303737,5.835976170406006
+14.276860503611127,5.816426704870568
+14.370211610167809,5.796480964928083
+14.46388728212764,5.776217799260636
+14.557807118475358,5.755714760335323
+14.651910495668206,5.735048745254061
+14.746151763840873,5.714296538246364
+14.840496582829866,5.693535259962867
+14.934919139592397,5.672842732913443
+15.0,5.658690840062236
+15.094557535129944,5.638287131641105
+15.189139715495056,5.6181697678105245
+15.283740384001858,5.59842062546013
+15.378354920986528,5.579123342376926
+15.47297986066382,5.560363366147045
+15.567612603111161,5.542227986346863
+15.66225119805826,5.524806353358032
+15.756894182617716,5.5081894865077015
+15.851540459520052,5.49247027370415
+15.94618920575471,5.47774346429902
+16.0,5.4699900926335845
+16.094653029135664,5.4570191188263
+16.189306839632287,5.4452925249892035
+16.283961236153846,5.434911550177765
+16.378616072196472,5.425979213791057
+16.473271237881256,5.418600287540577
+16.567926650798427,5.412881266099283
+16.662582249140307,5.4089303366119195
+16.757237986550958,5.406857347207214
+16.851893828263314,5.406773774621051
+16.94654974820203,5.408792691015498
+17.0,5.411184693685321
+17.01,5.411558283384523
+17.020000000000003,5.411956710348906
+17.030000000000005,5.412380110398485
+17.040000000000006,5.412828619542766
+17.050000000000008,5.4133023739802795
+17.06000000000001,5.413801510098117
+17.07000000000001,5.4143261644714595
+17.080000000000013,5.4148764738631145
+17.090000000000014,5.415452575223046
+17.100000000000016,5.416054605687906
+17.110000000000017,5.416682702580563
+17.12000000000002,5.417337003409634
+17.13000000000002,5.4180176458690115
+17.140000000000022,5.418724767837391
+17.150000000000023,5.419458507377802
+17.160000000000025,5.420219002737128
+17.170000000000027,5.42100639234564
+17.180000000000028,5.421820814816514
+17.19000000000003,5.422662408945362
+17.20000000000003,5.423531313709749
+17.210000000000033,5.424427668268722
+17.220000000000034,5.425351611962327
+17.230000000000036,5.4263032843111345
+17.240000000000038,5.427282825015756
+17.25000000000004,5.428290373956368
+17.26000000000004,5.429326071192228
+17.270000000000042,5.430390056961193
+17.280000000000044,5.431482471679241
+17.290000000000045,5.432603455939983
+17.300000000000047,5.43375315051418
+17.31000000000005,5.434931696349263
+17.32000000000005,5.436139234568842
+17.33000000000005,5.437375906472224
+17.340000000000053,5.438641853533922
+17.350000000000055,5.439937217403175
+17.360000000000056,5.441262139903451
+17.370000000000058,5.442616763031963
+17.38000000000006,5.4440012289591815
+17.39000000000006,5.445415680028338
+17.400000000000063,5.44686025875494
+17.410000000000064,5.448335107826274
+17.420000000000066,5.449840370100918
+17.430000000000067,5.451376188608244
+17.44000000000007,5.452942706547928
+17.45000000000007,5.454540067289452
+17.460000000000072,5.45616841437161
+17.470000000000073,5.457827891502013
+17.480000000000075,5.459518642556589
+17.490000000000077,5.461240811579092
+17.500000000000078,5.462994542780596
+17.51000000000008,5.464779980539
+17.52000000000008,5.466597269398531
+17.530000000000083,5.468446554069238
+17.540000000000084,5.470327979426495
+17.550000000000086,5.472241690510497
+17.560000000000088,5.474187832525762
+17.57000000000009,5.476166550840621
+17.58000000000009,5.478177990986721
+17.590000000000092,5.480222298658514
+17.600000000000094,5.48229961971276
+17.610000000000095,5.48441010016801
+17.620000000000097,5.486553886204112
+17.6300000000001,5.488731124161693
+17.6400000000001,5.490941960541658
+17.6500000000001,5.493186542004677
+17.660000000000103,5.49546501537068
+17.670000000000105,5.497777527618341
+17.680000000000106,5.500124225884574
+17.690000000000108,5.502505257464015
+17.70000000000011,5.504920769808515
+17.71000000000011,5.5073709105266255
+17.720000000000113,5.509855827383084
+17.730000000000114,5.512375668298301
+17.740000000000116,5.514930581347845
+17.750000000000117,5.517520714761926
+17.76000000000012,5.520146216924882
+17.77000000000012,5.522807236374658
+17.780000000000122,5.52550392180229
+17.790000000000123,5.528236422051391
+17.800000000000125,5.531004886117624
+17.810000000000127,5.53380946314819
+17.820000000000128,5.536650302441303
+17.83000000000013,5.539527553445671
+17.84000000000013,5.542441365759975
+17.850000000000133,5.545391889132344
+17.860000000000134,5.548379273459835
+17.870000000000136,5.5514036687879065
+17.880000000000138,5.554465225309898
+17.89000000000014,5.557564093366501
+17.90000000000014,5.560700423445237
+17.910000000000142,5.5638743661799275
+17.920000000000144,5.567086072350171
+17.930000000000145,5.570335692880811
+17.940000000000147,5.573623378841414
+17.95000000000015,5.5769492814457315
+17.96000000000015,5.58031355205118
+17.97000000000015,5.583716342158304
+17.980000000000153,5.587157803410249
+17.990000000000155,5.590638087592227
+18.01,5.597676663646981
+18.020000000000003,5.601195867734481
+18.030000000000005,5.604714902429239
+18.040000000000006,5.608233711267008
+18.050000000000008,5.6117522377835405
+18.06000000000001,5.615270425514589
+18.07000000000001,5.618788217995905
+18.080000000000013,5.622305558763244
+18.090000000000014,5.625822391352355
+18.100000000000016,5.629338659298994
+18.110000000000017,5.632854306138912
+18.12000000000002,5.636369275407861
+18.13000000000002,5.639883510641596
+18.140000000000022,5.643396955375867
+18.150000000000023,5.646909553146429
+18.160000000000025,5.650421247489033
+18.170000000000027,5.653931981939433
+18.180000000000028,5.65744170003338
+18.19000000000003,5.660950345306628
+18.20000000000003,5.664457861294929
+18.210000000000033,5.667964191534036
+18.220000000000034,5.671469279559702
+18.230000000000036,5.674973068907678
+18.240000000000038,5.678475503113718
+18.25000000000004,5.6819765257135755
+18.26000000000004,5.685476080243002
+18.270000000000042,5.68897411023775
+18.280000000000044,5.6924705592335725
+18.290000000000045,5.695965370766222
+18.300000000000047,5.699458488371452
+18.31000000000005,5.702949855585014
+18.32000000000005,5.706439415942661
+18.33000000000005,5.7099271129801465
+18.340000000000053,5.713412890233222
+18.350000000000055,5.716896691237641
+18.360000000000056,5.7203784595291545
+18.370000000000058,5.723858138643517
+18.38000000000006,5.727335672116481
+18.39000000000006,5.730811003483798
+18.400000000000063,5.734284076281222
+18.410000000000064,5.737754834044505
+18.420000000000066,5.7412232203094
+18.430000000000067,5.744689178611659
+18.44000000000007,5.748152652487035
+18.45000000000007,5.751613585471281
+18.460000000000072,5.755071921100149
+18.470000000000073,5.758527602909393
+18.480000000000075,5.761980574434764
+18.490000000000077,5.765430779212015
+18.500000000000078,5.768878160776899
+18.51000000000008,5.77232266266517
+18.52000000000008,5.775764228412578
+18.530000000000083,5.779202801554878
+18.540000000000084,5.782638325627821
+18.550000000000086,5.78607074416716
+18.560000000000088,5.789500000708649
+18.57000000000009,5.792926038788039
+18.58000000000009,5.796348801941083
+18.590000000000092,5.799768233703535
+18.600000000000094,5.803184277611146
+18.610000000000095,5.80659687719967
+18.620000000000097,5.810005976004859
+18.6300000000001,5.813411517562464
+18.6400000000001,5.816813445408241
+18.6500000000001,5.8202117030779394
+18.660000000000103,5.823606234107314
+18.670000000000105,5.826996982032116
+18.680000000000106,5.8303838903881005
+18.690000000000108,5.833766902711018
+18.70000000000011,5.8371459625366215
+18.71000000000011,5.840521013400664
+18.720000000000113,5.843891998838899
+18.730000000000114,5.847258862387077
+18.740000000000116,5.850621547580952
+18.750000000000117,5.853979997956277
+18.76000000000012,5.857334157048804
+18.77000000000012,5.8606839683942855
+18.780000000000122,5.8640293755284745
+18.790000000000123,5.867370321987124
+18.800000000000125,5.8707067513059865
+18.810000000000127,5.874038607020815
+18.820000000000128,5.877365832667361
+18.83000000000013,5.880688371781378
+18.84000000000013,5.884006167898619
+18.850000000000133,5.887319164554835
+18.860000000000134,5.890627305285781
+18.870000000000136,5.893930533627207
+18.880000000000138,5.897228793114868
+18.89000000000014,5.900522027284516
+18.90000000000014,5.903810179671902
+18.910000000000142,5.9070931938127815
+18.920000000000144,5.910371013242905
+18.930000000000145,5.913643581498026
+18.940000000000147,5.916910842113897
+18.95000000000015,5.920172738626271
+18.96000000000015,5.923429214570901
+18.97000000000015,5.926680213483539
+18.980000000000153,5.929925678899937
+18.990000000000155,5.933165554355849
+19.0,5.936399783387027
+19.01,5.9396283095292235
+19.020000000000003,5.942851076318191
+19.030000000000005,5.946068027289683
+19.040000000000006,5.949279105979452
+19.050000000000008,5.95248425592325
+19.06000000000001,5.95568342065683
+19.07000000000001,5.958876543715944
+19.080000000000013,5.962063568636347
+19.090000000000014,5.965244438953788
+19.100000000000016,5.968419098204023
+19.110000000000017,5.971587489922802
+19.12000000000002,5.974749557645881
+19.13000000000002,5.977905244909009
+19.140000000000022,5.981054495247942
+19.150000000000023,5.984197252198429
+19.160000000000025,5.9873334592962255
+19.170000000000027,5.990463060077083
+19.180000000000028,5.993585998076755
+19.19000000000003,5.996702216830993
+19.20000000000003,5.999811659875551
+19.210000000000033,6.002914270746181
+19.220000000000034,6.006009992978635
+19.230000000000036,6.009098770108666
+19.240000000000038,6.012180545672027
+19.25000000000004,6.015255263204471
+19.26000000000004,6.018322866241751
+19.270000000000042,6.021383298319617
+19.280000000000044,6.024436502973825
+19.290000000000045,6.027482423740126
+19.300000000000047,6.030521004154272
+19.31000000000005,6.033552187752017
+19.32000000000005,6.036575918069113
+19.33000000000005,6.039592138641313
+19.340000000000053,6.04260079300437
+19.350000000000055,6.045601824694035
+19.360000000000056,6.048595177246063
+19.370000000000058,6.051580794196205
+19.38000000000006,6.054558619080215
+19.39000000000006,6.057528595433844
+19.400000000000063,6.0604906667928455
+19.410000000000064,6.063444776692972
+19.420000000000066,6.066390868669976
+19.430000000000067,6.069328886259611
+19.44000000000007,6.072258772997629
+19.45000000000007,6.075180472419783
+19.460000000000072,6.078093928061825
+19.470000000000073,6.080999083459508
+19.480000000000075,6.083895882148585
+19.490000000000077,6.086784267664808
+19.500000000000078,6.089664183543931
+19.51000000000008,6.0925355733217055
+19.52000000000008,6.095398380533884
+19.530000000000083,6.09825254871622
+19.540000000000084,6.101098021404465
+19.550000000000086,6.103934742134373
+19.560000000000088,6.106762654441696
+19.57000000000009,6.1095817018621865
+19.58000000000009,6.112391827931598
+19.590000000000092,6.115192976185681
+19.600000000000094,6.11798509016019
+19.610000000000095,6.120768113390878
+19.620000000000097,6.123541989413497
+19.6300000000001,6.1263066617638
+19.6400000000001,6.129062073977539
+19.6500000000001,6.1318081695904665
+19.660000000000103,6.134544892138336
+19.670000000000105,6.137272185156899
+19.680000000000106,6.13998999218191
+19.690000000000108,6.14269825674912
+19.70000000000011,6.145396922394283
+19.71000000000011,6.14808593265315
+19.720000000000113,6.1507652310614755
+19.730000000000114,6.153434761155011
+19.740000000000116,6.15609446646951
+19.750000000000117,6.1587442905407235
+19.76000000000012,6.161384176904406
+19.77000000000012,6.164014069096309
+19.780000000000122,6.166633910652186
+19.790000000000123,6.169243645107788
+19.800000000000125,6.17184321599887
+19.810000000000127,6.174432566861183
+19.820000000000128,6.1770116412304805
+19.83000000000013,6.179580382642515
+19.84000000000013,6.182138734633039
+19.850000000000133,6.184686640737805
+19.860000000000134,6.187224044492567
+19.870000000000136,6.189750889433075
+19.880000000000138,6.192267119095083
+19.89000000000014,6.1947726770143445
+19.90000000000014,6.197267506726612
+19.910000000000142,6.199751551767637
+19.920000000000144,6.202224755673173
+19.930000000000145,6.204687061978973
+19.940000000000147,6.207138414220789
+19.95000000000015,6.209578755934373
+19.96000000000015,6.212008030655479
+19.97000000000015,6.214426181919859
+19.980000000000153,6.216833153263266
+19.990000000000155,6.219228888221452
+20.0,6.22161333033017
+20.01,6.223986423125173
+20.020000000000003,6.226348110142213
+20.030000000000005,6.228698334917044
+20.040000000000006,6.231037040985417
+20.050000000000008,6.233364171883086
+20.06000000000001,6.235679671145803
+20.07000000000001,6.23798348230932
+20.080000000000013,6.240275548909391
+20.090000000000014,6.2425558144817686
+20.100000000000016,6.244824222562205
+20.110000000000017,6.247080716686452
+20.12000000000002,6.249325240390263
+20.13000000000002,6.2515577372093905
+20.140000000000022,6.2537781506795875
+20.150000000000023,6.255986424336607
+20.160000000000025,6.258182501716201
+20.170000000000027,6.260366326354122
+20.180000000000028,6.262537841786123
+20.19000000000003,6.2646969915479565
+20.20000000000003,6.266843719175376
+20.210000000000033,6.2689779682041324
+20.220000000000034,6.2710996821699805
+20.230000000000036,6.273208804608672
+20.240000000000038,6.275305279055958
+20.25000000000004,6.277389049047594
+20.26000000000004,6.279460058119331
+20.270000000000042,6.281518249806922
+20.280000000000044,6.2835635676461195
+20.290000000000045,6.285595955172676
+20.300000000000047,6.287615355922345
+20.31000000000005,6.289621713430877
+20.32000000000005,6.2916149712340275
+20.33000000000005,6.293595072867547
+20.340000000000053,6.29556196186719
+20.350000000000055,6.297515581768708
+20.360000000000056,6.299455876107853
+20.370000000000058,6.301382788420379
+20.38000000000006,6.303296262242038
+20.39000000000006,6.305196241108583
+20.400000000000063,6.3070826685557675
+20.410000000000064,6.308955488119342
+20.420000000000066,6.310814643335061
+20.430000000000067,6.312660077738677
+20.44000000000007,6.314491734865942
+20.45000000000007,6.316309558252608
+20.460000000000072,6.318113491434429
+20.470000000000073,6.319903477947157
+20.480000000000075,6.321679461326545
+20.490000000000077,6.323441385108345
+20.500000000000078,6.325189192828311
+20.51000000000008,6.326922828022194
+20.52000000000008,6.328642234225748
+20.530000000000083,6.330347354974724
+20.540000000000084,6.332038133804876
+20.550000000000086,6.333714514251957
+20.560000000000088,6.335376439851719
+20.57000000000009,6.337023854139915
+20.58000000000009,6.3386567006522965
+20.590000000000092,6.340274922924618
+20.600000000000094,6.3418784644926305
+20.610000000000095,6.343467268892088
+20.620000000000097,6.345041279658742
+20.6300000000001,6.346600440328346
+20.6400000000001,6.348144694436653
+20.6500000000001,6.349673985519414
+20.660000000000103,6.3511882571123826
+20.670000000000105,6.352687452751312
+20.680000000000106,6.354171515971955
+20.690000000000108,6.355640390310064
+20.70000000000011,6.35709401930139
+20.71000000000011,6.358532346481687
+20.720000000000113,6.359955315386708
+20.730000000000114,6.361362869552206
+20.740000000000116,6.362754952513932
+20.750000000000117,6.364131507807641
+20.76000000000012,6.365492478969084
+20.77000000000012,6.3668378095340135
+20.780000000000122,6.368167443038183
+20.790000000000123,6.369481323017344
+20.800000000000125,6.3707793930072505
+20.810000000000127,6.372061596543654
+20.820000000000128,6.373327877162308
+20.83000000000013,6.374578178398965
+20.84000000000013,6.3758124437893775
+20.850000000000133,6.377030616869298
+20.860000000000134,6.37823264117448
+20.870000000000136,6.379418460240676
+20.880000000000138,6.380588017603638
+20.89000000000014,6.381741256799119
+20.90000000000014,6.382878121362871
+20.910000000000142,6.383998554830647
+20.920000000000144,6.3851025007382
+20.930000000000145,6.3861899026212825
+20.940000000000147,6.387260704015647
+20.95000000000015,6.388314848457046
+20.96000000000015,6.389352279481233
+20.97000000000015,6.390372940623961
+20.980000000000153,6.391376775420981
+20.990000000000155,6.392363727408046
+21.0,6.39333374012091
+21.01,6.394286757095324
+21.020000000000003,6.395222721867042
+21.030000000000005,6.396141577971816
+21.040000000000006,6.397043268945399
+21.050000000000008,6.397927738323544
+21.06000000000001,6.398794929642002
+21.07000000000001,6.399644786436528
+21.080000000000013,6.400477252242872
+21.090000000000014,6.401292270596789
+21.100000000000016,6.402089785034031
+21.110000000000017,6.40286973909035
+21.12000000000002,6.403632076301498
+21.13000000000002,6.40437674020323
+21.140000000000022,6.405103674331298
+21.150000000000023,6.405812822221453
+21.160000000000025,6.406504127409448
+21.170000000000027,6.407177533431038
+21.180000000000028,6.407832983821973
+21.19000000000003,6.4084704221180075
+21.20000000000003,6.409089791854893
+21.210000000000033,6.409691036568382
+21.220000000000034,6.410274099794228
+21.230000000000036,6.410838925068184
+21.240000000000038,6.411385455926001
+21.25000000000004,6.411913635903433
+21.26000000000004,6.412423408536233
+21.270000000000042,6.412914717360152
+21.280000000000044,6.413387505910944
+21.290000000000045,6.413841717724361
+21.300000000000047,6.414277296336157
+21.31000000000005,6.414694185282083
+21.32000000000005,6.415092328097892
+21.33000000000005,6.415471668319338
+21.340000000000053,6.4158321494821715
+21.350000000000055,6.416173715122147
+21.360000000000056,6.416496308775016
+21.370000000000058,6.416799873976531
+21.38000000000006,6.417084354262446
+21.39000000000006,6.417349693168513
+21.400000000000063,6.417595834230484
+21.410000000000064,6.4178227209841126
+21.420000000000066,6.418030296965151
+21.430000000000067,6.418218505709352
+21.44000000000007,6.418387290752468
+21.45000000000007,6.418536595630252
+21.460000000000072,6.418666363878457
+21.470000000000073,6.418776539032835
+21.480000000000075,6.418867064629138
+21.490000000000077,6.41893788420312
+21.500000000000078,6.418988941290533
+21.51000000000008,6.419020179427131
+21.52000000000008,6.419031542148664
+21.530000000000083,6.419022972990887
+21.540000000000084,6.418994415489552
+21.550000000000086,6.418945813180411
+21.560000000000088,6.418877109599217
+21.57000000000009,6.418788248281723
+21.58000000000009,6.418679172763682
+21.590000000000092,6.418549826580845
+21.600000000000094,6.4184001532689665
+21.610000000000095,6.418230096363798
+21.620000000000097,6.4180395994010935
+21.6300000000001,6.417828605916604
+21.6400000000001,6.417597059446083
+21.6500000000001,6.417344903525284
+21.660000000000103,6.417072081689958
+21.670000000000105,6.416778537475858
+21.680000000000106,6.416464214418737
+21.690000000000108,6.4161290560543485
+21.70000000000011,6.415773005918444
+21.71000000000011,6.415396007546777
+21.720000000000113,6.414998004475099
+21.730000000000114,6.4145789402391635
+21.740000000000116,6.414138758374723
+21.750000000000117,6.41367740241753
+21.76000000000012,6.413194815903338
+21.77000000000012,6.412690942367898
+21.780000000000122,6.412165725346965
+21.790000000000123,6.411619108376289
+21.800000000000125,6.411051034991625
+21.810000000000127,6.410461448728724
+21.820000000000128,6.409850293123339
+21.83000000000013,6.4092175117112244
+21.84000000000013,6.408563048028131
+21.850000000000133,6.407886845609811
+21.860000000000134,6.4071888479920185
+21.870000000000136,6.406468998710506
+21.880000000000138,6.405727241301025
+21.89000000000014,6.404963519299329
+21.90000000000014,6.404177776241172
+21.910000000000142,6.403369955662304
+21.920000000000144,6.402540001098479
+21.930000000000145,6.4016878560854495
+21.940000000000147,6.4008134641589685
+21.95000000000015,6.399916768854788
+21.96000000000015,6.3989977137086615
+21.97000000000015,6.398056242256341
+21.980000000000153,6.397092298033579
+21.990000000000155,6.396105824576129
+22.0,6.395096765419743
+22.01,6.394065064100174
+22.020000000000003,6.3930106641531745
+22.030000000000005,6.391933509114497
+22.040000000000006,6.3908335425198946
+22.050000000000008,6.389710707905119
+22.06000000000001,6.388564948805924
+22.07000000000001,6.387396208758062
+22.080000000000013,6.386204431297286
+22.090000000000014,6.384989559959347
+22.100000000000016,6.383751538279999
+22.110000000000017,6.382490309794996
+22.12000000000002,6.381205818040088
+22.13000000000002,6.379898006551029
+22.140000000000022,6.378566818863571
+22.150000000000023,6.377212198513467
+22.160000000000025,6.37583408903647
+22.170000000000027,6.374432433968333
+22.180000000000028,6.3730071768448076
+22.19000000000003,6.371558261201647
+22.20000000000003,6.370085630574604
+22.210000000000033,6.36858922849943
+22.220000000000034,6.36706899851188
+22.230000000000036,6.365524884147705
+22.240000000000038,6.3639568289426585
+22.25000000000004,6.362364776432492
+22.26000000000004,6.360748670152959
+22.270000000000042,6.359108453639812
+22.280000000000044,6.357444070428804
+22.290000000000045,6.3557554640556875
+22.300000000000047,6.354042578056215
+22.31000000000005,6.352305355966139
+22.32000000000005,6.350543741321212
+22.33000000000005,6.348757677657187
+22.340000000000053,6.346947108509817
+22.350000000000055,6.345111977414854
+22.360000000000056,6.343252227908051
+22.370000000000058,6.341367803525161
+22.38000000000006,6.339458647801936
+22.39000000000006,6.337524704274129
+22.400000000000063,6.335565916477493
+22.410000000000064,6.33358222794778
+22.420000000000066,6.331573582220742
+22.430000000000067,6.329539922832134
+22.44000000000007,6.327481193317706
+22.45000000000007,6.3253973372132135
+22.460000000000072,6.323288298054407
+22.470000000000073,6.3211540193770395
+22.480000000000075,6.318994444716864
+22.490000000000077,6.3168095176096335
+22.500000000000078,6.3145991815911
+22.51000000000008,6.312363380197016
+22.52000000000008,6.310102056963134
+22.530000000000083,6.307815155425208
+22.540000000000084,6.3055026191189905
+22.550000000000086,6.303164391580233
+22.560000000000088,6.300800416344688
+22.57000000000009,6.29841063694811
+22.58000000000009,6.295994996926249
+22.590000000000092,6.29355343981486
+22.600000000000094,6.291085909149695
+22.610000000000095,6.288592348466506
+22.620000000000097,6.2860727013010465
+22.6300000000001,6.283526911189068
+22.6400000000001,6.280954921666325
+22.6500000000001,6.278356676268569
+22.660000000000103,6.275732118531552
+22.670000000000105,6.273081191991028
+22.680000000000106,6.270403840182749
+22.690000000000108,6.267700006642468
+22.70000000000011,6.264969634905937
+22.71000000000011,6.2622126685089095
+22.720000000000113,6.259429050987138
+22.730000000000114,6.256618725876375
+22.740000000000116,6.253781636712373
+22.750000000000117,6.250917727030884
+22.76000000000012,6.248026940367661
+22.77000000000012,6.245109220258458
+22.780000000000122,6.242164510239027
+22.790000000000123,6.23919275384512
+22.800000000000125,6.23619389461249
+22.810000000000127,6.23316787607689
+22.820000000000128,6.2301146417740725
+22.83000000000013,6.22703413523979
+22.84000000000013,6.223926300009794
+22.850000000000133,6.22079107961984
+22.860000000000134,6.2176284176056775
+22.870000000000136,6.214438257503061
+22.880000000000138,6.211220542847743
+22.89000000000014,6.207975217175476
+22.90000000000014,6.204702224022013
+22.910000000000142,6.201401506923106
+22.920000000000144,6.198073009414508
+22.930000000000145,6.194716675031972
+22.940000000000147,6.19133244731125
+22.95000000000015,6.187920269788095
+22.96000000000015,6.18448008599826
+22.97000000000015,6.181011839477496
+22.980000000000153,6.177515473761558
+22.990000000000155,6.173990932386197
+23.0,6.170438158887166
+23.01,6.166857096800219
+23.020000000000003,6.163247689661107
+23.030000000000005,6.159609881005583
+23.040000000000006,6.1559436143693995
+23.050000000000008,6.1522488332883105
+23.06000000000001,6.148525481298067
+23.07000000000001,6.144773501934423
+23.080000000000013,6.14099283873313
+23.090000000000014,6.137183435229941
+23.100000000000016,6.1333452349606095
+23.110000000000017,6.129478181460887
+23.12000000000002,6.125582218266527
+23.13000000000002,6.121657288913282
+23.140000000000022,6.117703336936904
+23.150000000000023,6.113720305873146
+23.160000000000025,6.109708139257761
+23.170000000000027,6.105666780626502
+23.180000000000028,6.101596173515121
+23.19000000000003,6.097496261459371
+23.20000000000003,6.0933669879950045
+23.210000000000033,6.089208296657774
+23.220000000000034,6.085020130983432
+23.230000000000036,6.080802434507731
+23.240000000000038,6.076555150766425
+23.25000000000004,6.072278223295266
+23.26000000000004,6.067971595630006
+23.270000000000042,6.063635211306398
+23.280000000000044,6.059269013860194
+23.290000000000045,6.054872946827149
+23.300000000000047,6.050446953743013
+23.31000000000005,6.045990978143539
+23.32000000000005,6.041504963564481
+23.33000000000005,6.036988853541591
+23.340000000000053,6.032442591610622
+23.350000000000055,6.027866121307326
+23.360000000000056,6.023259386167457
+23.370000000000058,6.018622329726766
+23.38000000000006,6.013954895521006
+23.39000000000006,6.00925702708593
+23.400000000000063,6.004528667957291
+23.410000000000064,5.999769761670842
+23.420000000000066,5.994980251762334
+23.430000000000067,5.99016008176752
+23.44000000000007,5.985309195222155
+23.45000000000007,5.980427535661989
+23.460000000000072,5.975515046622776
+23.470000000000073,5.970571671640268
+23.480000000000075,5.965597354250218
+23.490000000000077,5.960592037988379
+23.500000000000078,5.955555666390503
+23.51000000000008,5.950488182992343
+23.52000000000008,5.945389531329652
+23.530000000000083,5.940259654938182
+23.540000000000084,5.935098497353686
+23.550000000000086,5.929906002111917
+23.560000000000088,5.924682112748626
+23.57000000000009,5.919426772799568
+23.58000000000009,5.914139925800494
+23.590000000000092,5.908821515287157
+23.600000000000094,5.903471484795309
+23.610000000000095,5.898089777860705
+23.620000000000097,5.892676338019096
+23.6300000000001,5.887231108806235
+23.6400000000001,5.881754033757875
+23.6500000000001,5.8762450564097675
+23.660000000000103,5.870704120297666
+23.670000000000105,5.865131168957323
+23.680000000000106,5.859526145924491
+23.690000000000108,5.853888994734922
+23.70000000000011,5.8482196589243705
+23.71000000000011,5.842518082028588
+23.720000000000113,5.836784207583327
+23.730000000000114,5.831017979124341
+23.740000000000116,5.825219340187382
+23.750000000000117,5.819388234308202
+23.76000000000012,5.813524605022555
+23.77000000000012,5.807628395866193
+23.780000000000122,5.801699550374869
+23.790000000000123,5.795738012084335
+23.800000000000125,5.789743724530345
+23.810000000000127,5.78371663124865
+23.820000000000128,5.777656675775003
+23.83000000000013,5.771563801645158
+23.84000000000013,5.7654379523948664
+23.850000000000133,5.759279071559881
+23.860000000000134,5.753087102675955
+23.870000000000136,5.74686198927884
+23.880000000000138,5.74060367490429
+23.89000000000014,5.734312103088056
+23.90000000000014,5.727987217365893
+23.910000000000142,5.721628961273552
+23.920000000000144,5.715237278346787
+23.930000000000145,5.708812112121349
+23.940000000000147,5.702353406132991
+23.95000000000015,5.695861103917466
+23.96000000000015,5.689335149010526
+23.97000000000015,5.682775484947926
+23.980000000000153,5.676182055265415
+23.990000000000155,5.669554803498749
+24.0,5.662893673183679
+24.01,5.65622275159166
+24.020000000000003,5.649542216629252
+24.030000000000005,5.642852132018264
+24.040000000000006,5.6361525617368935
+24.050000000000008,5.629443570019372
+24.06000000000001,5.6227252213556245
+24.07000000000001,5.615997580490911
+24.080000000000013,5.609260712425481
+24.090000000000014,5.602514682414223
+24.100000000000016,5.595759555966309
+24.110000000000017,5.588995398844842
+24.12000000000002,5.582222277066505
+24.13000000000002,5.5754402569012
+24.140000000000022,5.568649404871702
+24.150000000000023,5.561849787753293
+24.160000000000025,5.555041472573411
+24.170000000000027,5.548224526611288
+24.180000000000028,5.541399017397595
+24.19000000000003,5.534565012714078
+24.20000000000003,5.5277225805932035
+24.210000000000033,5.520871789317789
+24.220000000000034,5.514012707420649
+24.230000000000036,5.507145403684226
+24.240000000000038,5.50026994714023
+24.25000000000004,5.493386407069273
+24.26000000000004,5.486494853000504
+24.270000000000042,5.479595354711243
+24.280000000000044,5.472687982226612
+24.290000000000045,5.465772805819169
+24.300000000000047,5.458849896008539
+24.31000000000005,5.451919323561045
+24.32000000000005,5.444981159489336
+24.33000000000005,5.438035475052018
+24.340000000000053,5.4310823417532825
+24.350000000000055,5.4241218313425295
+24.360000000000056,5.417154015814
+24.370000000000058,5.410178967406396
+24.38000000000006,5.403196758602511
+24.39000000000006,5.3962074621288485
+24.400000000000063,5.3892111509552505
+24.410000000000064,5.382207898294516
+24.420000000000066,5.375197777602025
+24.430000000000067,5.368180862575358
+24.44000000000007,5.361157227153917
+24.45000000000007,5.354126945518544
+24.460000000000072,5.3470900920911415
+24.470000000000073,5.3400467415342865
+24.480000000000075,5.332996968750852
+24.490000000000077,5.325940848883619
+24.500000000000078,5.318878457314894
+24.51000000000008,5.311809869666124
+24.52000000000008,5.304735161797509
+24.530000000000083,5.297654409807613
+24.540000000000084,5.290567690032982
+24.550000000000086,5.283475079047751
+24.560000000000088,5.276376653663253
+24.57000000000009,5.2692724909276345
+24.58000000000009,5.262162668125459
+24.590000000000092,5.255047262777319
+24.600000000000094,5.247926352639442
+24.610000000000095,5.240800015703295
+24.620000000000097,5.2336683301951945
+24.6300000000001,5.226531374575909
+24.6400000000001,5.219389227540265
+24.6500000000001,5.212241968016748
+24.660000000000103,5.205089675167108
+24.670000000000105,5.197932428385959
+24.680000000000106,5.190770307300384
+24.690000000000108,5.1836033917695294
+24.70000000000011,5.176431761884211
+24.71000000000011,5.1692554979665095
+24.720000000000113,5.162074680569369
+24.730000000000114,5.154889390476195
+24.740000000000116,5.147699708700451
+24.750000000000117,5.140505716485253
+24.76000000000012,5.133307495302965
+24.77000000000012,5.126105126854797
+24.780000000000122,5.118898693070392
+24.790000000000123,5.111688276107423
+24.800000000000125,5.104473958351186
+24.810000000000127,5.097255822414186
+24.820000000000128,5.090033951135734
+24.83000000000013,5.082808427581531
+24.84000000000013,5.075579335043261
+24.850000000000133,5.068346757038178
+24.860000000000134,5.061110777308691
+24.870000000000136,5.053871479821956
+24.880000000000138,5.046628948769456
+24.89000000000014,5.039383268566589
+24.90000000000014,5.032134523852255
+24.910000000000142,5.0248827994884335
+24.920000000000144,5.017628180559772
+24.930000000000145,5.0103707523731655
+24.940000000000147,5.0031106004573385
+24.95000000000015,4.995847810562425
+24.96000000000015,4.9885824686595495
+24.97000000000015,4.981314660940406
+24.980000000000153,4.974044473816835
+24.990000000000155,4.966771993920403
+25.0,4.959497308101981
+25.01,4.952220503431314
+25.020000000000003,4.944941667196603
+25.030000000000005,4.937660886904078
+25.040000000000006,4.930378250277571
+25.050000000000008,4.92309384525809
+25.06000000000001,4.915807760003391
+25.07000000000001,4.9085200828875495
+25.080000000000013,4.901230902500533
+25.090000000000014,4.893940307647769
+25.100000000000016,4.886648387349719
+25.110000000000017,4.879355230841439
+25.12000000000002,4.872060927572157
+25.13000000000002,4.864765567204835
+25.140000000000022,4.857469239615736
+25.150000000000023,4.850172034893991
+25.160000000000025,4.8428740433411654
+25.170000000000027,4.8355753554708185
+25.180000000000028,4.828276062008073
+25.19000000000003,4.820976253889176
+25.20000000000003,4.81367602226106
+25.210000000000033,4.806375458480904
+25.220000000000034,4.799074654115698
+25.25000000000004,4.777171716317554
+25.26000000000004,4.769870869462798
+25.270000000000042,4.762570242989645
+25.280000000000044,4.7552699297146725
+25.290000000000045,4.747970022661174
+25.300000000000047,4.74067061505871
+25.31000000000005,4.733371800342669
+25.32000000000005,4.726073672153811
+25.33000000000005,4.718776324337832
+25.340000000000053,4.711479850944909
+25.350000000000055,4.704184346229251
+25.360000000000056,4.696889904648656
+25.370000000000058,4.689596620864055
+25.38000000000006,4.682304589739064
+25.39000000000006,4.675013906339533
+25.400000000000063,4.667724665933094
+25.410000000000064,4.660436963988707
+25.420000000000066,4.653150896176208
+25.430000000000067,4.645866558365853
+25.44000000000007,4.638584046627867
+25.45000000000007,4.631303457231985
+25.460000000000072,4.624024886646997
+25.470000000000073,4.616748431540293
+25.480000000000075,4.6094741887774004
+25.490000000000077,4.602202255421533
+25.500000000000078,4.5949327287331245
+25.51000000000008,4.587665706169375
+25.52000000000008,4.580401285383787
+25.530000000000083,4.573139564225706
+25.540000000000084,4.565880640739859
+25.550000000000086,4.558624613165891
+25.560000000000088,4.5513715799379035
+25.57000000000009,4.544121639683988
+25.58000000000009,4.536874891225765
+25.590000000000092,4.529631433577918
+25.600000000000094,4.5223913659477235
+25.610000000000095,4.515154787734593
+25.620000000000097,4.507921798529598
+25.6300000000001,4.500692498115005
+25.6400000000001,4.493466986463809
+25.6500000000001,4.486245363739262
+25.660000000000103,4.479027730294403
+25.670000000000105,4.471814186671589
+25.680000000000106,4.464604833602021
+25.690000000000108,4.457399772005277
+25.70000000000011,4.450199102988837
+25.71000000000011,4.443002927847607
+25.720000000000113,4.4358113480634485
+25.730000000000114,4.428624465304704
+25.740000000000116,4.421442381425721
+25.750000000000117,4.414265198466376
+25.76000000000012,4.407093018651597
+25.77000000000012,4.3999259443908905
+25.780000000000122,4.392764078277857
+25.790000000000123,4.385607523089718
+25.800000000000125,4.378456381786836
+25.810000000000127,4.371310757512232
+25.820000000000128,4.364170753591108
+25.83000000000013,4.357036473530366
+25.84000000000013,4.349908021018122
+25.850000000000133,4.342785499923228
+25.860000000000134,4.335669014294789
+25.870000000000136,4.328558668361675
+25.880000000000138,4.321454566532042
+25.89000000000014,4.314356813392843
+25.90000000000014,4.3072655137093445
+25.910000000000142,4.30018077242464
+25.920000000000144,4.293102694659161
+25.930000000000145,4.286031385710192
+25.940000000000147,4.278966951051382
+25.95000000000015,4.271909496332254
+25.96000000000015,4.264859127377717
+25.97000000000015,4.257815950187574
+25.980000000000153,4.250780070936035
+25.990000000000155,4.24375159597122
+26.0,4.236730631814674
+26.01,4.229717285160866
+26.020000000000003,4.222711662876704
+26.030000000000005,4.215713872001034
+26.040000000000006,4.208724019744151
+26.050000000000008,4.2017422134873
+26.06000000000001,4.194768560782182
+26.07000000000001,4.187803169350458
+26.080000000000013,4.180846147083248
+26.090000000000014,4.17389760204064
+26.100000000000016,4.166957642451186
+26.110000000000017,4.1600263767114045
+26.12000000000002,4.153103913385284
+26.13000000000002,4.146190361203777
+26.140000000000022,4.139285829064305
+26.150000000000023,4.132390426030255
+26.160000000000025,4.125504261330474
+26.170000000000027,4.118627444358772
+26.180000000000028,4.111760084673414
+26.19000000000003,4.104902291996622
+26.20000000000003,4.098054176214061
+26.210000000000033,4.091215847374346
+26.220000000000034,4.084387415688524
+26.230000000000036,4.077568991529578
+26.240000000000038,4.070760685431914
+26.25000000000004,4.063962608090855
+26.26000000000004,4.057174870362133
+26.270000000000042,4.050397583261382
+26.280000000000044,4.043630857963624
+26.290000000000045,4.036874805802764
+26.300000000000047,4.030129538271078
+26.31000000000005,4.0233951670187
+26.32000000000005,4.016671803853112
+26.33000000000005,4.009959560738632
+26.340000000000053,4.003258549795899
+26.350000000000055,3.996568883301363
+26.360000000000056,3.9898906736867668
+26.370000000000058,3.9832240335386344
+26.38000000000006,3.9765690755977543
+26.39000000000006,3.969925912758664
+26.400000000000063,3.963294658069134
+26.410000000000064,3.9566754247296494
+26.420000000000066,3.9500683260928935
+26.430000000000067,3.9434734756632293
+26.44000000000007,3.9368909870961803
+26.45000000000007,3.9303209741979117
+26.460000000000072,3.9237635509247104
+26.470000000000073,3.9172188313824643
+26.480000000000075,3.9106869298261406
+26.490000000000077,3.904167960659265
+26.500000000000078,3.8976620384333995
+26.51000000000008,3.8911692778476183
+26.52000000000008,3.8846897937479863
+26.530000000000083,3.8782237011270335
+26.540000000000084,3.8717711151232312
+26.550000000000086,3.8653321510204663
+26.560000000000088,3.858906924247517
+26.57000000000009,3.852495550377525
+26.58000000000009,3.8460981451274696
+26.590000000000092,3.8397148243576398
+26.600000000000094,3.8333457040711063
+26.610000000000095,3.826990900413194
+26.620000000000097,3.820650529670952
+26.6300000000001,3.814324708272624
+26.6400000000001,3.808013552787119
+26.6500000000001,3.801717179923479
+26.660000000000103,3.7954357065303483
+26.670000000000105,3.789169249595444
+26.680000000000106,3.7829179262450197
+26.690000000000108,3.776681853743335
+26.70000000000011,3.7704611494921223
+26.71000000000011,3.7642559310300503
+26.720000000000113,3.7580663160321928
+26.730000000000114,3.7518924223094903
+26.740000000000116,3.745734367808217
+26.750000000000117,3.7395922706094424
+26.76000000000012,3.7334662489284964
+26.77000000000012,3.7273564211144303
+26.780000000000122,3.7212629056494806
+26.790000000000123,3.7151858211485296
+26.800000000000125,3.7091252863585664
+26.810000000000127,3.703081420158148
+26.820000000000128,3.6970543415568584
+26.83000000000013,3.6910441696947696
+26.84000000000013,3.685051023841899
+26.850000000000133,3.6790750233976692
+26.860000000000134,3.6731162878903643
+26.870000000000136,3.6671749369765885
+26.880000000000138,3.6612510904407225
+26.89000000000014,3.6553448681943803
+26.90000000000014,3.6494563902758634
+26.910000000000142,3.6435857768496183
+26.920000000000144,3.637733148205689
+26.930000000000145,3.631898624759173
+26.940000000000147,3.6260823270496743
+26.95000000000015,3.6202843757407566
+26.96000000000015,3.6145048916193954
+26.97000000000015,3.608743995595431
+26.980000000000153,3.60300180870102
+26.990000000000155,3.5972784520900856
+27.0,3.5915740470377697
+27.01,3.585888714939881
+27.020000000000003,3.580222577312346
+27.030000000000005,3.5745757557906583
+27.040000000000006,3.5689483721293267
+27.050000000000008,3.5633405482013223
+27.06000000000001,3.5577524059975274
+27.07000000000001,3.552184067626182
+27.080000000000013,3.5466356553123304
+27.090000000000014,3.541107291397268
+27.100000000000016,3.535599098337985
+27.110000000000017,3.530111198706613
+27.12000000000002,3.52464371518987
+27.13000000000002,3.519196770588503
+27.140000000000022,3.513770487816732
+27.150000000000023,3.5083649899016933
+27.160000000000025,3.502980399982883
+27.170000000000027,3.4976168413115962
+27.180000000000028,3.4922744372503733
+27.19000000000003,3.4869533112724365
+27.20000000000003,3.4816535869611327
+27.210000000000033,3.476375388009374
+27.220000000000034,3.471118838219076
+27.230000000000036,3.465884061500598
+27.240000000000038,3.4606711818721814
+27.25000000000004,3.455480323459388
+27.26000000000004,3.4503116104945373
+27.270000000000042,3.4451651673161447
+27.280000000000044,3.4400411183683577
+27.290000000000045,3.434939588200392
+27.300000000000047,3.4298607014659677
+27.31000000000005,3.424804582922745
+27.32000000000005,3.4197713574317588
+27.33000000000005,3.414761149956852
+27.340000000000053,3.4097740855641123
+27.350000000000055,3.4048102894213024
+27.360000000000056,3.3998698867972954
+27.370000000000058,3.394953003061507
+27.38000000000006,3.390059763683327
+27.39000000000006,3.385190294231551
+27.400000000000063,3.3803447203738113
+27.410000000000064,3.3755231678760094
+27.420000000000066,3.3707257626017446
+27.430000000000067,3.365952630511744
+27.44000000000007,3.3612038976632928
+27.45000000000007,3.3564796902096616
+27.460000000000072,3.3517801343995366
+27.470000000000073,3.347105356576447
+27.480000000000075,3.3424554831781923
+27.490000000000077,3.3378306407362697
+27.500000000000078,3.333230955875301
+27.51000000000008,3.328656555312458
+27.52000000000008,3.3241075658568886
+27.530000000000083,3.319584114409144
+27.540000000000084,3.3150863279606
+27.550000000000086,3.310614333592885
+27.560000000000088,3.3061682584773022
+27.57000000000009,3.3017482298742533
+27.58000000000009,3.2973543751326617
+27.590000000000092,3.292986821689396
+27.600000000000094,3.288645697068692
+27.610000000000095,3.2843311288815733
+27.620000000000097,3.280043244825275
+27.6300000000001,3.275782172682663
+27.6400000000001,3.271548040321654
+27.6500000000001,3.2673409756946388
+27.660000000000103,3.2631611068378983
+27.670000000000105,3.2590085618710254
+27.680000000000106,3.254883468996343
+27.690000000000108,3.250785956498322
+27.70000000000011,3.2467161527429997
+27.71000000000011,3.242674186177398
+27.720000000000113,3.2386601853289405
+27.730000000000114,3.234674278804868
+27.740000000000116,3.230716595291657
+27.750000000000117,3.2267872635544337
+27.76000000000012,3.2228864124363903
+27.77000000000012,3.2190141708582014
+27.780000000000122,3.2151706678174365
+27.790000000000123,3.2113560323879766
+27.800000000000125,3.207570393719426
+27.810000000000127,3.2038138810365275
+27.820000000000128,3.2000866236385743
+27.83000000000013,3.1963887508988242
+27.84000000000013,3.1927203922639107
+27.850000000000133,3.1890816772532555
+27.860000000000134,3.1854727354584793
+27.870000000000136,3.181893696542814
+27.880000000000138,3.1783446902405132
+27.89000000000014,3.1748258463562617
+27.90000000000014,3.171337294764587
+27.910000000000142,3.1678791654092664
+27.920000000000144,3.1644515883027395
+27.930000000000145,3.161054693525515
+27.940000000000147,3.157688611225578
+27.95000000000015,3.154353471617801
+27.96000000000015,3.1510494049833495
+27.97000000000015,3.1477765416690895
+27.980000000000153,3.1445350120869944
+27.990000000000155,3.1413249467135524
+28.0,3.1381464760891724
+28.01,3.1349997308175874
+28.020000000000003,3.131884841565264
+28.030000000000005,3.128801939060804
+28.040000000000006,3.1257511540943503
+28.050000000000008,3.122732617516992
+28.06000000000001,3.119746460240166
+28.07000000000001,3.116792813235064
+28.080000000000013,3.1138718075320315
+28.090000000000014,3.1109835742199743
+28.100000000000016,3.108128244445758
+28.110000000000017,3.105305949413613
+28.12000000000002,3.1025168203845337
+28.13000000000002,3.0997609886756807
+28.140000000000022,3.0970385856597824
+28.150000000000023,3.0943497427645346
+28.160000000000025,3.091694591472002
+28.170000000000027,3.089073263318017
+28.180000000000028,3.08648588989158
+28.19000000000003,3.0839326028342584
+28.20000000000003,3.081413533839585
+28.210000000000033,3.0789288146524574
+28.220000000000034,3.076478577068536
+28.230000000000036,3.0740629529336414
+28.240000000000038,3.0716820741431516
+28.25000000000004,3.0693360726414007
+28.26000000000004,3.067025080421074
+28.270000000000042,3.064749229522605
+28.280000000000044,3.062508652033572
+28.290000000000045,3.0603034800880935
+28.300000000000047,3.058133845866224
+28.31000000000005,3.055999881593349
+28.32000000000005,3.0539017195395792
+28.33000000000005,3.051839492019146
+28.340000000000053,3.0498133313897946
+28.350000000000055,3.0478233700521784
+28.360000000000056,3.0458697404492527
+28.370000000000058,3.0439525750656675
+28.38000000000006,3.0420720064271602
+28.39000000000006,3.0402281670999485
+28.400000000000063,3.0384211896901223
+28.410000000000064,3.0366512068430356
+28.420000000000066,3.0349183512426983
+28.430000000000067,3.0332227556111673
+28.44000000000007,3.031564552707937
+28.45000000000007,3.029943875329331
+28.460000000000072,3.028360856307891
+28.470000000000073,3.0268156285117676
+28.480000000000075,3.02530832484411
+28.490000000000077,3.023839078242456
+28.500000000000078,3.0224080216781184
+28.51000000000008,3.0210152881555774
+28.52000000000008,3.0196610107118667
+28.530000000000083,3.018345322415962
+28.540000000000084,3.0170683563681697
+28.550000000000086,3.0158302456995134
+28.560000000000088,3.0146311235711214
+28.57000000000009,3.013471123173614
+28.58000000000009,3.0123503777264906
+28.590000000000092,3.0112690204775148
+28.600000000000094,3.010227184702101
+28.610000000000095,3.0092250037027015
+28.620000000000097,3.0082626108081896
+28.6300000000001,3.007340139373247
+28.6400000000001,3.0064577227777467
+28.6500000000001,3.0056154944261397
+28.660000000000103,3.004813587746838
+28.670000000000105,3.004052136191598
+28.680000000000106,3.003331273234908
+28.690000000000108,3.002651132373366
+28.70000000000011,3.0020118471250674
+28.71000000000011,3.0014135510289868
+28.720000000000113,3.00085637764436
+28.730000000000114,3.0003404605500665
+28.740000000000116,2.9998659333440125
+28.750000000000117,2.9994329296425115
+28.76000000000012,2.9990415830796673
+28.77000000000012,2.9986920273067543
+28.780000000000122,2.998384395991599
+28.790000000000123,2.9981188228179603
+28.800000000000125,2.997895441484911
+28.810000000000127,2.997714385706218
+28.820000000000128,2.9975757892097197
+28.83000000000013,2.99747978573671
+28.84000000000013,2.9974265090413152
+28.850000000000133,2.9974160928898725
+28.860000000000134,2.9974486710603117
+28.870000000000136,2.9975243773415317
+28.880000000000138,2.99764334553278
+28.89000000000014,2.9978057094430297
+28.90000000000014,2.99801160289036
+28.910000000000142,2.9982611597013307
+28.920000000000144,2.998554513710363
+28.930000000000145,2.998891798759114
+28.940000000000147,2.999273148695855
+28.95000000000015,2.9996986973748476
+28.96000000000015,3.0001685786557215
+28.97000000000015,3.00068292640285
+28.980000000000153,3.001241874484725
+28.990000000000155,3.001845556773335
+29.0,3.002494107143539
+29.01,3.003187659472442
+29.020000000000003,3.003926347638771
+29.030000000000005,3.004710305522249
+29.040000000000006,3.0055396670029704
+29.050000000000008,3.006414565960774
+29.06000000000001,3.00733513627462
+29.07000000000001,3.0083015118219603
+29.080000000000013,3.0093138264781154
+29.090000000000014,3.010372214115647
+29.100000000000016,3.0114768086037293
+29.110000000000017,3.012627743807526
+29.12000000000002,3.0138251535875598
+29.13000000000002,3.015069171799086
+29.140000000000022,3.0163599322914663
+29.150000000000023,3.017697568907539
+29.160000000000025,3.019082215482993
+29.170000000000027,3.0205140058457376
+29.180000000000028,3.0219930738152763
+29.19000000000003,3.023519553202076
+29.20000000000003,3.02509357780694
+29.210000000000033,3.0267152814203784
+29.220000000000034,3.0283847978219782
+29.230000000000036,3.030102260779775
+29.240000000000038,3.0318678040496225
+29.25000000000004,3.0336815613745642
+29.26000000000004,3.035543666484201
+29.270000000000042,3.037454253094063
+29.280000000000044,3.0394134549049783
+29.290000000000045,3.0414214056024433
+29.300000000000047,3.0434782388559904
+29.31000000000005,3.0455840883185585
+29.32000000000005,3.047739087625861
+29.33000000000005,3.0499433703957552
+29.340000000000053,3.0521970702276096
+29.350000000000055,3.0545003207016737
+29.360000000000056,3.0568532553784458
+29.370000000000058,3.0592560077980395
+29.38000000000006,3.061708711479554
+29.39000000000006,3.0642114999204386
+29.400000000000063,3.066764506595864
+29.410000000000064,3.0693678649580853
+29.420000000000066,3.072021708435813
+29.430000000000067,3.0747261704335767
+29.44000000000007,3.077481384331094
+29.45000000000007,3.080287483482637
+29.460000000000072,3.0831446012163957
+29.470000000000073,3.0860528708338495
+29.480000000000075,3.089012425609129
+29.490000000000077,3.0920233987883834
+29.500000000000078,3.095085923589146
+29.51000000000008,3.0982001331997013
+29.52000000000008,3.1013661607784475
+29.530000000000083,3.1045841394532645
+29.540000000000084,3.107854202320878
+29.550000000000086,3.111176482446224
+29.560000000000088,3.1145511128618146
+29.57000000000009,3.1179782265671023
+29.58000000000009,3.1214579565278444
+29.590000000000092,3.1249904356754676
+29.600000000000094,3.128575796906432
+29.610000000000095,3.1322141730815956
+29.620000000000097,3.1359056970255774
+29.6300000000001,3.139650501526123
+29.6400000000001,3.1434487193334664
+29.6500000000001,3.147300483159695
+29.660000000000103,3.151205925678111
+29.670000000000105,3.155165179522598
+29.680000000000106,3.1591783772869806
+29.690000000000108,3.16324565152439
+29.70000000000011,3.167367134746625
+29.71000000000011,3.1715429594235167
+29.720000000000113,3.1757732579822897
+29.730000000000114,3.1800581628069247
+29.740000000000116,3.1843978062375213
+29.750000000000117,3.188792320569661
+29.76000000000012,3.1932418380537673
+29.77000000000012,3.19774649089447
+29.780000000000122,3.2023064112499657
+29.790000000000123,3.20692173123138
+29.800000000000125,3.211592582902129
+29.810000000000127,3.216319098277281
+29.820000000000128,3.2211014093229187
+29.83000000000013,3.225939647955499
+29.84000000000013,3.230833946041215
+29.850000000000133,3.235784435395358
+29.860000000000134,3.240791247781677
+29.870000000000136,3.2458545149117413
+29.880000000000138,3.250974368444299
+29.89000000000014,3.25615093998464
+29.90000000000014,3.2613843610839552
+29.910000000000142,3.266674763238698
+29.920000000000144,3.2720222778899446
+29.930000000000145,3.277427036422753
+29.940000000000147,3.282889170165525
+29.95000000000015,3.2884088103893654
+29.96000000000015,3.2939860883074417
+29.97000000000015,3.2996211350743447
+29.980000000000153,3.3053140817854496
+29.990000000000155,3.311065059476273
+30.0,3.3168741991217443
+					</series>
+					<series title="i2d((cps_i_state.position).y)" type="l" color="0x8000ff" encoding="csv">0.0,0.0
+0.0,6.1
+13.0,6.1
+13.0,6.0
+14.0,6.0
+14.0,5.8
+15.0,5.8
+15.0,5.6
+16.0,5.6
+16.0,5.4
+18.0,5.4
+18.0,5.6
+19.0,5.6
+19.0,5.9
+20.0,5.9
+20.0,6.2
+21.0,6.2
+21.0,6.3
+22.0,6.3
+22.0,6.2
+23.0,6.2
+23.0,5.9
+24.0,5.9
+24.0,5.4
+25.0,5.4
+25.0,4.7
+26.0,4.7
+26.0,4.0
+27.0,4.0
+27.0,3.4
+28.0,3.4
+28.0,3.1
+29.0,3.1
+29.0,3.2
+30.0,3.2
+					</series>
+					<comment/>
+				</plot>
+			</result>
+		</query>
+		<query>
+			<formula>A[] !cps_i_state.detection.collide</formula>
+			<comment/>
+			<result outcome="failure" type="quality" timestamp="2025-01-31 17:34:59 +0100">
+				<option key="--total-runs" value="200"/>
+				<option key="--max-iterations" value="10"/>
+				<option key="--good-runs" value="100"/>
+				<option key="--eval-runs" value="200"/>
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] !cps_i_state.detection.outside</formula>
+			<comment/>
+			<result outcome="failure" type="quality" timestamp="2025-01-31 17:35:02 +0100">
+				<option key="--total-runs" value="200"/>
+				<option key="--max-iterations" value="10"/>
+				<option key="--good-runs" value="100"/>
+				<option key="--eval-runs" value="200"/>
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>E[] !cps_i_state.detection.collide &amp;&amp; !cps_i_state.detection.outside</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-01-31 17:35:05 +0100">
+				<option key="--total-runs" value="200"/>
+				<option key="--max-iterations" value="10"/>
+				<option key="--good-runs" value="100"/>
+				<option key="--eval-runs" value="200"/>
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; !cps_i_state.detection.collide &amp;&amp; !cps_i_state.detection.outside &amp;&amp; cps_i_state.detection.reach</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-01-31 17:35:09 +0100">
+				<option key="--total-runs" value="200"/>
+				<option key="--max-iterations" value="10"/>
+				<option key="--good-runs" value="100"/>
+				<option key="--eval-runs" value="200"/>
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula/>
+			<comment/>
+		</query>
+		<query>
+			<formula/>
+			<comment>//Error estimation</comment>
+		</query>
+		<query>
+			<formula>simulate[&lt;=MAXTIME;100]{cps_dynamic.x-i2d(cps_i_state.position.x),cps_dynamic.y-i2d(cps_i_state.position.y)}</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula/>
+			<comment>//Reward funciton evaluation</comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; FSAFE &lt; 0 &amp;&amp; !cps_i_state.detection.collide &amp;&amp; !cps_i_state.detection.outside</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-01-03 10:30:06 +0100">
+				<option key="--total-runs" value="200"/>
+				<option key="--max-iterations" value="10"/>
+				<option key="--good-runs" value="100"/>
+				<option key="--eval-runs" value="200"/>
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula/>
+			<comment/>
+		</query>
+		<query>
+			<formula/>
+			<comment>//Controller synthesis</comment>
+		</query>
+		<query>
+			<formula>strategy safe = control:A[] !cps_i_state.detection.collide &amp;&amp; !cps_i_state.detection.outside</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-02-04 09:53:54 +0100">
+				<option key="--total-runs" value="200"/>
+				<option key="--max-iterations" value="10"/>
+				<option key="--good-runs" value="100"/>
+				<option key="--eval-runs" value="200"/>
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>saveStrategy("/home/rgu01/Uppaal/StagedShieldSynthesis/car/safeCar.json",safe)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-02-04 09:54:12 +0100">
+				<option key="--total-runs" value="200"/>
+				<option key="--max-iterations" value="10"/>
+				<option key="--good-runs" value="100"/>
+				<option key="--eval-runs" value="200"/>
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; cps_i_state.detection.reach under safe</formula>
+			<comment/>
+			<result outcome="failure" type="quality" timestamp="2025-02-04 09:37:54 +0100">
+				<option key="--total-runs" value="200"/>
+				<option key="--max-iterations" value="10"/>
+				<option key="--good-runs" value="100"/>
+				<option key="--eval-runs" value="200"/>
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] !cps_i_state.detection.collide &amp;&amp; !cps_i_state.detection.outside under safe</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-01-31 17:36:11 +0100">
+				<option key="--total-runs" value="200"/>
+				<option key="--max-iterations" value="10"/>
+				<option key="--good-runs" value="100"/>
+				<option key="--eval-runs" value="200"/>
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula/>
+			<comment/>
+		</query>
+		<query>
+			<formula>strategy reachSafe = maxE(10*rSafe+(5+10*cps_i_state.detection.reach)*rProgress) [&lt;=MAXTIME+1]{controller.location, move.location, turn.location}-&gt;{cps_i_state.position.x, cps_i_state.position.y, cps_i_state.velocity, cps_i_state.orientation, cps_i_state.acceleration, cps_i_state.accRate, cps_i_state.yawRate,obs_i_state[0].position.x, obs_i_state[0].position.y, obs_i_state[0].velocity, obs_i_state[0].orientation}: &lt;&gt; timer.Done under safe</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-01-03 14:49:11 +0100">
+				<option key="--total-runs" value="200"/>
+				<option key="--max-iterations" value="10"/>
+				<option key="--good-runs" value="100"/>
+				<option key="--eval-runs" value="200"/>
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>Pr[&lt;=MAXTIME] (&lt;&gt; cps_i_state.detection.reach) under reachSafe</formula>
+			<comment/>
+			<result outcome="success" type="interval" value="≥ 0.950056 (95% CI)" timestamp="2025-01-03 14:38:16 +0100">
+				<option key="--total-runs" value="200"/>
+				<option key="--max-iterations" value="10"/>
+				<option key="--good-runs" value="100"/>
+				<option key="--eval-runs" value="200"/>
+				<option key="--diagnostic" value="1"/>
+				<details>≥ 0.950056 (95% CI)</details>
+				<plot title="Probability Density Distribution" xaxis="run duration in time" yaxis="probability density">
+					<series title="density" type="b(0.000000)" color="0x0000ff" encoding="csv">25.0,4.503599627370496E15
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">25.0,0.0
+25.0,4.503599627370496E15
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.2204e-16, bucket count=1
+Runs: 72 in total, 72 (100%) displayed, 0 (0%) remaining
+Span of displayed sample: [25, 25]
+Mean estimate of displayed sample: ≈ 25</comment>
+				</plot>
+				<plot title="Probability Density Confidence Intervals" xaxis="run duration in time" yaxis="probability density">
+					<series title="upper limit" type="b(0.000000)" color="0xa0a0ff" encoding="csv">25.0,1.0
+					</series>
+					<series title="lower limit" type="b(0.000000)" color="0x0000ff" encoding="csv">25.0,0.9500559162941453
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">25.0,0.0
+25.0,4.503599627370496E15
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.2204e-16, bucket count=1
+Runs: 72 in total, 72 (100%) displayed, 0 (0%) remaining
+Span of displayed sample: [25, 25]
+Mean estimate of displayed sample: ≈ 25</comment>
+				</plot>
+				<plot title="Probability Distribution" xaxis="run duration in time" yaxis="probability">
+					<series title="probability" type="b(0.000000)" color="0x0000ff" encoding="csv">25.0,1.0
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">25.0,0.0
+25.0,1.0
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.2204e-16, bucket count=1
+Runs: 72 in total, 72 (100%) displayed, 0 (0%) remaining
+Span of displayed sample: [25, 25]
+Mean estimate of displayed sample: ≈ 25</comment>
+				</plot>
+				<plot title="Probability Confidence Intervals" xaxis="run duration in time" yaxis="probability">
+					<series title="upper limit" type="b(0.000000)" color="0xa0a0ff" encoding="csv">25.0,1.0
+					</series>
+					<series title="lower limit" type="b(0.000000)" color="0x0000ff" encoding="csv">25.0,0.9500559162941453
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">25.0,0.0
+25.0,1.0
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.2204e-16, bucket count=1
+Runs: 72 in total, 72 (100%) displayed, 0 (0%) remaining
+Span of displayed sample: [25, 25]
+Mean estimate of displayed sample: ≈ 25</comment>
+				</plot>
+				<plot title="Cumulative Probability Distribution" xaxis="run duration in time" yaxis="probability">
+					<series title="cumulative" type="l" color="0x000000" encoding="csv">25.0,0.0
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">25.0,0.0
+25.0,1.0
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.2204e-16, bucket count=1
+Runs: 72 in total, 72 (100%) displayed, 0 (0%) remaining
+Span of displayed sample: [25, 25]
+Mean estimate of displayed sample: ≈ 25</comment>
+				</plot>
+				<plot title="Cumulative Probability Confidence Intervals" xaxis="run duration in time" yaxis="probability">
+					<series title="upper limit" type="k" color="0x0000dd" encoding="csv">25.0,0.04994408370585468
+					</series>
+					<series title="lower limit" type="k" color="0xdd0000" encoding="csv">25.0,0.0
+					</series>
+					<series title="cumulative" type="l" color="0x000000" encoding="csv">25.0,0.0
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">25.0,0.0
+25.0,1.0
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.2204e-16, bucket count=1
+Runs: 72 in total, 72 (100%) displayed, 0 (0%) remaining
+Span of displayed sample: [25, 25]
+Mean estimate of displayed sample: ≈ 25</comment>
+				</plot>
+				<plot title="Frequency Histogram" xaxis="run duration in time" yaxis="count">
+					<series title="count" type="b(0.000000)" color="0x0000ff" encoding="csv">25.0,72.0
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">25.0,0.0
+25.0,72.0
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.2204e-16, bucket count=1
+Runs: 72 in total, 72 (100%) displayed, 0 (0%) remaining
+Span of displayed sample: [25, 25]
+Mean estimate of displayed sample: ≈ 25</comment>
+				</plot>
+			</result>
+		</query>
+		<query>
+			<formula/>
+			<comment>//Reinformcement learning</comment>
+		</query>
+		<query>
+			<formula>strategy reach = maxE(10*rSafe+(5+100*cps_i_state.detection.reach)*rProgress) [&lt;=MAXTIME+1]{controller.location, move.location, turn.location}-&gt;
+{cps_i_state.position.x, cps_i_state.position.y, cps_i_state.velocity, cps_i_state.orientation, cps_i_state.acceleration, cps_i_state.accRate, cps_i_state.yawRate,
+obs_i_state[0].position.x, obs_i_state[0].position.y, obs_i_state[0].velocity, obs_i_state[0].orientation}: &lt;&gt; timer.Done</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-01-03 10:44:01 +0100">
+				<option key="--total-runs" value="200"/>
+				<option key="--max-iterations" value="10"/>
+				<option key="--good-runs" value="100"/>
+				<option key="--eval-runs" value="200"/>
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] !cps_i_state.detection.collide &amp;&amp; !cps_i_state.detection.outside under reach</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-01-03 10:44:05 +0100">
+				<option key="--total-runs" value="200"/>
+				<option key="--max-iterations" value="10"/>
+				<option key="--good-runs" value="100"/>
+				<option key="--eval-runs" value="200"/>
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; cps_i_state.detection.reach under reach</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-01-03 10:44:08 +0100">
+				<option key="--total-runs" value="200"/>
+				<option key="--max-iterations" value="10"/>
+				<option key="--good-runs" value="100"/>
+				<option key="--eval-runs" value="200"/>
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>A&lt;&gt; cps_i_state.detection.reach under reach</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-01-03 10:44:21 +0100">
+				<option key="--total-runs" value="200"/>
+				<option key="--max-iterations" value="10"/>
+				<option key="--good-runs" value="100"/>
+				<option key="--eval-runs" value="200"/>
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+	</queries>
+</nta>
