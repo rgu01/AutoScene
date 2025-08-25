@@ -127,7 +127,7 @@ const uint8_t N = 78;
 const int32_t ALL = -32767;
 
 /** Shielding */
-import "/home/rong/Github/StagedShieldSynthesis/car/shield/libshield.so"
+import "/home/rong/Github/ScenarioGeneration/car/shield/libshield.so"
 {
     bool allow(uint8_t type, int value);
     int is_state_contained();

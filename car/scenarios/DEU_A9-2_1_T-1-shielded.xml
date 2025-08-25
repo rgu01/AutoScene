@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="Max Mustermann" affiliation="Technical University of Munich, Germany" source="" benchmarkID="DEU_A9-2_1_T-1" date="2025-08-07">
+<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="Max Mustermann" affiliation="Technical University of Munich, Germany" source="" benchmarkID="DEU_A9-2_1_T-1" date="2025-08-25">
   <location>
     <geoNameId>-999</geoNameId>
     <gpsLatitude>999</gpsLatitude>
     <gpsLongitude>999</gpsLongitude>
   </location>
   <scenarioTags>
-    <interstate/>
     <critical/>
+    <interstate/>
   </scenarioTags>
   <lanelet id="30622">
     <leftBound>
@@ -3300,15 +3300,15 @@
         </time>
         <position>
           <point>
-            <x>54.3269</x>
-            <y>-1.3753</y>
+            <x>54.0539</x>
+            <y>-2.7506</y>
           </point>
         </position>
         <velocity>
           <exact>3.6</exact>
         </velocity>
         <orientation>
-          <exact>0.0</exact>
+          <exact>-0.392</exact>
         </orientation>
         <acceleration>
           <exact>0.0</exact>
@@ -3320,8 +3320,8 @@
         </time>
         <position>
           <point>
-            <x>57.9269</x>
-            <y>-1.3753</y>
+            <x>57.6539</x>
+            <y>-2.7506</y>
           </point>
         </position>
         <velocity>
@@ -3340,8 +3340,8 @@
         </time>
         <position>
           <point>
-            <x>61.5269</x>
-            <y>-1.3753</y>
+            <x>61.2539</x>
+            <y>-2.7506</y>
           </point>
         </position>
         <velocity>
@@ -3368,7 +3368,7 @@
           <exact>3.6</exact>
         </velocity>
         <orientation>
-          <exact>-0.392</exact>
+          <exact>0.0</exact>
         </orientation>
         <acceleration>
           <exact>0.0</exact>
