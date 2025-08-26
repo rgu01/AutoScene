@@ -1610,7 +1610,7 @@ system game, dynamics, behavior_shield, obs0, obs1;
 			<comment/>
 		</query>
 		<query>
-			<formula>saveStrategy("/home/rgu01/Uppaal/StagedShieldSynthesis/car/shield/safeCarObs.json",safe)</formula>
+			<formula>saveStrategy("/home/rgu01/Github/ScenarioGeneration/car/shield/safeCarObs.json",safe)</formula>
 			<comment/>
 		</query>
 		<query>
