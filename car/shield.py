@@ -329,7 +329,7 @@ if __name__ == '__main__':
     if run_command(synthsis_path):
         gif.generate(scenario_path, True)
         evaluate.measure_single_criticality(f"{scenario_id}-shielded")
-        evaluate.measure_multiple_criticality(f"{scenario_id}-shielded")
+        #evaluate.measure_multiple_criticality(f"{scenario_id}-shielded")
     #only_compile()
     #if run_command(simulate_path):
     #    gif.generate()
