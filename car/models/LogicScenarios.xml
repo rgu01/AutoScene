@@ -1149,7 +1149,7 @@ void up_paras(){
 }
 
 // deceleration of a smooth brake (dec is zero at the beginning and end)
-void brake(){
+void mayBrake(){
     // dec durtion = lane change end time - dec start time
     double dur_dec = tick2sec(para_cutin.tick_test_lc - para_cutin.tick_test_dec);
     double time_current = tick2sec(tick_current);
@@ -1178,10 +1178,12 @@ void brake(){
 		<transition id="id56" controllable="false">
 			<source ref="id53"/>
 			<target ref="id53"/>
-			<label kind="synchronisation" x="-408" y="68">act?</label>
-			<label kind="assignment" x="-433" y="85">brake()</label>
-			<nail x="-374" y="68"/>
-			<nail x="-374" y="102"/>
+			<label kind="synchronisation" x="-323" y="68">act?</label>
+			<label kind="assignment" x="-374" y="85">mayBrake()</label>
+			<label kind="comments" x="-280" y="68">During lane changing, the test vehicle 
+brakes if s_t_dec is valid and reached</label>
+			<nail x="-306" y="68"/>
+			<nail x="-306" y="93"/>
 		</transition>
 		<transition id="id57" controllable="false">
 			<source ref="id55"/>
@@ -1201,18 +1203,18 @@ s_t_dec:int[0,0]</label>
 s_v_lon_min, s_dis_lon_lc, 
 s_t_lc, s_t_dec)</label>
 			<label kind="comments" x="-280" y="-170">- s_v_lon: 
-velocity when lane change starts
+velocity when lane change (lc) starts
 - s_v_lon_min: 
-min velocity during lane change (may not reach)
+min velocity during lc (may not reach)
 - s_dis_lon_lc: 
-longitudinal displacement during lane change
+longitudinal displacement during lc
 - s_t_lc: 
-duration of lane change, after lane change starts
+duration of lane change, after lc starts
 - s_t_dec:
-starting time of lon deceleration, after lane change starts
+starting time of lon deceleration, after lc starts
 0&lt;=s_t_dec&lt;=s_t_lc, 
-s_t_dec == 0: decelerate when lane change starts
-s_t_dec == s_t_lc: decelerate when lane change ends</label>
+s_t_dec == 0: decelerate when lc starts
+s_t_dec == s_t_lc: decelerate when lc ends</label>
 		</transition>
 	</template>
 	<system>// Vehicle width: [1.7, 2.0]m, length: [4.0, 5.0]m
@@ -1223,7 +1225,7 @@ rss = RSS(d2i(1.9),d2i(4.3));
 fsm = FSM(d2i(1.9),d2i(4.3));
 timer = Timer();
 // List one or more processes to be composed into a system.
-system timer, fsm, scenario_cutin;
+system timer, cc_human_driver, scenario_cutin;
 </system>
 	<queries>
 		<option key="--diagnostic" value="0"/>
@@ -1237,7 +1239,7 @@ system timer, fsm, scenario_cutin;
 		<query>
 			<formula>strategy safe = control: A[] (safe &amp;&amp; (para_cutin.tick_test_lc&gt;0 imply para_cutin.tick_test_lc &lt;= sec2tick(SIM)))</formula>
 			<comment/>
-			<result outcome="success" type="quality" timestamp="2025-09-03 19:25:22 +0200">
+			<result outcome="success" type="quality" timestamp="2025-09-04 10:17:25 +0200">
 				<option key="--diagnostic" value="0"/>
 			</result>
 		</query>
