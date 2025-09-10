@@ -105,8 +105,7 @@ const int SIM = 10;                  //scenario max time is 100s
 clock st;
 int tick_current = 0;
 bool safe = true;
-bool started = false;
-broadcast chan start, update, fin, act;
+broadcast chan ready, start, update, fin, act;
 
 ST_VEHICLE ego, test; 
 ST_CUTIN para_cutin;
@@ -338,11 +337,10 @@ st&gt;=para_cutin.tick_test_lc</label>
 	<template>
 		<name>R157</name>
 		<parameter>const int32_t width, const int32_t length</parameter>
-		<declaration>void set_paras(int32_t s_v_c_lon){
+		<declaration>void set_paras(){
     ego.width = width;
     ego.length = length;
     ego.lon.a = 0;
-    ego.lon.v = kmh2ms(d2i(s_v_c_lon));
     ego.lon.p = 0;             //ego always starts from 0, longitudinally
     ego.lat.a = 0;
     ego.lat.v = 0;
@@ -375,8 +373,8 @@ void sense(){
 void react(){
     ego.lon.a = para_cutin.max_ego_lon_del;
 }</declaration>
-		<location id="id10" x="34" y="0">
-			<name x="17" y="-34">Start</name>
+		<location id="id10" x="102" y="0">
+			<name x="85" y="-34">Start</name>
 			<committed/>
 		</location>
 		<location id="id11" x="238" y="0">
@@ -399,9 +397,9 @@ void react(){
 		<transition id="id15">
 			<source ref="id10"/>
 			<target ref="id11"/>
-			<label kind="select" x="51" y="-25">s_v_c_lon:int[50,60]</label>
-			<label kind="assignment" x="51" y="8">set_paras(s_v_c_lon)</label>
-			<label kind="comments" x="17" y="-93">In R157, the reaction time
+			<label kind="synchronisation" x="127" y="0">ready?</label>
+			<label kind="assignment" x="127" y="-17">set_paras()</label>
+			<label kind="comments" x="170" y="42">In R157, the reaction time
 and max deceleration are fixed,
 0.35s and -6m/s2, respectively.</label>
 		</transition>
@@ -430,11 +428,10 @@ and max deceleration are fixed,
 	<template>
 		<name>CC</name>
 		<parameter>const int32_t width, const int32_t length</parameter>
-		<declaration>void set_paras(int32_t s_v_c_lon){
+		<declaration>void set_paras(){
     ego.width = width;
     ego.length = length;
     ego.lon.a = 0;
-    ego.lon.v = kmh2ms(d2i(s_v_c_lon));
     ego.lon.p = 0;             //ego always starts from 0, longitudinally
     ego.lat.a = 0;
     ego.lat.v = 0;
@@ -483,8 +480,8 @@ void react(){
 		<location id="id20" x="408" y="-68">
 			<name x="391" y="-102">W</name>
 		</location>
-		<location id="id21" x="34" y="0">
-			<name x="17" y="-42">Start</name>
+		<location id="id21" x="102" y="0">
+			<name x="85" y="-42">Start</name>
 			<committed/>
 		</location>
 		<location id="id22" x="340" y="0">
@@ -522,9 +519,9 @@ void react(){
 		<transition id="id27">
 			<source ref="id21"/>
 			<target ref="id19"/>
-			<label kind="select" x="59" y="-25">s_v_c_lon:int[50,60]</label>
-			<label kind="assignment" x="59" y="8">set_paras(s_v_c_lon)</label>
-			<label kind="comments" x="42" y="42">In CC human driver, the reaction time 
+			<label kind="synchronisation" x="127" y="0">ready?</label>
+			<label kind="assignment" x="127" y="-25">set_paras()</label>
+			<label kind="comments" x="68" y="34">In CC human driver, the reaction time 
 is 0.75s, during which the deceleration
 is -4m/s2. After that the deceleration 
 linearly increases to -7.59m/s2 within 0.6s, 
@@ -534,11 +531,10 @@ which makes the jerk to be -12.65m/s3.</label>
 	<template>
 		<name>RSS</name>
 		<parameter>const int32_t width, const int32_t length</parameter>
-		<declaration>void set_paras(int32_t s_v_c_lon){
+		<declaration>void set_paras(){
     ego.width = width;
     ego.length = length;
     ego.lon.a = 0;
-    ego.lon.v = kmh2ms(d2i(s_v_c_lon));
     ego.lon.p = 0;             //ego always starts from 0, longitudinally
     ego.lat.a = 0;
     ego.lat.v = 0;
@@ -626,8 +622,8 @@ void react(){
 		<location id="id29" x="408" y="-68">
 			<name x="391" y="-102">W</name>
 		</location>
-		<location id="id30" x="34" y="0">
-			<name x="17" y="-42">Start</name>
+		<location id="id30" x="102" y="0">
+			<name x="85" y="-42">Start</name>
 			<committed/>
 		</location>
 		<location id="id31" x="340" y="0">
@@ -665,9 +661,9 @@ void react(){
 		<transition id="id36">
 			<source ref="id30"/>
 			<target ref="id28"/>
-			<label kind="select" x="59" y="-25">s_v_c_lon:int[50,60]</label>
-			<label kind="assignment" x="59" y="8">set_paras(s_v_c_lon)</label>
-			<label kind="comments" x="34" y="42">In Responsibility Sensitive Safety Model (RSS),
+			<label kind="synchronisation" x="119" y="0">ready?</label>
+			<label kind="assignment" x="119" y="-25">set_paras()</label>
+			<label kind="comments" x="68" y="42">In Responsibility Sensitive Safety Model (RSS),
 the reaction time is 0.75s, during which 
 the deceleration is -4m/s2. After that the 
 deceleration linearly increases to -7.59m/s2 
@@ -681,11 +677,10 @@ The test vehicle is assumed to have a lon del -6m/s2</label>
 		<declaration>const double margin_dist = 2.0;        // distance margin (m)
 const double margin_safe_dist = 2.0;   // safety margin (m)
 
-void set_paras(int32_t s_v_c_lon){
+void set_paras(){
     ego.width = width;
     ego.length = length;
     ego.lon.a = 0;
-    ego.lon.v = kmh2ms(d2i(s_v_c_lon));
     ego.lon.p = 0;             //ego always starts from 0, longitudinally
     ego.lat.a = 0;
     ego.lat.v = 0;
@@ -931,8 +926,8 @@ void react(){
 		<location id="id38" x="408" y="-68">
 			<name x="391" y="-102">W</name>
 		</location>
-		<location id="id39" x="34" y="0">
-			<name x="17" y="-42">Start</name>
+		<location id="id39" x="93" y="0">
+			<name x="76" y="-42">Start</name>
 			<committed/>
 		</location>
 		<location id="id40" x="340" y="0">
@@ -970,9 +965,9 @@ void react(){
 		<transition id="id45">
 			<source ref="id39"/>
 			<target ref="id37"/>
-			<label kind="select" x="59" y="-25">s_v_c_lon:int[50,60]</label>
-			<label kind="assignment" x="59" y="8">set_paras(s_v_c_lon)</label>
-			<label kind="comments" x="34" y="42">In Fuzzy Safety Model (FSS),</label>
+			<label kind="synchronisation" x="119" y="0">ready?</label>
+			<label kind="assignment" x="119" y="-25">set_paras()</label>
+			<label kind="comments" x="85" y="25">In Fuzzy Safety Model (FSS),</label>
 		</transition>
 	</template>
 	<template>
@@ -1120,7 +1115,7 @@ s_dis_lon_lc, s_t_lc)</label>
 *
 */
 
-void set_paras(int32_t s_v_lon, int32_t s_v_lon_min, int32_t s_dis_lon_lc, int32_t s_t_lc, int32_t s_t_dec){
+void set_paras(int32_t s_ego_v_lon, int32_t s_v_lon, int32_t s_v_lon_min, int32_t s_dis_lon_lc, int32_t s_t_lc, int32_t s_t_dec){
     test.width = width;
     test.length = length;
     test.lon.a = 0;
@@ -1138,6 +1133,8 @@ void set_paras(int32_t s_v_lon, int32_t s_v_lon_min, int32_t s_dis_lon_lc, int32
     para_cutin.tick_test_dec = sec2tick(s_t_dec);      // relative lane change end time
     para_cutin.max_test_lon_del = d2i(-6.0);        //-6m/s2
     para_cutin.min_test_lon_v = kmh2ms(d2i(s_v_lon_min));
+    
+    ego.lon.v = kmh2ms(d2i(s_ego_v_lon));
 }
 
 void up_paras(){
@@ -1145,7 +1142,6 @@ void up_paras(){
     para_cutin.tick_test_lc += para_cutin.tick_test_lcs; // global lane change end time
     para_cutin.tick_test_dec += para_cutin.tick_test_lcs;// global deceleration start time
     test.lat.a = lc_acc();
-    started=true;
 }
 
 // deceleration of a smooth brake (dec is zero at the beginning and end)
@@ -1154,7 +1150,6 @@ void mayBrake(){
     double dur_dec = tick2sec(para_cutin.tick_test_lc - para_cutin.tick_test_dec);
     double time_current = tick2sec(tick_current);
 
-    started = false;
     if(dur_dec &gt; 0 &amp;&amp; tick_current &gt;= para_cutin.tick_test_dec){
         //starts to brake
         test.lon.a = d2i(fmax(i2d(para_cutin.max_test_lon_del), braking_acc(time_current, dur_dec, 
@@ -1188,30 +1183,35 @@ brakes if s_t_dec is valid and reached</label>
 		<transition id="id57" controllable="false">
 			<source ref="id55"/>
 			<target ref="id53"/>
-			<label kind="synchronisation" x="-391" y="-8">start!</label>
-			<label kind="assignment" x="-425" y="8">up_paras()</label>
+			<label kind="synchronisation" x="-391" y="0">start!</label>
+			<label kind="assignment" x="-425" y="17">up_paras()</label>
 		</transition>
 		<transition id="id58">
 			<source ref="id54"/>
 			<target ref="id55"/>
-			<label kind="select" x="-518" y="-161">s_v_lon:int[30,30],
-s_v_lon_min:int[20,20],
-s_dis_lon_lc:int[-50,-10],
-s_t_lc:int[2,4],
-s_t_dec:int[0,0]</label>
-			<label kind="assignment" x="-518" y="-68">set_paras(s_v_lon, 
-s_v_lon_min, s_dis_lon_lc, 
-s_t_lc, s_t_dec)</label>
-			<label kind="comments" x="-280" y="-170">- s_v_lon: 
+			<label kind="select" x="-518" y="-187">s_ego_v_lon:int[50,55],
+s_v_lon:int[30,35],
+s_v_lon_min:int[15,20],
+s_dis_lon_lc:int[-50,-40],
+s_t_lc:int[3,5],
+s_t_dec:int[0,2]</label>
+			<label kind="synchronisation" x="-518" y="-85">ready!</label>
+			<label kind="assignment" x="-518" y="-59">set_paras(s_ego_v_lon, 
+s_v_lon, s_v_lon_min, 
+s_dis_lon_lc, s_t_lc, 
+s_t_dec)</label>
+			<label kind="comments" x="-280" y="-195">-s_ego_v_lon:
+velocity of the ego vehicle when lc starts
+- s_v_lon: 
 velocity when lane change (lc) starts
 - s_v_lon_min: 
 min velocity during lc (may not reach)
 - s_dis_lon_lc: 
-longitudinal displacement during lc
+relative distance when lc starts
 - s_t_lc: 
-duration of lane change, after lc starts
+duration of lane change
 - s_t_dec:
-starting time of lon deceleration, after lc starts
+starting time of lon dec relative to s_t_lc
 0&lt;=s_t_dec&lt;=s_t_lc, 
 s_t_dec == 0: decelerate when lc starts
 s_t_dec == s_t_lc: decelerate when lc ends</label>
@@ -1239,7 +1239,7 @@ system timer, cc_human_driver, scenario_cutin;
 		<query>
 			<formula>strategy safe = control: A[] (safe &amp;&amp; (para_cutin.tick_test_lc&gt;0 imply para_cutin.tick_test_lc &lt;= sec2tick(SIM)))</formula>
 			<comment/>
-			<result outcome="success" type="quality" timestamp="2025-09-04 10:17:25 +0200">
+			<result outcome="success" type="quality" timestamp="2025-09-10 09:36:23 +0200">
 				<option key="--diagnostic" value="0"/>
 			</result>
 		</query>
@@ -1251,9 +1251,13 @@ system timer, cc_human_driver, scenario_cutin;
 			</result>
 		</query>
 		<query>
-			<formula>saveStrategy("/home/rong/Github/ScenarioGeneration/car/shield/logic_cutin.json",safe)</formula>
+			<formula>saveStrategy("/home/rong/Github/AutoScene/car/shield/logic_cutin.json",safe)</formula>
 			<comment/>
-			<result outcome="success" type="quality" timestamp="2025-08-29 14:41:52 +0200">
+		</query>
+		<query>
+			<formula>saveStrategy("/Users/rgu01/Projects/AutoScene/car/shield/logic_cutin.json",safe)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-09-10 09:36:29 +0200">
 				<option key="--diagnostic" value="0"/>
 			</result>
 		</query>
