@@ -1,0 +1,57 @@
+# =========================
+# Ego vehicle configuration
+# =========================
+ego_vehicle:
+  ego_id: 2        # Ego vehicle ID
+  length: 4.3      # Vehicle length (m)
+  width: 1.9       # Vehicle width (m)
+
+# =========================
+# Test vehicle configuration
+# =========================
+test_vehicle:
+  test_id: 1       # Test vehicle ID
+  length: 4.3      # Vehicle length (m)
+  width: 1.9       # Vehicle width (m)
+
+# =========================
+# Scenario parameters
+# =========================
+logic_params:
+  type: "cutin"          # Scenario type
+  dis_lon_init: 0.0      # Initial longitudinal distance (m)
+  dis_lon_lc: 0.0        # Longitudinal distance at lane change (m)
+
+  # Test vehicle timing
+  tick_test_rt: 0.0      # Reaction time (s)
+  tick_test_lcs: 0.0     # Lane change start time (s)
+  tick_test_dec: 0.0     # Deceleration time after lane change starts (s)
+
+  # Ego vehicle timing
+  tick_ego_rt: 0.0       # Ego reaction time (s)
+  tick_ego_ttc: 0.0      # Time-to-collision (s)
+  tick_ego_safe_ttc: 0.0 # Safe time-to-collision (s)
+
+  # Ego vehicle dynamics
+  min_ego_lon_dec: 0.0   # Minimum longitudinal deceleration (m/s²)
+  max_ego_lon_dec: 0.0   # Maximum longitudinal deceleration (m/s²)
+  max_ego_lon_jerk: 0.0  # Maximum longitudinal jerk (m/s³)
+
+  # Test vehicle dynamics
+  max_test_lon_dec: 0.0  # Maximum longitudinal deceleration (m/s²)
+  min_test_lon_v: 0.0    # Minimum longitudinal velocity (m/s)
+  init_test_lon_v: 0.0   # Initial longitudinal velocity (m/s)
+
+  # Safety margins
+  safe_margin_lat: 0.0   # Lateral safety margin (m)
+
+# =========================
+# Logic index mapping
+# =========================
+logic_index:
+  i_ego_v_lon: 0         # Index for ego longitudinal velocity
+  i_test_v_lon: 1        # Index for test vehicle longitudinal velocity
+  i_test_v_lon_min: 2    # Index for min test vehicle velocity
+  i_dis_lon_lc: 3        # Index for distance at lane change
+  i_t_lc: 4              # Index for lane change time
+  i_t_dec: 5             # Index for deceleration time

@@ -1189,12 +1189,12 @@ brakes if s_t_dec is valid and reached</label>
 		<transition id="id58">
 			<source ref="id54"/>
 			<target ref="id55"/>
-			<label kind="select" x="-518" y="-187">s_ego_v_lon:int[50,55],
-s_v_lon:int[30,35],
-s_v_lon_min:int[15,20],
-s_dis_lon_lc:int[-50,-40],
-s_t_lc:int[3,5],
-s_t_dec:int[0,2]</label>
+			<label kind="select" x="-518" y="-187">s_ego_v_lon:int[50,50],
+s_v_lon:int[30,30],
+s_v_lon_min:int[20,20],
+s_dis_lon_lc:int[-50,-50],
+s_t_lc:int[3,3],
+s_t_dec:int[0,0]</label>
 			<label kind="synchronisation" x="-518" y="-85">ready!</label>
 			<label kind="assignment" x="-518" y="-59">set_paras(s_ego_v_lon, 
 s_v_lon, s_v_lon_min, 
@@ -1239,7 +1239,7 @@ system timer, cc_human_driver, scenario_cutin;
 		<query>
 			<formula>strategy safe = control: A[] (safe &amp;&amp; (para_cutin.tick_test_lc&gt;0 imply para_cutin.tick_test_lc &lt;= sec2tick(SIM)))</formula>
 			<comment/>
-			<result outcome="success" type="quality" timestamp="2025-09-10 09:36:23 +0200">
+			<result outcome="success" type="quality" timestamp="2025-09-10 15:45:46 +0200">
 				<option key="--diagnostic" value="0"/>
 			</result>
 		</query>
@@ -1251,8 +1251,11 @@ system timer, cc_human_driver, scenario_cutin;
 			</result>
 		</query>
 		<query>
-			<formula>saveStrategy("/home/rong/Github/AutoScene/car/shield/logic_cutin.json",safe)</formula>
+			<formula>saveStrategy("/home/rong/Github/AutoScene/car/shield/DEU_A9-2_1_T-1_cutin.json",safe)</formula>
 			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-09-10 15:46:12 +0200">
+				<option key="--diagnostic" value="0"/>
+			</result>
 		</query>
 		<query>
 			<formula>saveStrategy("/Users/rgu01/Projects/AutoScene/car/shield/logic_cutin.json",safe)</formula>
