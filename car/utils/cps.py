@@ -1,124 +1,6 @@
 import re
-from collections import defaultdict
 import subprocess
-import generate_cr_scenarios as gif
-from crime import evaluate
-
-class Transition:
-    def __init__(self, model_from, loc_from, model_to, loc_to, details, condition):
-        self.model_from = model_from
-        self.loc_from = loc_from
-        self.model_to = model_to
-        self.loc_to = loc_to
-        self.details = details
-        self.condition = condition
-
-    def __repr__(self):
-        return (f"Action(type={self.loc_from}, "
-                f"value={self.details}")
-
-class State:
-    def __init__(self, state_info):
-        self.state_info = state_info
-        self.locations = self.parse_locations()
-        self.variables = self.parse_variables()
-        self.conditions = self.parse_conditions()
-        self.transitions = self.parse_transitions()
-        self.wait_transitions = self.parse_wait_transitions()
-    
-    def __eq__(self, other):
-        if not isinstance(other, CPS_State):
-            return False
-        return (self.locations == other.locations and
-                self.variables == other.variables and 
-                self.conditions == other.conditions and
-                self.transitions == other.transitions and
-                self.wait_transitions == self.wait_transitions)
-
-
-    def __repr__(self):
-        transitions_repr = ', '.join(repr(t) for t in self.transitions.values())
-        return (f"State(locations={self.locations}, "
-                f"variables={self.variables}, \n"
-                f"transitions=[{transitions_repr}])")
-
-    
-    def __hash__(self):
-        def make_hashable(obj):
-            if isinstance(obj, dict):
-                return tuple(sorted((k, make_hashable(v)) for k, v in obj.items()))
-            elif isinstance(obj, list):
-                return tuple(make_hashable(i) for i in obj)
-            elif isinstance(obj, set):
-                return tuple(sorted(make_hashable(i) for i in obj))
-            else:
-                return obj
-
-        return hash((
-            make_hashable(self.locations),
-            make_hashable(self.variables),
-            make_hashable(self.conditions),
-            make_hashable(self.transitions),
-            make_hashable(self.wait_transitions)
-        ))
-
-    def parse_locations(self):
-        locations = {}
-        start_index = self.state_info.find("(")
-        end_index = self.state_info.find(")")
-        if start_index != -1 and end_index != -1:
-            location_info = self.state_info[start_index+1:end_index].strip()
-            location_pairs = location_info.split()
-            for pair in location_pairs:
-                model, location = pair.split(".")
-                locations[model] = location
-        return locations
-
-    def parse_variables(self):
-        variables = {}
-        # Updated pattern to handle nested fields and arrays
-        variable_pattern = re.compile(r"(\w+(?:\[\d+\])?(?:\.\w+(?:\[\d+\])?)*)=([\w\d-]+)")
-        matches = variable_pattern.findall(self.state_info)
-        for match in matches:
-            full_var, value = match
-            parts = full_var.split('.')
-            current_level = variables
-            for part in parts[:-1]:
-                if part not in current_level:
-                    current_level[part] = {}
-                current_level = current_level[part]
-            # Ensure the value is correctly parsed as an integer
-            value = int(re.match(r'-?\d+', value).group())
-            current_level[parts[-1]] = value
-        return variables
-
-    def parse_conditions(self):
-        conditions = []
-        condition_pattern = re.compile(r"When you are in \((.*?)\)")
-        matches = condition_pattern.findall(self.state_info)
-        for match in matches:
-            if match.strip() not in conditions:
-                conditions.append(match.strip())
-        return conditions
-
-    def parse_transitions(self):
-        transitions_by_condition = defaultdict(list)
-        transition_pattern = re.compile(r"When you are in \((.*?)\), take transition (\w+)\.(\w+)->(\w+)\.(\w+) \{(.*?)\}")
-        matches = transition_pattern.findall(self.state_info)
-        for match in matches:
-            condition, model_from, loc_from, model_to, loc_to, details = match
-            transition = Transition(model_from, loc_from, model_to, loc_to, details.strip(), condition.strip())
-            transitions_by_condition[condition.strip()].append(transition)
-        
-        return transitions_by_condition
-
-    def parse_wait_transitions(self):
-        wait_transitions = []
-        wait_pattern = re.compile(r"While you are in\s*\((.*?)\), wait")
-        matches = wait_pattern.findall(self.state_info)
-        for match in matches:
-            wait_transitions.append(match.strip())
-        return wait_transitions
+from utils.tiga_strategy import State
 
 class CPS_State:
     def __init__(self, position, velocity, acceleration, orientation):
@@ -153,13 +35,11 @@ class CPS_State:
             make_hashable(self.orientation)
         ))
 
-
     def __repr__(self):
         return (f"CPS_State(position={self.position}, velocity={self.velocity}, "
                 f"acceleration={self.acceleration}, orientation={self.orientation})")
 
-
-class Shield:
+class Shield_V1:
     def __init__(self, file_path):
         self.file_path = file_path
         self.data = self.load_text_file()
@@ -299,37 +179,3 @@ class Shield:
             print(f"An error occurred while executing the command: {e}")
         except FileNotFoundError:
             print("GCC is not installed or not found in your PATH.")
-
-def run_command(script_path):
-    try:
-        result = subprocess.run(["bash", script_path], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        #print("Output:\n", result.stdout)
-        return True
-    except subprocess.CalledProcessError as e:
-        print("Error:\n", e.stderr)
-        return False
-
-
-def only_compile():
-    # Create an instance of the Shield class and parse the text file
-    shield_instance = Shield('car/shield/safeCarObs.json')
-    # Print the C header code
-    shield_instance.insert_strategy_into_c_file("car/shield/shield.c")
-    # Compile the c code
-    shield_instance.compile_c_file()
-
-if __name__ == '__main__':
-    # Specify the file path to process
-    scenario_id = "DEU_A9-2_1_T-1"
-    scenario_path = f"car/scenarios/{scenario_id}.xml"
-    simulate_path = "car/shield/linux_simulate.sh"
-    synthsis_path = "car/shield/linux_synthesis.sh"
-    # execute(verifyta_path, uppaal_file_path, synthesis_query_path)
-    #evaluate.measure_criticality(scenario_id)
-    if run_command(synthsis_path):
-        gif.generate(scenario_path, True)
-        evaluate.measure_single_criticality(f"{scenario_id}-shielded")
-        #evaluate.measure_multiple_criticality(f"{scenario_id}-shielded")
-    #only_compile()
-    #if run_command(simulate_path):
-    #    gif.generate()

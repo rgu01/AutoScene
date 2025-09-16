@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="Max Mustermann" affiliation="Technical University of Munich, Germany" source="" benchmarkID="DEU_A9-2_1_T-1" date="2025-09-10">
+<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="Max Mustermann" affiliation="Technical University of Munich, Germany" source="" benchmarkID="DEU_A9-2_1_T-1" date="2025-09-16">
   <location>
     <geoNameId>-999</geoNameId>
     <gpsLatitude>999</gpsLatitude>
     <gpsLongitude>999</gpsLongitude>
   </location>
   <scenarioTags>
-    <interstate/>
     <critical/>
+    <interstate/>
   </scenarioTags>
   <lanelet id="30622">
     <leftBound>
@@ -3160,15 +3160,15 @@
         </time>
         <position>
           <point>
-            <x>29.1269</x>
-            <y>-1.3753</y>
+            <x>28.8539</x>
+            <y>-2.7506</y>
           </point>
         </position>
         <velocity>
           <exact>3.6</exact>
         </velocity>
         <orientation>
-          <exact>0.0</exact>
+          <exact>-0.392</exact>
         </orientation>
         <acceleration>
           <exact>0.0</exact>
@@ -3188,7 +3188,7 @@
           <exact>3.6</exact>
         </velocity>
         <orientation>
-          <exact>-0.392</exact>
+          <exact>0.0</exact>
         </orientation>
         <acceleration>
           <exact>0.0</exact>
@@ -4020,15 +4020,15 @@
         </time>
         <position>
           <point>
-            <x>183.654</x>
-            <y>-2.7506</y>
+            <x>183.381</x>
+            <y>-1.3753</y>
           </point>
         </position>
         <velocity>
           <exact>3.6</exact>
         </velocity>
         <orientation>
-          <exact>0.0</exact>
+          <exact>0.392</exact>
         </orientation>
         <acceleration>
           <exact>0.0</exact>
@@ -4040,8 +4040,8 @@
         </time>
         <position>
           <point>
-            <x>187.254</x>
-            <y>-2.7506</y>
+            <x>186.981</x>
+            <y>-1.3753</y>
           </point>
         </position>
         <velocity>
@@ -4060,8 +4060,8 @@
         </time>
         <position>
           <point>
-            <x>190.854</x>
-            <y>-2.7506</y>
+            <x>190.581</x>
+            <y>-1.3753</y>
           </point>
         </position>
         <velocity>
@@ -4088,7 +4088,7 @@
           <exact>3.6</exact>
         </velocity>
         <orientation>
-          <exact>0.392</exact>
+          <exact>0.0</exact>
         </orientation>
         <acceleration>
           <exact>0.0</exact>
