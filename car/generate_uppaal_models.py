@@ -27,7 +27,7 @@ template_file = os.path.dirname(__file__) + "/template.xml"
 with open(template_file, 'r') as template_file:
         lines = template_file.readlines()
 
-input_file_folder = os.path.dirname(__file__) + "/scenarios"
+input_file_folder = os.path.dirname(__file__) + "/test"
 output_file_folder = os.path.dirname(__file__) + "/models"
 if not os.path.exists(output_file_folder):
         os.makedirs(output_file_folder)

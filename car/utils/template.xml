@@ -61,7 +61,7 @@ const int NOW = 2;
 /** test end **/
 
 /** Shielding */
-/*capture 1*/ import "/home/rgu01/Uppaal/StagedShieldSynthesis/car/shield/libshield.so" /* end 1*/
+/*capture 1*/ import "/home/rong/Github/AutoScene/car/shield/libshield.so" /* end 1*/
 {
     int is_state_contained();
     int get_action(int &amp;type[ACTNUM], int32_t &amp;value[ACTNUM]);
