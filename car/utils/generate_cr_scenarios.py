@@ -19,6 +19,7 @@ from commonroad.scenario.trajectory import Trajectory
 from commonroad.prediction.prediction import TrajectoryPrediction
 
 def read_sample_log(path):
+    print("Current working directory:", os.getcwd())
     with open(path, 'r') as f:
         data = f.read().splitlines()
     data = [list(map(float, line.split(' '))) for line in data]
@@ -103,11 +104,11 @@ def save_scenario(scenario: Scenario, planning_problem_set: PlanningProblemSet, 
 
     fw.write_to_file(filename, OverwriteExistingFile.ALWAYS)
 
-def generate(SCENARIO_PATH, save=False):
+def generate(SCENARIO_PATH, SAMPLING_LOG_PATH, save=False):
     # Define variables for parsing
     root = os.path.dirname(__file__)
     #SCENARIO_PATH = os.path.join(root, 'scenarios/DEU_A9-2_1_T-1.xml')
-    SAMPLING_LOG_PATH = os.path.join(root, '../sampling.log')
+    #SAMPLING_LOG_PATH = os.path.join(root, '../sampling.log')
     N_OBS_STATES = 5
     N_NEW_OBS = 0
 

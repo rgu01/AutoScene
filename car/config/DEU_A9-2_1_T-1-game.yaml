@@ -9,7 +9,7 @@ THRESHOLD_REACH: 0.5        # distance threshold to judge goal reaching
 N1: 1                       # sense period  
 N2: 4                       # decision-making period
 MAXACT: 2                   # number of actions
-MAXOBS: 0                   # number of dynamic obstacles
+MAXOBS: 2                  # number of dynamic obstacles
 # Ego vehicle parameters
 EV_WIDTH: 1
 EV_LENGTH: 4.5

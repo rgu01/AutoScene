@@ -1,16 +1,18 @@
-from utils.config import Configuration
+from car.utils.config import Configuration
 from commonroad.common.file_reader import CommonRoadFileReader
 import sys
 import logging
 import os
 import numpy as np
-from parseCR.utils import write_large_block
+from car.utils.parseCR.utils import write_large_block
 
 class HybridGame:
     def __init__(self, scenario_id:str):
         self.scenario_id = scenario_id
         self.config = Configuration(self.scenario_id, "game")
         self.scenario, self.planning_problem_set = CommonRoadFileReader(f"car/scenarios/{self.scenario_id}.xml").open()
+        self.game_file = f"car/models/{self.scenario_id}_game.xml"
+        self.template_file = "car/utils/template.xml" 
 
     # Function to calculate the travel time of a lanelet
     def calculate_travel_time(self, lanelet):
@@ -255,8 +257,8 @@ class HybridGame:
         THRES_COL_str = f"const double THRESHOLD_COLLISION = {self.config.THRESHOLD_COLLISION};"
         THRES_REC_str = f"const double THRESHOLD_REACH = {self.config.THRESHOLD_REACH};"
         RADAR_str = f"const double RADAR = {self.config.RADAR};"
-        BASE_str = f"const uint8_t self.config.BASE = {self.config.BASE};"
-        EXPONENT_str = f"const uint8_t self.config.EXPONENT = {self.config.EXPONENT};"
+        BASE_str = f"const uint8_t BASE = {self.config.BASE};"
+        EXPONENT_str = f"const uint8_t EXPONENT = {self.config.EXPONENT};"
         N1_str = f"const uint8_t N1 = {self.config.N1};"
         N2_str = f"const uint8_t N2 = {self.config.N2};"
         MAXACT_str = f"const uint8_t MAXACT = {self.config.MAXACT};"
@@ -276,18 +278,16 @@ class HybridGame:
             system_str = "system timer, " + ", ".join(Obs_naming_set) + ", move, turn, controller, dynamics;"
 
         # %% write in the xml templates
-        scenario_prompt = "<declaration>// Generated self.scenario starts"
+        scenario_prompt = "<declaration>// Generated scenario starts"
         moving_obs_prompt = "<system>// Generated moving obstacles starts"
         model_prompt = "// Generated model instances starts"
         ego_prompt = "// Generated ego vehicle starts"
 
-        out_file = os.path.dirname(__file__) + f"/models/{self.scenario_id}_game.xml"
-        template_file = os.path.dirname(__file__) + "/template.xml" 
         # read template files and store lines
-        with open(template_file, 'r') as template_file:
-            lines = template_file.readlines()
+        with open(self.template_file, 'r') as template:
+            lines = template.readlines()
         # output the xml file of a hybrid game in UPPAAL
-        with open(out_file, 'w') as file:
+        with open(self.game_file, 'w') as file:
             for line in lines:
                 file.write(line)
                 if line.strip() == scenario_prompt:

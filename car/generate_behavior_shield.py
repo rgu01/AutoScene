@@ -1,6 +1,6 @@
 from utils.cps import Shield_V1 as Shield
 import subprocess
-import generate_cr_scenarios as gif
+import car.utils.generate_cr_scenarios as gif
 from crime import evaluate
 
 def run_command(script_path):
@@ -26,10 +26,11 @@ if __name__ == '__main__':
     scenario_path = f"car/scenarios/{scenario_id}.xml"
     simulate_path = "car/shield/linux_simulate.sh"
     synthsis_path = "car/shield/linux_synthesis.sh"
+    sampling_path = "sampling.log"
     # execute(verifyta_path, uppaal_file_path, synthesis_query_path)
     #evaluate.measure_criticality(scenario_id)
     if run_command(synthsis_path):
-        gif.generate(scenario_path, True)
+        gif.generate(scenario_path, sampling_path, True)
         #evaluate.measure_single_criticality(f"{scenario_id}-shielded")
         #evaluate.measure_multiple_criticality(f"{scenario_id}-shielded")
     #only_compile()
