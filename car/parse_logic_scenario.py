@@ -1,7 +1,7 @@
 from utils.tiga_strategy import TiGaStrategy
 from utils.config import Configuration as LogicScenarioConfig
 from utils.hybrid_game import HybridGame
-import os
+from utils.c_compile import compile_c_file
 
 class LogicScenario(TiGaStrategy):
     def update_paras(self, config):
@@ -15,7 +15,12 @@ if __name__ == '__main__':
     cutin = LogicScenario(logic_scenario_path)
     cutin.update_paras(config)
     print(config.ego_vehicle.ego_id)
-    print(os.path.dirname(__file__))
     
     game = HybridGame(scenario_id)
     game.generate_uppaal_model()
+
+    c_path = "car/shield/logic_scenario.c"
+    o_path = "car/shield/logic_scenario.o"
+    so_path = "car/shield/logic_scenario.so"
+
+    compile_c_file(c_path, o_path, so_path)

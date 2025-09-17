@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>const double F = 0.1;           // frequency, unit: second
+
+const int X = 0;
+const int Y = 1;
+const int Z = 2;
+const int D = 2;                // dimensions: 1-x; 2-x,y; 3-x,y,z
+
+clock p[D], v[D];
+double a[D];
+
+/*
+ tranformation between double and int
+*/
+const uint8_t BASE = 10;
+const uint8_t EXPONENT = 1;
+int32_t d2i(const double value) {
+    return fint(value*pow(BASE,EXPONENT));
+}
+double i2d(const int32_t value) {
+    return value/pow(BASE,EXPONENT);
+}
+
+const int32_t AMAX[D] = {d2i(1.0), d2i(1.0)};
+const int32_t AMIN[D] = {d2i(-1.0), d2i(-1.0)};
+
+/** Shielding */
+import "/home/rong/Github/AutoScene/car/shield/logic_scenario.so"
+{
+    bool get_action(double px, double py, double vx, double vy, double ax, double ay);
+};
+
+bool shield(int ax, int ay){
+    return get_action(p[X],p[Y],v[X],v[Y],i2d(ax),i2d(ay));
+}</declaration>
+	<template>
+		<name x="5" y="5">Kinematics</name>
+		<declaration>// Place local declarations here.
+</declaration>
+		<location id="id0" x="0" y="0">
+			<name x="-17" y="-34">Move</name>
+			<label kind="invariant" x="-42" y="17">p[X]'==v[X]&amp;&amp;
+p[Y]'==v[Y]&amp;&amp;
+v[X]'==a[X]&amp;&amp;
+v[Y]'==a[Y]</label>
+		</location>
+		<init ref="id0"/>
+	</template>
+	<template>
+		<name>Controller</name>
+		<declaration>clock t;</declaration>
+		<location id="id1" x="0" y="0">
+			<name x="-34" y="-8">S1</name>
+			<committed/>
+		</location>
+		<location id="id2" x="0" y="102">
+			<name x="-34" y="93">S0</name>
+			<label kind="invariant" x="-10" y="119">t&lt;=F</label>
+		</location>
+		<init ref="id2"/>
+		<transition id="id3">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="select" x="17" y="-68">ax:int[AMIN[X],AMAX[X]],
+ay:int[AMIN[Y],AMAX[Y]]</label>
+			<label kind="guard" x="17" y="-25">shield(ax, ay)</label>
+			<label kind="assignment" x="17" y="0">a[X]=i2d(ax),
+a[Y]=i2d(ay),
+t=0</label>
+			<nail x="204" y="0"/>
+			<nail x="204" y="102"/>
+		</transition>
+		<transition id="id4" controllable="false">
+			<source ref="id2"/>
+			<target ref="id1"/>
+			<label kind="guard" x="8" y="59">t&gt;=F</label>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+car = Kinematics();
+control = Controller();
+// List one or more processes to be composed into a system.
+system car, control;
+</system>
+	<queries>
+		<query>
+			<formula/>
+			<comment/>
+		</query>
+	</queries>
+</nta>
