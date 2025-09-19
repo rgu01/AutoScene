@@ -8,8 +8,11 @@ const int Y = 1;
 const int Z = 2;
 const int D = 2;                // dimensions: 1-x; 2-x,y; 3-x,y,z
 
-clock p[D], v[D];
-double a[D];
+clock tp[D], tv[D];
+double ta[D];
+
+clock ep[D], ev[D];
+double ea[D];
 
 /*
  tranformation between double and int
@@ -23,21 +26,22 @@ double i2d(const int32_t value) {
     return value/pow(BASE,EXPONENT);
 }
 
-const int32_t AMAX[D] = {d2i(1.0), d2i(1.0)};
-const int32_t AMIN[D] = {d2i(-1.0), d2i(-1.0)};
-
 /** Shielding */
 import "/home/rong/Github/AutoScene/car/shield/logic_scenario.so"
 {
-    bool get_action(double px, double py, double vx, double vy, double ax, double ay);
+    bool get_action(double tpx, double tpy, double tvx, double tvy, double tax, double tay,
+                    double epx, double epy, double evx, double evy, double eax, double eay);
 };
 
-bool shield(int ax, int ay){
-    return get_action(p[X],p[Y],v[X],v[Y],i2d(ax),i2d(ay));
+bool shield(int tax, int tay){
+    return get_action(tp[X],tp[Y],tv[X],tv[Y],i2d(tax),i2d(tay),
+                      ep[X],ep[Y],ev[X],ev[Y],ea[X],ea[Y]);
 }</declaration>
 	<template>
 		<name x="5" y="5">Kinematics</name>
-		<declaration>// Place local declarations here.
+		<parameter>clock &amp;p[D], clock &amp;v[D], double &amp;a[D]</parameter>
+		<declaration>
+
 </declaration>
 		<location id="id0" x="0" y="0">
 			<name x="-17" y="-34">Move</name>
@@ -50,6 +54,7 @@ v[Y]'==a[Y]</label>
 	</template>
 	<template>
 		<name>Controller</name>
+		<parameter>const int32_t AMAX[D], const int32_t AMIN[D]</parameter>
 		<declaration>clock t;</declaration>
 		<location id="id1" x="0" y="0">
 			<name x="-34" y="-8">S1</name>
@@ -65,9 +70,9 @@ v[Y]'==a[Y]</label>
 			<target ref="id2"/>
 			<label kind="select" x="17" y="-68">ax:int[AMIN[X],AMAX[X]],
 ay:int[AMIN[Y],AMAX[Y]]</label>
-			<label kind="guard" x="17" y="-25">shield(ax, ay)</label>
-			<label kind="assignment" x="17" y="0">a[X]=i2d(ax),
-a[Y]=i2d(ay),
+			<label kind="guard" x="17" y="-25">shield(ax,ay)</label>
+			<label kind="assignment" x="17" y="0">ta[X]=i2d(ax),
+ta[Y]=i2d(ay),
 t=0</label>
 			<nail x="204" y="0"/>
 			<nail x="204" y="102"/>
@@ -79,10 +84,13 @@ t=0</label>
 		</transition>
 	</template>
 	<system>// Place template instantiations here.
-car = Kinematics();
-control = Controller();
+const int32_t AMAX[D] = {d2i(1.0), d2i(1.0)};
+const int32_t AMIN[D] = {d2i(-1.0), d2i(-1.0)};
+test = Kinematics(tp,tv,ta);
+control = Controller(AMAX, AMIN);
+ego = Kinematics(ep,ev,ea);
 // List one or more processes to be composed into a system.
-system car, control;
+system ego, test, control;
 </system>
 	<queries>
 		<query>

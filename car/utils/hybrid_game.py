@@ -2,7 +2,6 @@ from car.utils.config import Configuration
 from commonroad.common.file_reader import CommonRoadFileReader
 import sys
 import logging
-import os
 import numpy as np
 from car.utils.parseCR.utils import write_large_block
 
