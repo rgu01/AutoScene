@@ -1,0 +1,23 @@
+P: 1                        # basic period
+BASE: 10
+EXPONENT: 3
+MAXT: 40                    # max simulation time
+DEFAULT_VAL: 0.0            # default value
+RADAR: 100                  # radar range
+THRESHOLD_COLLISION: 2      # distance threshold to judge collisions
+THRESHOLD_REACH: 0.5        # distance threshold to judge goal reaching
+N1: 1                       # sense period  
+N2: 4                       # decision-making period
+MAXACT: 2                   # number of actions
+MAXOBS: 2                   # number of dynamic obstacles
+# Ego vehicle parameters
+EV_WIDTH: 1
+EV_LENGTH: 4.5
+EV_ORI: 0 # initial orientation
+#
+MAXSPEED: 5
+MINSPEED: 1
+#
+MAXP: 40                    # max number of points on a road
+MAXPRE: 1                   # max number of preceding roads
+MAXSUC: 1                   # max number of succeeding roads

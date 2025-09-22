@@ -19,11 +19,13 @@ class C_Builder:
 
         # Update the parameters
         para_pattern = re.compile(r"#define MAXP\s+\d+")
-        c_file_content = para_pattern.sub(f"#define MAXP {self.config.MAXP}", c_file_content)
+        c_file_content = para_pattern.sub(f"#define MAXP {self.config.Lanelet.MAXP}", c_file_content)
         para_pattern = re.compile(r"#define MAXPRE\s+\d+")
-        c_file_content = para_pattern.sub(f"#define MAXPRE {self.config.MAXPRE}", c_file_content)
+        c_file_content = para_pattern.sub(f"#define MAXPRE {self.config.Lanelet.MAXPRE}", c_file_content)
         para_pattern = re.compile(r"#define MAXSUC\s+\d+")
-        c_file_content = para_pattern.sub(f"#define MAXSUC {self.config.MAXSUC}", c_file_content)
+        c_file_content = para_pattern.sub(f"#define MAXSUC {self.config.Lanelet.MAXSUC}", c_file_content)
+        para_pattern = re.compile(r"#define MAXL\s+\d+")
+        c_file_content = para_pattern.sub(f"#define MAXL {self.config.Lanelet.MAXL}", c_file_content)
 
         lanelet_pattern = re.compile(
             r"/\*\*capture lanelet start \*/.*?/\*\*capture lanelet end \*/",
@@ -33,7 +35,6 @@ class C_Builder:
             f"/**capture lanelet start */\n{self.translate_lanelet_to_cstr()}\n/**capture lanelet end */",
             c_file_content
         )
-
 
         # Write the updated content back to the C file
         with open(self.c_path, 'w') as file:
@@ -107,14 +108,14 @@ class C_Builder:
                 rightLane = rightLane[[0, -1]]
 
             # padding
-            pad_len_left = self.config.MAXP - len(leftLane)
+            pad_len_left = self.config.Lanelet.MAXP - len(leftLane)
             if pad_len_left > 0:
                 padding_left = np.full((pad_len_left, 2), np.nan)
             else:
                 padding_left = np.empty((0, 2))
             leftLane_full = np.vstack([leftLane, padding_left])
 
-            pad_len_right = self.config.MAXP - len(rightLane)
+            pad_len_right = self.config.Lanelet.MAXP - len(rightLane)
             if pad_len_right > 0:
                 padding_right = np.full((pad_len_right, 2), np.nan)
             else:
@@ -140,8 +141,8 @@ class C_Builder:
             rightLane_inline = f"{{{rightLane_str}, {'true' if lane_markingRight else 'false'}}}"
 
             # pad predecessors/successors
-            lane_predecessor += [None] * (self.config.MAXPRE - len(lane_predecessor))
-            lane_successor += [None] * (self.config.MAXSUC - len(lane_successor))
+            lane_predecessor += [None] * (self.config.Lanelet.MAXPRE - len(lane_predecessor))
+            lane_successor += [None] * (self.config.Lanelet.MAXSUC - len(lane_successor))
             pre_str = ", ".join("None" if x is None else str(x) for x in lane_predecessor)
             suc_str = ", ".join("None" if x is None else str(x) for x in lane_successor)
 

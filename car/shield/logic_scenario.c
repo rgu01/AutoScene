@@ -16,12 +16,12 @@ typedef int uint8_t;
 
 #define true 1
 #define false 0
+#define None -1
 /**capture define start*/
 #define MAXP 40
 #define MAXPRE 1
 #define MAXSUC 1
 #define MAXL 3
-#define None -1
 /**capture define end*/
 
 typedef struct {
