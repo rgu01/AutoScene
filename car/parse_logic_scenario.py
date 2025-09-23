@@ -1,6 +1,6 @@
 from car.utils.tiga_strategy import TiGaStrategy
 from car.utils.config import Configuration
-from car.utils.c_compile import C_Builder
+from car.utils.c_builder import C_Builder
 from commonroad.common.file_reader import CommonRoadFileReader
 
 class LogicScenario(TiGaStrategy):
@@ -10,12 +10,11 @@ class LogicScenario(TiGaStrategy):
 
 if __name__ == '__main__':
     scenario_id = "DEU_A9-2_1_T-1"
-
     logic_scenario_config = Configuration(scenario_id, "logic")
     logic_scenario_path = f"car/shield/{scenario_id}_{logic_scenario_config.logic_params.type}.json"
     cutin = LogicScenario(logic_scenario_path)
-    cutin.update_paras(logic_scenario_config)
-    print(logic_scenario_config.ego_vehicle.ego_id)
+    #cutin.update_paras(logic_scenario_config)
+    #print(logic_scenario_config.ego_vehicle.ego_id)
     
     #game = HybridGame(scenario_id)
     #game.generate_uppaal_model()

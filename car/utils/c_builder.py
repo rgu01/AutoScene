@@ -26,6 +26,10 @@ class C_Builder:
         c_file_content = para_pattern.sub(f"#define MAXSUC {self.config.Lanelet.MAXSUC}", c_file_content)
         para_pattern = re.compile(r"#define MAXL\s+\d+")
         c_file_content = para_pattern.sub(f"#define MAXL {self.config.Lanelet.MAXL}", c_file_content)
+        para_pattern = re.compile(r"#define INIT_LANE_EGO\s+\d+")
+        c_file_content = para_pattern.sub(f"#define INIT_LANE_EGO {self.config.Init.Ego.Lane}", c_file_content)
+        para_pattern = re.compile(r"#define INIT_LANE_TEST\s+\d+")
+        c_file_content = para_pattern.sub(f"#define INIT_LANE_TEST {self.config.Init.Test.Lane}", c_file_content)
 
         lanelet_pattern = re.compile(
             r"/\*\*capture lanelet start \*/.*?/\*\*capture lanelet end \*/",

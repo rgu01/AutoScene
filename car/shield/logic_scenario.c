@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
+#include <float.h>
 
 typedef int int32_t;
 typedef char bool;
@@ -18,38 +19,45 @@ typedef int uint8_t;
 #define false 0
 #define None -1
 /**capture define start*/
-#define MAXP 40
-#define MAXPRE 1
-#define MAXSUC 1
-#define MAXL 3
+// Constants used for lane network configuration
+#define MAXP 40          // Maximum number of points in a boundary
+#define MAXPRE 1         // Maximum number of predecessor lanes
+#define MAXSUC 1         // Maximum number of successor lanes
+#define MAXL 3           // Maximum number of lanes in the lane network
+#define INIT_LANE_EGO 30626   // Initial lane ID for the ego vehicle
+#define INIT_LANE_TEST 30624  // Initial lane ID for the testing vehicle
 /**capture define end*/
 
+// Structure representing a 2D point with double precision
 typedef struct {
     double x;
     double y;
-}ST_DPOINT;
+} ST_DPOINT;
 
+// Structure representing a line segment defined by two endpoints
 typedef struct {
-    ST_DPOINT ends[2];
-}ST_DLINE;
+    ST_DPOINT ends[2];  // Array of two points representing the start and end of the line
+} ST_DLINE;
 
+// Structure representing a lane boundary, which may be dashed or solid
 typedef struct {
-    ST_DPOINT points[MAXP];
-    bool dashLine;
-}ST_BOUND;
+    ST_DPOINT points[MAXP];  // Array of points defining the boundary shape
+    bool dashLine;           // Flag indicating if the boundary is dashed
+} ST_BOUND;
 
+// Structure representing a lane in the lane network
 typedef struct {
-    id_t ID;
-    ST_BOUND left;
-    ST_BOUND right;
-    id_t predecessor[MAXPRE];
-    id_t successor[MAXSUC];
-    id_t adjLeft;
-    bool dirLeft;
-    id_t adjRight;
-    bool dirRight;
-    double length;
-}ST_LANE;
+    id_t ID;                     // Unique identifier for the lane
+    ST_BOUND left;               // Left boundary of the lane
+    ST_BOUND right;              // Right boundary of the lane
+    id_t predecessor[MAXPRE];    // Array of predecessor lane IDs
+    id_t successor[MAXSUC];      // Array of successor lane IDs
+    id_t adjLeft;                // ID of adjacent lane to the left
+    bool dirLeft;                // Is the direction of the left adjacency the same
+    id_t adjRight;               // ID of adjacent lane to the right
+    bool dirRight;               // Is the direction of the right adjacency the same
+    double length;               // Length of the lane
+} ST_LANE;
 
 /**capture lanelet start */
 ST_LANE laneNet[MAXL] = {
@@ -125,7 +133,194 @@ ST_LANE laneNet[MAXL] = {
 };
 /**capture lanelet end */
 
-bool get_action(double tpx, double tpy, double tvx, double tvy, double tax, double tay,
+/**
+ * @brief Initializes the positions of the test and ego vehicles.
+ * 
+ * This function searches through the lane network to find the lanes
+ * with IDs matching INIT_LANE_TEST and INIT_LANE_EGO. For each, it computes
+ * the midpoint between the first left and right boundary points and stores
+ * the result in the provided pointers.
+ * 
+ * @param tpx Pointer to store the x-coordinate of the test vehicle's initial position
+ * @param tpy Pointer to store the y-coordinate of the test vehicle's initial position
+ * @param epx Pointer to store the x-coordinate of the ego vehicle's initial position
+ * @param epy Pointer to store the y-coordinate of the ego vehicle's initial position
+ */
+void initialize(double *tpx, double *tpy, double *epx, double *epy){
+    int i = 0;
+    ST_DPOINT right, left;
+
+    for(i = 0; i < MAXL; i++){  // Loop through all lanes in the lane network
+        if(laneNet[i].ID == INIT_LANE_TEST){
+            // Get the first point from left and right boundaries of the test lane
+            right = laneNet[i].right.points[0];
+            left = laneNet[i].left.points[0];
+
+            // Compute the midpoint and store in test vehicle position
+            (*tpx) = (right.x + left.x) / 2.0;
+            (*tpy) = (right.y + left.y) / 2.0;
+        }
+        if(laneNet[i].ID == INIT_LANE_EGO){
+            // Get the first point from left and right boundaries of the ego lane
+            right = laneNet[i].right.points[0];
+            left = laneNet[i].left.points[0];
+
+            // Compute the midpoint and store in ego vehicle position
+            (*epx) = (right.x + left.x) / 2.0;
+            (*epy) = (right.y + left.y) / 2.0;
+        }
+    }
+}
+
+/**
+ * @brief Finds the closest lane boundary points ahead of the vehicle.
+ *
+ * This function finds the closest centerline point and checks if it's behind the vehicle.
+ * If so, it returns the next pair of boundary points (if available).
+ *
+ * @param px Current x position of the vehicle
+ * @param py Current y position of the vehicle
+ * @param vx Current x velocity of the vehicle
+ * @param vy Current y velocity of the vehicle
+ * @param left Pointer to store the left boundary point ahead
+ * @param right Pointer to store the right boundary point ahead
+ * @return true if a valid point ahead was found, false otherwise
+ */
+bool get_closest_lane_boundaries_ahead(double px, double py, double vx, double vy, ST_DPOINT *left, ST_DPOINT *right) {
+    // Variable declarations
+    double minDist = DBL_MAX;
+    double prevDist;
+    double cx, cy, dx, dy, distSq;
+    ST_DPOINT l, r;
+    int i, j;
+    bool result = false;
+
+    for (i = 0; i < MAXL; i++) {
+        prevDist = DBL_MAX;
+
+        for (j = 0; j < MAXP; j++) {
+            l = laneNet[i].left.points[j];
+            r = laneNet[i].right.points[j];
+
+            // Skip uninitialized points
+            if (l.x == None && l.y == None && r.x == None && r.y == None) break;
+
+            // Compute center line point
+            cx = (l.x + r.x) / 2.0;
+            cy = (l.y + r.y) / 2.0;
+
+            // Compute squared distance to vehicle position
+            dx = cx - px;
+            dy = cy - py;
+            distSq = dx * dx + dy * dy;
+
+            // If distance starts increasing, break early
+            if (distSq > prevDist) break;
+
+            // Check if the point is ahead using dot product
+            double dot = dx * vx + dy * vy;
+            if (dot <= 0) {
+                // Point is behind, try next one if available
+                if (j + 1 < MAXP) {
+                    ST_DPOINT l_next = laneNet[i].left.points[j + 1];
+                    ST_DPOINT r_next = laneNet[i].right.points[j + 1];
+                    if (l_next.x != None && r_next.x != None) {
+                        *left = l_next;
+                        *right = r_next;
+                        result = true;
+                        break;
+                    }
+                }
+            } else {
+                // Point is ahead
+                if (distSq < minDist) {
+                    minDist = distSq;
+                    *left = l;
+                    *right = r;
+                    result = true;
+                }
+            }
+
+            prevDist = distSq;
+        }
+    }
+
+    return result;
+}
+
+#include <math.h>  // For fabs
+
+#define X 0
+#define Y 1
+
+/**
+ * @brief Update the testing vehicle's acceleration on x and y.
+ *
+ * This function calculates the testing vehicle's x and y accelerations such that 
+ * the vehicle moves along the center line of the lane in the next P time units.
+ * The resulting accelerations are scaled to stay within the given AMIN and AMAX bounds.
+ *
+ * @param tpx Current x position of the testing vehicle
+ * @param tpy Current y position of the testing vehicle
+ * @param tvx Current x velocity of the testing vehicle
+ * @param tvy Current y velocity of the testing vehicle
+ * @param tax Pointer to x acceleration of the testing vehicle (to be updated)
+ * @param tay Pointer to y acceleration of the testing vehicle (to be updated)
+ * @param epx Current x position of the ego vehicle
+ * @param epy Current y position of the ego vehicle
+ * @param evx Current x velocity of the ego vehicle
+ * @param evy Current y velocity of the ego vehicle
+ * @param eax Current x acceleration of the ego vehicle
+ * @param eay Current y acceleration of the ego vehicle
+ * @param P Time horizon for planning (in seconds)
+ * @param AMIN Minimum allowed acceleration per axis [X, Y]
+ * @param AMAX Maximum allowed acceleration per axis [X, Y]
+ * @return true if a valid target point was found and acceleration was computed
+ */
+bool get_action(double tpx, double tpy, double tvx, double tvy, double *tax, double *tay,
+                double epx, double epy, double evx, double evy, double eax, double eay,
+                double P, double AMINX, double AMINY, double AMAXX, double AMAXY) {
+    ST_DPOINT l, r;
+    bool result = false;
+    double cx, cy;
+    double ax, ay;
+    double scaleX = 1.0, scaleY = 1.0, scale;
+
+    // Find the closest lane boundary points ahead of the testing vehicle
+    result = get_closest_lane_boundaries_ahead(tpx, tpy, tvx, tvy, &l, &r);
+
+    if (result) {
+        // Compute center line point
+        cx = (l.x + r.x) / 2.0;
+        cy = (l.y + r.y) / 2.0;
+
+        // Compute required acceleration using kinematic equation
+        ax = 2.0 * (cx - tpx - tvx * P) / (P * P);
+        ay = 2.0 * (cy - tpy - tvy * P) / (P * P);
+
+        // Compute per-axis scaling factors
+        if (ax > AMAXX) scaleX = AMAXX / ax;
+        else if (ax < AMINX && ax != 0.0) scaleX = AMINX / ax;
+
+        if (ay > AMAXY) scaleY = AMAXY / ay;
+        else if (ay < AMINY && ay != 0.0) scaleY = AMINY / ay;
+
+        // Use the smaller scaling factor to preserve direction
+        scale = (fabs(scaleX) < fabs(scaleY)) ? scaleX : scaleY;
+
+        // Apply scaling
+        *tax = ax * scale;
+        *tay = ay * scale;
+    } else {
+        // If no valid point found, default to zero acceleration
+        *tax = 0.0;
+        *tay = 0.0;
+    }
+
+    return result;
+}
+
+bool is_action_ok(double tpx, double tpy, double tvx, double tvy, double tax, double tay,
                 double epx, double epy, double evx, double evy, double eax, double eay){
     /* test code */
     if(tpx == 0.0 && tpx == 0.0 && tvx == 0.0 && tvx == 0.0){

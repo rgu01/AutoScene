@@ -29,13 +29,31 @@ double i2d(const int32_t value) {
 /** Shielding */
 import "/home/rong/Github/AutoScene/car/shield/logic_scenario.so"
 {
-    bool get_action(double tpx, double tpy, double tvx, double tvy, double tax, double tay,
+    bool is_action_ok(double tpx, double tpy, double tvx, double tvy, double tax, double tay,
                     double epx, double epy, double evx, double evy, double eax, double eay);
+    bool get_action(double tpx, double tpy, double tvx, double tvy, double &amp;tax, double &amp;tay,
+                double epx, double epy, double evx, double evy, double eax, double eay,
+                double P, double AMINX, double AMINY, double AMAXX, double AMAXY);
+    void initialize(clock &amp;tpx, clock &amp;tpy, clock &amp;epx, clock &amp;epy);
 };
 
+void begin(){
+    initialize(tp[X],tp[Y],ep[X],ep[Y]);
+}
+
 bool shield(int tax, int tay){
-    return get_action(tp[X],tp[Y],tv[X],tv[Y],i2d(tax),i2d(tay),
-                      ep[X],ep[Y],ev[X],ev[Y],ea[X],ea[Y]);
+    double d_tax = i2d(tax);
+    double d_tay = i2d(tay);
+
+    //return is_action_ok(tp[X],tp[Y],tv[X],tv[Y],d_tax,d_tay,ep[X],ep[Y],ev[X],ev[Y],ea[X],ea[Y]);
+    return true;
+}
+
+bool watch = false;
+void get_acce(const int32_t AMIN[D], const int32_t AMAX[D]){
+    watch = get_action(tp[X],tp[Y],tv[X],tv[Y],ta[X],ta[Y],
+                       ep[X],ep[Y],ev[X],ev[Y],ea[X],ea[Y], F,
+                       i2d(AMIN[X]), i2d(AMIN[Y]), i2d(AMAX[X]), i2d(AMAX[Y]));
 }</declaration>
 	<template>
 		<name x="5" y="5">Kinematics</name>
@@ -57,16 +75,33 @@ v[Y]'==a[Y]</label>
 		<parameter>const int32_t AMAX[D], const int32_t AMIN[D]</parameter>
 		<declaration>clock t;</declaration>
 		<location id="id1" x="0" y="0">
-			<name x="-34" y="-8">S1</name>
+			<name x="-34" y="-8">S2</name>
 			<committed/>
 		</location>
 		<location id="id2" x="0" y="102">
-			<name x="-34" y="93">S0</name>
-			<label kind="invariant" x="-10" y="119">t&lt;=F</label>
+			<name x="-34" y="93">S1</name>
+			<label kind="invariant" x="8" y="119">t&lt;=F</label>
 		</location>
-		<init ref="id2"/>
-		<transition id="id3">
+		<location id="id3" x="136" y="102">
+			<name x="126" y="68">S0</name>
+			<urgent/>
+		</location>
+		<location id="id4" x="0" y="-34">
+		</location>
+		<init ref="id3"/>
+		<transition id="id5">
 			<source ref="id1"/>
+			<target ref="id2"/>
+			<nail x="-102" y="0"/>
+			<nail x="-102" y="102"/>
+		</transition>
+		<transition id="id6" controllable="false">
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<label kind="assignment" x="42" y="85">begin()</label>
+		</transition>
+		<transition id="id7">
+			<source ref="id4"/>
 			<target ref="id2"/>
 			<label kind="select" x="17" y="-68">ax:int[AMIN[X],AMAX[X]],
 ay:int[AMIN[Y],AMAX[Y]]</label>
@@ -75,12 +110,15 @@ ay:int[AMIN[Y],AMAX[Y]]</label>
 ta[Y]=i2d(ay),
 t=0</label>
 			<nail x="204" y="0"/>
-			<nail x="204" y="102"/>
+			<nail x="204" y="170"/>
+			<nail x="0" y="170"/>
 		</transition>
-		<transition id="id4" controllable="false">
+		<transition id="id8" controllable="false">
 			<source ref="id2"/>
 			<target ref="id1"/>
 			<label kind="guard" x="8" y="59">t&gt;=F</label>
+			<label kind="assignment" x="-153" y="42">get_acce(AMIN,AMAX),
+t=0</label>
 		</transition>
 	</template>
 	<system>// Place template instantiations here.
