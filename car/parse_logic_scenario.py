@@ -29,3 +29,5 @@ if __name__ == '__main__':
     c_builder = C_Builder(c_path, o_path, so_path, scenario, game_config)
     c_builder.write_c_file()
     c_builder.compile_c_file()
+
+    cutin.simulate("car/shield/linux_simulate.sh", f"car/scenarios/{scenario_id}.xml", "sampling.log")

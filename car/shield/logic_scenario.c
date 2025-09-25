@@ -334,3 +334,39 @@ bool is_action_ok(double tpx, double tpy, double tvx, double tvy, double tax, do
 
     return false;
 }
+
+#include <stdio.h>
+
+int main()
+{
+    double tpx, tpy, tvx = 0, tvy = 0, tax, tay;
+    double epx, epy, evx = 0, evy = 0, eax = 0, eay = 0;
+
+    initialize(&tpx, &tpy, &epx, &epy);
+
+    FILE *fp = fopen("/home/rong/Github/AutoScene/sampling.log", "w");
+    if (fp == NULL) {
+        printf("Error opening file for writing.\n");
+        return 1;
+    }
+
+    for (int i = 0; i < 500; i++) {
+        get_action(tpx, tpy, tvx, tvy, &tax, &tay,
+                   epx, epy, evx, evy, eax, eay, 0.1,
+                   -1, -1, 1, 1);
+
+        // Euler integration to update target's velocity and position
+        tvx += tax * 0.1;
+        tvy += tay * 0.1;
+        tpx += tvx * 0.1;
+        tpy += tvy * 0.1;
+
+        // Write to file every 10 iterations
+        if (i % 10 == 0) {
+            fprintf(fp, "%d %f %f %f %f %f %f\n", i / 10, tpx, tpy, tvx, tvy, tax, tay);
+        }
+    }
+
+    fclose(fp);
+    return 0;
+}
