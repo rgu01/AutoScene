@@ -151,7 +151,7 @@ class TiGaStrategy:
     
     def simulate(self, script_path:str, scenario_path:str, sampling_path:str):
         try:
-            #subprocess.run(["bash", script_path], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            subprocess.run(["bash", script_path], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             simulate.generate(scenario_path, sampling_path, False)
         except subprocess.CalledProcessError as e:
             print("Error:\n", e.stderr)

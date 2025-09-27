@@ -172,86 +172,91 @@ void initialize(double *tpx, double *tpy, double *epx, double *epy){
     }
 }
 
+int find_lane_index_by_id(id_t lane_id){
+    for (int i = 0; i < MAXL; i++) {
+        if(laneNet[i].ID == lane_id){
+            return i;
+        }
+    }
+    return -1;
+}
+
 /**
- * @brief Finds the closest lane boundary points ahead of the vehicle.
- *
- * This function finds the closest centerline point and checks if it's behind the vehicle.
- * If so, it returns the next pair of boundary points (if available).
- *
- * @param px Current x position of the vehicle
- * @param py Current y position of the vehicle
- * @param vx Current x velocity of the vehicle
- * @param vy Current y velocity of the vehicle
- * @param left Pointer to store the left boundary point ahead
- * @param right Pointer to store the right boundary point ahead
- * @return true if a valid point ahead was found, false otherwise
+ * @brief Returns the next ahead points on the left and right boundaries of the current lane
+ * 
+ * The function finds the nearest point on each boundary that lies ahead of the current
+ * vehicle position, based on the direction of the velocity vector.
+ * 
+ * @param lane_id ID of the current traveling lane
+ * @param px X-coordinate of the test vehicle's current position
+ * @param py Y-coordinate of the test vehicle's current position
+ * @param vx Velocity component along X
+ * @param vy Velocity component along Y
+ * @param left Pointer to store the next point on the left boundary
+ * @param right Pointer to store the next point on the right boundary
+ * @return true if ahead points were found, false otherwise
  */
-bool get_closest_lane_boundaries_ahead(double px, double py, double vx, double vy, ST_DPOINT *left, ST_DPOINT *right) {
-    // Variable declarations
-    double minDist = DBL_MAX;
-    double prevDist;
-    double cx, cy, dx, dy, distSq;
-    ST_DPOINT l, r;
-    int i, j;
-    bool result = false;
+bool get_ahead_lane_boundaries_ahead(id_t lane_id, double px, double py, double vx, double vy, ST_DPOINT *left, ST_DPOINT *right) {
+    // Find the index of the lane in laneNet array
+    int lane_index = find_lane_index_by_id(lane_id);
+    if (lane_index == -1) return false;  // Lane not found
 
-    for (i = 0; i < MAXL; i++) {
-        prevDist = DBL_MAX;
+    ST_LANE *lane = &laneNet[lane_index];
 
-        for (j = 0; j < MAXP; j++) {
-            l = laneNet[i].left.points[j];
-            r = laneNet[i].right.points[j];
+    // Initialize indices and minimum projection distances
+    int next_left_idx = -1;
+    int next_right_idx = -1;
+    double min_proj_left = DBL_MAX;
+    double min_proj_right = DBL_MAX;
 
-            // Skip uninitialized points
-            if (l.x == None && l.y == None && r.x == None && r.y == None) break;
+    // Compute normalized velocity vector for projection along travel direction
+    double speed_sq = vx * vx + vy * vy;
+    if (speed_sq < 1e-6) return false;  // Velocity too small to determine direction
+    double inv_speed = 1.0 / sqrt(speed_sq);
+    double dir_x = vx * inv_speed;
+    double dir_y = vy * inv_speed;
 
-            // Compute center line point
-            cx = (l.x + r.x) / 2.0;
-            cy = (l.y + r.y) / 2.0;
+    // Loop through left boundary points to find nearest point ahead
+    for (int i = 0; i < MAXP; i++) {
+        ST_DPOINT pt = lane->left.points[i];
+        if (pt.x == 0 && pt.y == 0) break; // Assuming unused points are {0,0}
 
-            // Compute squared distance to vehicle position
-            dx = cx - px;
-            dy = cy - py;
-            distSq = dx * dx + dy * dy;
+        double dx = pt.x - px;
+        double dy = pt.y - py;
+        double proj = dx * dir_x + dy * dir_y;  // Project vector onto velocity direction
 
-            // If distance starts increasing, break early
-            if (distSq > prevDist) break;
-
-            // Check if the point is ahead using dot product
-            double dot = dx * vx + dy * vy;
-            if (dot <= 0) {
-                // Point is behind, try next one if available
-                if (j + 1 < MAXP) {
-                    ST_DPOINT l_next = laneNet[i].left.points[j + 1];
-                    ST_DPOINT r_next = laneNet[i].right.points[j + 1];
-                    if (l_next.x != None && r_next.x != None) {
-                        *left = l_next;
-                        *right = r_next;
-                        result = true;
-                        break;
-                    }
-                }
-            } else {
-                // Point is ahead
-                if (distSq < minDist) {
-                    minDist = distSq;
-                    *left = l;
-                    *right = r;
-                    result = true;
-                }
-            }
-
-            prevDist = distSq;
+        // Consider only points ahead and track the closest one
+        if (proj > 0 && proj < min_proj_left) {
+            min_proj_left = proj;
+            next_left_idx = i;
         }
     }
 
-    return result;
+    // Loop through right boundary points to find nearest point ahead
+    for (int i = 0; i < MAXP; i++) {
+        ST_DPOINT pt = lane->right.points[i];
+        if (pt.x == 0 && pt.y == 0) break;
+
+        double dx = pt.x - px;
+        double dy = pt.y - py;
+        double proj = dx * dir_x + dy * dir_y;
+
+        if (proj > 0 && proj < min_proj_right) {
+            min_proj_right = proj;
+            next_right_idx = i;
+        }
+    }
+
+    // Check if valid ahead points were found
+    if (next_left_idx == -1 || next_right_idx == -1) return false;
+
+    // Store the nearest ahead points in the provided pointers
+    *left = lane->left.points[next_left_idx];
+    *right = lane->right.points[next_right_idx];
+
+    return true;
 }
 
-#include <math.h>  // For fabs
-
-#define X 0
-#define Y 1
 
 /**
  * @brief Update the testing vehicle's acceleration on x and y.
@@ -287,7 +292,9 @@ bool get_action(double tpx, double tpy, double tvx, double tvy, double *tax, dou
     double scaleX = 1.0, scaleY = 1.0, scale;
 
     // Find the closest lane boundary points ahead of the testing vehicle
-    result = get_closest_lane_boundaries_ahead(tpx, tpy, tvx, tvy, &l, &r);
+    result = get_ahead_lane_boundaries_ahead(INIT_LANE_TEST, tpx, tpy, tvx, tvy, &l, &r);
+
+    //printf("(%f,%f,%f,%f)\n",l.x,l.y,r.x,r.y);
 
     if (result) {
         // Compute center line point
@@ -335,12 +342,10 @@ bool is_action_ok(double tpx, double tpy, double tvx, double tvy, double tax, do
     return false;
 }
 
-#include <stdio.h>
-
 int main()
 {
-    double tpx, tpy, tvx = 0, tvy = 0, tax, tay;
-    double epx, epy, evx = 0, evy = 0, eax = 0, eay = 0;
+    double tpx, tpy, tvx = 0.1, tvy = 0, tax, tay;
+    double epx, epy, evx = 0.1, evy = 0, eax = 0, eay = 0;
 
     initialize(&tpx, &tpy, &epx, &epy);
 
@@ -351,19 +356,17 @@ int main()
     }
 
     for (int i = 0; i < 500; i++) {
-        get_action(tpx, tpy, tvx, tvy, &tax, &tay,
-                   epx, epy, evx, evy, eax, eay, 0.1,
-                   -1, -1, 1, 1);
+        if(get_action(tpx, tpy, tvx, tvy, &tax, &tay,epx, epy, evx, evy, eax, eay, 0.1, -1, -1, 1, 1)){
+            // Euler integration to update target's velocity and position
+            tvx += tax * 0.1;
+            tvy += tay * 0.1;
+            tpx += tvx * 0.1;
+            tpy += tvy * 0.1;
 
-        // Euler integration to update target's velocity and position
-        tvx += tax * 0.1;
-        tvy += tay * 0.1;
-        tpx += tvx * 0.1;
-        tpy += tvy * 0.1;
-
-        // Write to file every 10 iterations
-        if (i % 10 == 0) {
-            fprintf(fp, "%d %f %f %f %f %f %f\n", i / 10, tpx, tpy, tvx, tvy, tax, tay);
+            // Write to file every 10 iterations
+            if (i % 10 == 0) {
+                fprintf(fp, "%d %f %f %f %f %f %f\n", i / 10, tpx, tpy, tvx, tvy, tax, tay);
+            }
         }
     }
 

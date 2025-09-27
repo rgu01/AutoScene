@@ -39,6 +39,8 @@ import "/home/rong/Github/AutoScene/car/shield/logic_scenario.so"
 
 void begin(){
     initialize(tp[X],tp[Y],ep[X],ep[Y]);
+    tv[X] = 0.1;
+    ev[X] = 0.1;
 }
 
 bool shield(int tax, int tay){
@@ -51,9 +53,20 @@ bool shield(int tax, int tay){
 
 bool watch = false;
 void get_acce(const int32_t AMIN[D], const int32_t AMAX[D]){
-    watch = get_action(tp[X],tp[Y],tv[X],tv[Y],ta[X],ta[Y],
+    double l_tax = ta[X];
+    double l_tay = ta[Y];
+    watch = get_action(tp[X],tp[Y],tv[X],tv[Y],l_tax,l_tay,
                        ep[X],ep[Y],ev[X],ev[Y],ea[X],ea[Y], F,
                        i2d(AMIN[X]), i2d(AMIN[Y]), i2d(AMAX[X]), i2d(AMAX[Y]));
+    if(watch){
+        ta[X] = l_tax;
+        ta[Y] = l_tay;
+    }else{
+        ta[X] = 0;
+        ta[Y] = 0;
+        tv[X] = 0;
+        tv[Y] = 0;
+    }
 }</declaration>
 	<template>
 		<name x="5" y="5">Kinematics</name>
