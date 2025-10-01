@@ -82,51 +82,40 @@ class C_Builder:
         laneNet_entries = []
 
         for lane in self.scenario.lanelet_network.lanelets:
-            # compute lane length as double
             travel_time = self.calculate_travel_time(lane)
             lane_length = float(travel_time)
 
-            # lane info
             lane_ID = lane.lanelet_id
             lane_predecessor = lane.predecessor if lane.predecessor else []
             lane_successor = lane.successor if lane.successor else []
             lane_adjLeft = lane.adj_left
             lane_adjRight = lane.adj_right
 
-            # lane markings
             lane_markingLeft = lane.line_marking_left_vertices.value == 'dashed'
             lane_markingRight = lane.line_marking_right_vertices.value == 'dashed'
 
-            # direction flags
             lane_dirLeft = bool(lane.adj_left_same_direction)
             lane_dirRight = bool(lane.adj_right_same_direction)
 
-            # vertices as double
             leftLane = lane._left_vertices.astype(float)
             rightLane = lane._right_vertices.astype(float)
 
-            # merge points if straight line
             if np.all(leftLane[:, 1] == leftLane[0, 1]) or np.all(leftLane[:, 0] == leftLane[0, 0]):
                 leftLane = leftLane[[0, -1]]
             if np.all(rightLane[:, 1] == rightLane[0, 1]) or np.all(rightLane[:, 0] == rightLane[0, 0]):
                 rightLane = rightLane[[0, -1]]
 
-            # padding
             pad_len_left = self.config.Lanelet.MAXP - len(leftLane)
-            if pad_len_left > 0:
-                padding_left = np.full((pad_len_left, 2), np.nan)
-            else:
-                padding_left = np.empty((0, 2))
+            padding_left = np.full((pad_len_left, 2), np.nan) if pad_len_left > 0 else np.empty((0, 2))
             leftLane_full = np.vstack([leftLane, padding_left])
 
             pad_len_right = self.config.Lanelet.MAXP - len(rightLane)
-            if pad_len_right > 0:
-                padding_right = np.full((pad_len_right, 2), np.nan)
-            else:
-                padding_right = np.empty((0, 2))
+            padding_right = np.full((pad_len_right, 2), np.nan) if pad_len_right > 0 else np.empty((0, 2))
             rightLane_full = np.vstack([rightLane, padding_right])
 
-            # helper to format points with line breaks
+            # Compute center line
+            centerLane_full = (leftLane_full + rightLane_full) / 2.0
+
             def format_points(points_array):
                 lines = []
                 for i in range(0, len(points_array), points_per_line):
@@ -144,15 +133,16 @@ class C_Builder:
             rightLane_str = "{\n        " + format_points(rightLane_full) + "\n    }"
             rightLane_inline = f"{{{rightLane_str}, {'true' if lane_markingRight else 'false'}}}"
 
-            # pad predecessors/successors
+            centerLane_str = "{\n        " + format_points(centerLane_full) + "\n    }"
+            centerLane_inline = f"{{{centerLane_str}, false}}"  # Assuming no marking for center
+
             lane_predecessor += [None] * (self.config.Lanelet.MAXPRE - len(lane_predecessor))
             lane_successor += [None] * (self.config.Lanelet.MAXSUC - len(lane_successor))
             pre_str = ", ".join("None" if x is None else str(x) for x in lane_predecessor)
             suc_str = ", ".join("None" if x is None else str(x) for x in lane_successor)
 
-            # full ST_LANE entry
             lane_entry = (
-                f"{{{lane_ID}, {leftLane_inline}, {rightLane_inline}, "
+                f"{{{lane_ID}, {leftLane_inline}, {centerLane_inline}, {rightLane_inline}, "
                 f"{pre_str}, {suc_str}, "
                 f"{'None' if lane_adjLeft is None else lane_adjLeft}, "
                 f"{'true' if lane_dirLeft else 'false'}, "
@@ -163,6 +153,5 @@ class C_Builder:
 
             laneNet_entries.append(lane_entry)
 
-        # final C array
         laneNet_str = "ST_LANE laneNet[MAXL] = {\n" + ",\n".join(laneNet_entries) + "\n};"
         return laneNet_str

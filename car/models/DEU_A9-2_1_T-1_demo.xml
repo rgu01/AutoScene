@@ -31,9 +31,10 @@ import "/home/rong/Github/AutoScene/car/shield/logic_scenario.so"
 {
     bool is_action_ok(double tpx, double tpy, double tvx, double tvy, double tax, double tay,
                     double epx, double epy, double evx, double evy, double eax, double eay);
-    bool get_action(double tpx, double tpy, double tvx, double tvy, double &amp;tax, double &amp;tay,
-                double epx, double epy, double evx, double evy, double eax, double eay,
-                double P, double AMINX, double AMINY, double AMAXX, double AMAXY);
+    void get_action(double tpx, double tpy, double tvx, double tvy, double &amp;tax, double &amp;tay,
+                    double epx, double epy, double evx, double evy, double eax, double eay,
+                    double P, double AMINX, double AMINY, double AMAXX, double AMAXY, 
+                    double VMINX, double VMINY, double VMAXX, double VMAXY, int&amp; waypoint);
     void initialize(clock &amp;tpx, clock &amp;tpy, clock &amp;epx, clock &amp;epy);
 };
 
@@ -51,22 +52,13 @@ bool shield(int tax, int tay){
     return true;
 }
 
-bool watch = false;
-void get_acce(const int32_t AMIN[D], const int32_t AMAX[D]){
-    double l_tax = ta[X];
-    double l_tay = ta[Y];
-    watch = get_action(tp[X],tp[Y],tv[X],tv[Y],l_tax,l_tay,
+int waypoint = 0;
+void get_acce(const int32_t AMIN[D], const int32_t AMAX[D], 
+              const int32_t VMIN[D], const int32_t VMAX[D]){
+    get_action(tp[X],tp[Y],tv[X],tv[Y],ta[X],ta[Y],
                        ep[X],ep[Y],ev[X],ev[Y],ea[X],ea[Y], F,
-                       i2d(AMIN[X]), i2d(AMIN[Y]), i2d(AMAX[X]), i2d(AMAX[Y]));
-    if(watch){
-        ta[X] = l_tax;
-        ta[Y] = l_tay;
-    }else{
-        ta[X] = 0;
-        ta[Y] = 0;
-        tv[X] = 0;
-        tv[Y] = 0;
-    }
+                       i2d(AMIN[X]), i2d(AMIN[Y]), i2d(AMAX[X]), i2d(AMAX[Y]),
+                       i2d(VMIN[X]), i2d(VMIN[Y]), i2d(VMAX[X]), i2d(VMAX[Y]), waypoint);
 }</declaration>
 	<template>
 		<name x="5" y="5">Kinematics</name>
@@ -85,7 +77,7 @@ v[Y]'==a[Y]</label>
 	</template>
 	<template>
 		<name>Controller</name>
-		<parameter>const int32_t AMAX[D], const int32_t AMIN[D]</parameter>
+		<parameter>const int32_t AMAX[D], const int32_t AMIN[D], const int32_t VMAX[D], const int32_t VMIN[D]</parameter>
 		<declaration>clock t;</declaration>
 		<location id="id1" x="0" y="0">
 			<name x="-34" y="-25">S2</name>
@@ -105,8 +97,10 @@ v[Y]'==a[Y]</label>
 		<transition id="id5">
 			<source ref="id1"/>
 			<target ref="id2"/>
-			<label kind="assignment" x="-170" y="34">t=0,
-get_acce(AMIN,AMAX)</label>
+			<label kind="assignment" x="-110" y="-17">t=0,
+get_acce
+(AMIN,AMAX,
+VMIN,VMAX)</label>
 			<nail x="-102" y="0"/>
 			<nail x="-102" y="102"/>
 		</transition>
@@ -138,8 +132,10 @@ t=0</label>
 
 const int32_t AMAX[D] = {d2i(1.0), d2i(1.0)};
 const int32_t AMIN[D] = {d2i(-1.0), d2i(-1.0)};
+const int32_t VMAX[D] = {d2i(9.0), d2i(9.0)};
+const int32_t VMIN[D] = {d2i(-5.0), d2i(-5.0)};
 test = Kinematics(tp,tv,ta);
-control = Controller(AMAX, AMIN);
+control = Controller(AMAX, AMIN, VMAX, VMIN);
 ego = Kinematics(ep,ev,ea);
 // List one or more processes to be composed into a system.
 system ego, test, control;

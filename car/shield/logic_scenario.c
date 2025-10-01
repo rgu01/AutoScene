@@ -49,6 +49,7 @@ typedef struct {
 typedef struct {
     id_t ID;                     // Unique identifier for the lane
     ST_BOUND left;               // Left boundary of the lane
+    ST_BOUND center;
     ST_BOUND right;              // Right boundary of the lane
     id_t predecessor[MAXPRE];    // Array of predecessor lane IDs
     id_t successor[MAXSUC];      // Array of successor lane IDs
@@ -73,6 +74,17 @@ ST_LANE laneNet[MAXL] = {
         {286.308400, 1.206400}, {310.573300, 1.457000}, {310.686100, 1.458200}, {334.148100, 1.700500},
         {334.260900, 1.701700}, {363.910300, 2.008000}, {364.023100, 2.009200}, {387.272600, 2.249400}
     }, false}, {{
+        {-39.213450, -4.016800}, {-20.797900, -3.826950}, {-20.685100, -3.825800}, {-0.015082, -3.612700},
+        {0.097755, -3.611550}, {21.402500, -3.391900}, {21.515350, -3.390700}, {26.747250, -3.336800},
+        {26.763850, -3.336600}, {32.044550, -3.282100}, {32.202300, -3.280500}, {37.359500, -3.227300},
+        {37.567550, -3.225200}, {42.937100, -3.169800}, {43.049950, -3.168600}, {71.917250, -2.870900},
+        {72.030050, -2.869750}, {95.133650, -2.631420}, {95.246450, -2.630235}, {120.111050, -2.373730},
+        {120.223850, -2.372545}, {154.696050, -2.016850}, {154.808850, -2.015715}, {182.102250, -1.734030},
+        {182.215050, -1.732845}, {207.385750, -1.473040}, {207.498550, -1.471860}, {228.187550, -1.258270},
+        {228.300350, -1.257140}, {256.819150, -0.962660}, {256.931950, -0.961480}, {286.214850, -0.659100},
+        {286.327650, -0.657950}, {310.592550, -0.407300}, {310.705350, -0.406150}, {334.167350, -0.163800},
+        {334.280200, -0.162600}, {363.929550, 0.143700}, {364.042350, 0.144900}, {387.348300, 0.385700}
+    }, false}, {{
         {-39.137800, -5.880600}, {-20.778700, -5.691400}, {-20.665900, -5.690200}, {0.004140, -5.477100},
         {0.116980, -5.476000}, {21.421700, -5.256300}, {21.534600, -5.255100}, {26.766500, -5.201200},
         {26.783100, -5.201000}, {32.063800, -5.146500}, {32.221500, -5.144900}, {37.378700, -5.091700},
@@ -95,6 +107,17 @@ ST_LANE laneNet[MAXL] = {
         {228.184500, 4.102000}, {256.763800, 4.397000}, {256.816100, 4.397600}, {286.159500, 4.700600},
         {286.211800, 4.701100}, {310.537200, 4.952300}, {310.589500, 4.952900}, {334.112000, 5.195800},
         {334.164300, 5.196400}, {363.874200, 5.503300}, {363.926500, 5.503900}, {387.288800, 5.745200}
+    }, false}, {{
+        {-39.280950, -0.404950}, {-20.835150, -0.214750}, {-20.782850, -0.214250}, {-0.052321, -0.000550},
+        {0.000000, 0.000000}, {21.365250, 0.220250}, {21.417600, 0.220850}, {26.726600, 0.275550},
+        {26.853800, 0.276850}, {32.007300, 0.330050}, {32.244700, 0.332450}, {37.322250, 0.384850},
+        {37.372450, 0.385350}, {42.899850, 0.442350}, {42.952200, 0.442850}, {71.880000, 0.741200},
+        {71.932300, 0.741750}, {95.096350, 0.980680}, {95.148700, 0.981250}, {120.073800, 1.238370},
+        {120.126100, 1.238890}, {154.658750, 1.595200}, {154.711050, 1.595770}, {182.064950, 1.878020},
+        {182.117250, 1.878590}, {207.348450, 2.139010}, {207.400750, 2.139530}, {228.150250, 2.353730},
+        {228.202550, 2.354300}, {256.781850, 2.649340}, {256.834150, 2.649910}, {286.177550, 2.952900},
+        {286.229850, 2.953450}, {310.555250, 3.204650}, {310.607550, 3.205250}, {334.130050, 3.448150},
+        {334.182350, 3.448750}, {363.892250, 3.755650}, {363.944550, 3.756250}, {387.280700, 3.997300}
     }, false}, {{
         {-39.289100, -2.153000}, {-20.817100, -1.962500}, {-20.764800, -1.962000}, {-0.034304, -1.748300},
         {0.018020, -1.747800}, {21.383300, -1.527500}, {21.435600, -1.526900}, {26.744600, -1.472200},
@@ -119,6 +142,17 @@ ST_LANE laneNet[MAXL] = {
         {286.175300, 8.234200}, {310.369100, 8.484100}, {310.553000, 8.486000}, {333.944000, 8.727600},
         {334.127800, 8.729500}, {363.706100, 9.035000}, {363.890000, 9.036900}, {387.068500, 9.276400}
     }, false}, {{
+        {-39.382950, 3.108800}, {-21.002900, 3.298250}, {-20.819100, 3.300150}, {-0.220100, 3.512500},
+        {-0.036233, 3.514400}, {21.197500, 3.733300}, {21.381350, 3.735200}, {26.504000, 3.788050},
+        {26.817600, 3.791250}, {31.846750, 3.843100}, {32.208450, 3.846850}, {37.022650, 3.896450},
+        {37.336200, 3.899700}, {42.732100, 3.955350}, {42.915950, 3.957250}, {71.712200, 4.254200},
+        {71.896050, 4.256100}, {94.928600, 4.493700}, {95.112450, 4.495600}, {119.906000, 4.751300},
+        {120.089850, 4.753200}, {154.490950, 5.108200}, {154.674800, 5.110100}, {181.897150, 5.391000},
+        {182.081000, 5.392900}, {207.180650, 5.651900}, {207.364450, 5.653800}, {227.982450, 5.866650},
+        {228.166300, 5.868550}, {256.614050, 6.162250}, {256.797900, 6.164150}, {286.009750, 6.465750},
+        {286.193550, 6.467650}, {310.387350, 6.717550}, {310.571250, 6.719450}, {333.962250, 6.961050},
+        {334.146050, 6.962950}, {363.724350, 7.268500}, {363.908250, 7.270400}, {387.178650, 7.510800}
+    }, false}, {{
         {-39.272800, 1.343100}, {-20.984700, 1.531600}, {-20.800900, 1.533500}, {-0.201890, 1.745900},
         {-0.018020, 1.747800}, {21.215700, 1.966700}, {21.399600, 1.968600}, {26.522200, 2.021400},
         {26.835800, 2.024600}, {31.865000, 2.076500}, {32.226700, 2.080200}, {37.040900, 2.129800},
@@ -132,6 +166,12 @@ ST_LANE laneNet[MAXL] = {
     }, false}, None, None, None, false, 30624, true, 426.584313}
 };
 /**capture lanelet end */
+
+double get_distance(ST_DPOINT p1, ST_DPOINT p2) {
+    double dx = p2.x - p1.x;
+    double dy = p2.y - p1.y;
+    return sqrt(dx * dx + dy * dy);
+}
 
 /**
  * @brief Initializes the positions of the test and ego vehicles.
@@ -152,22 +192,12 @@ void initialize(double *tpx, double *tpy, double *epx, double *epy){
 
     for(i = 0; i < MAXL; i++){  // Loop through all lanes in the lane network
         if(laneNet[i].ID == INIT_LANE_TEST){
-            // Get the first point from left and right boundaries of the test lane
-            right = laneNet[i].right.points[0];
-            left = laneNet[i].left.points[0];
-
-            // Compute the midpoint and store in test vehicle position
-            (*tpx) = (right.x + left.x) / 2.0;
-            (*tpy) = (right.y + left.y) / 2.0;
+            (*tpx) = laneNet[i].center.points[0].x;
+            (*tpy) = laneNet[i].center.points[0].y;
         }
         if(laneNet[i].ID == INIT_LANE_EGO){
-            // Get the first point from left and right boundaries of the ego lane
-            right = laneNet[i].right.points[0];
-            left = laneNet[i].left.points[0];
-
-            // Compute the midpoint and store in ego vehicle position
-            (*epx) = (right.x + left.x) / 2.0;
-            (*epy) = (right.y + left.y) / 2.0;
+            (*epx) = laneNet[i].center.points[0].x;
+            (*epy) = laneNet[i].center.points[0].y;
         }
     }
 }
@@ -181,82 +211,34 @@ int find_lane_index_by_id(id_t lane_id){
     return -1;
 }
 
-/**
- * @brief Returns the next ahead points on the left and right boundaries of the current lane
- * 
- * The function finds the nearest point on each boundary that lies ahead of the current
- * vehicle position, based on the direction of the velocity vector.
- * 
- * @param lane_id ID of the current traveling lane
- * @param px X-coordinate of the test vehicle's current position
- * @param py Y-coordinate of the test vehicle's current position
- * @param vx Velocity component along X
- * @param vy Velocity component along Y
- * @param left Pointer to store the next point on the left boundary
- * @param right Pointer to store the next point on the right boundary
- * @return true if ahead points were found, false otherwise
- */
-bool get_ahead_lane_boundaries_ahead(id_t lane_id, double px, double py, double vx, double vy, ST_DPOINT *left, ST_DPOINT *right) {
-    // Find the index of the lane in laneNet array
-    int lane_index = find_lane_index_by_id(lane_id);
-    if (lane_index == -1) return false;  // Lane not found
+void update_target(id_t lane_id, ST_DPOINT current, double speed, double period, ST_DPOINT *target, int *waypoint){
+    int i = 0, lane_index = find_lane_index_by_id(INIT_LANE_TEST);
+    double distance = 0;
 
-    ST_LANE *lane = &laneNet[lane_index];
-
-    // Initialize indices and minimum projection distances
-    int next_left_idx = -1;
-    int next_right_idx = -1;
-    double min_proj_left = DBL_MAX;
-    double min_proj_right = DBL_MAX;
-
-    // Compute normalized velocity vector for projection along travel direction
-    double speed_sq = vx * vx + vy * vy;
-    if (speed_sq < 1e-6) return false;  // Velocity too small to determine direction
-    double inv_speed = 1.0 / sqrt(speed_sq);
-    double dir_x = vx * inv_speed;
-    double dir_y = vy * inv_speed;
-
-    // Loop through left boundary points to find nearest point ahead
-    for (int i = 0; i < MAXP; i++) {
-        ST_DPOINT pt = lane->left.points[i];
-        if (pt.x == 0 && pt.y == 0) break; // Assuming unused points are {0,0}
-
-        double dx = pt.x - px;
-        double dy = pt.y - py;
-        double proj = dx * dir_x + dy * dir_y;  // Project vector onto velocity direction
-
-        // Consider only points ahead and track the closest one
-        if (proj > 0 && proj < min_proj_left) {
-            min_proj_left = proj;
-            next_left_idx = i;
+    if((*waypoint) < MAXP){
+        *target = laneNet[lane_index].center.points[*waypoint];
+        if(target->x != None && target->y != None){
+            distance = get_distance(current, *target);
+            while(distance <= speed * period && (*waypoint) < MAXP){
+                (*waypoint) = (*waypoint) + 1;            
+                if((*waypoint) < MAXP){
+                    *target = laneNet[lane_index].center.points[*waypoint];
+                }else{
+                    *target = laneNet[lane_index].center.points[MAXP - 1];
+                }
+                distance = get_distance(current, *target);
+            }
+        }else{
+            // "None" needs to be dealt with
         }
+    }else{
+        *target = laneNet[lane_index].center.points[MAXP - 1];
     }
+    distance = get_distance(current, *target);
 
-    // Loop through right boundary points to find nearest point ahead
-    for (int i = 0; i < MAXP; i++) {
-        ST_DPOINT pt = lane->right.points[i];
-        if (pt.x == 0 && pt.y == 0) break;
-
-        double dx = pt.x - px;
-        double dy = pt.y - py;
-        double proj = dx * dir_x + dy * dir_y;
-
-        if (proj > 0 && proj < min_proj_right) {
-            min_proj_right = proj;
-            next_right_idx = i;
-        }
-    }
-
-    // Check if valid ahead points were found
-    if (next_left_idx == -1 || next_right_idx == -1) return false;
-
-    // Store the nearest ahead points in the provided pointers
-    *left = lane->left.points[next_left_idx];
-    *right = lane->right.points[next_right_idx];
-
-    return true;
+    //printf("target %d: %f, %f. distance: %f\n", *waypoint, target->x, target->y, distance);
+    //printf("current: %f, %f, %f, %f\n", tpx, tpy, tvx, tvy);
 }
-
 
 /**
  * @brief Update the testing vehicle's acceleration on x and y.
@@ -282,49 +264,48 @@ bool get_ahead_lane_boundaries_ahead(id_t lane_id, double px, double py, double 
  * @param AMAX Maximum allowed acceleration per axis [X, Y]
  * @return true if a valid target point was found and acceleration was computed
  */
-bool get_action(double tpx, double tpy, double tvx, double tvy, double *tax, double *tay,
+void get_action(double tpx, double tpy, double tvx, double tvy, double *tax, double *tay,
                 double epx, double epy, double evx, double evy, double eax, double eay,
-                double P, double AMINX, double AMINY, double AMAXX, double AMAXY) {
-    ST_DPOINT l, r;
-    bool result = false;
-    double cx, cy;
-    double ax, ay;
-    double scaleX = 1.0, scaleY = 1.0, scale;
+                double P, double AMINX, double AMINY, double AMAXX, double AMAXY, 
+                double VMINX, double VMINY, double VMAXX, double VMAXY, int* waypoint) {
+    int i = 0, lane_index = find_lane_index_by_id(INIT_LANE_TEST), minIndex = 0;
+    ST_DPOINT start, end, current, target;
+    double distance, minDis = DBL_MAX;
+    double ax, ay, vx = tvx, vy = tvy;
+    double scaleX = 1.0, scaleY = 1.0, scale = 0;
+    
+    current.x = tpx;
+    current.y = tpy;
+    update_target(INIT_LANE_TEST, current, sqrt(tvx*tvx+tvy*tvy), P, &target, waypoint);
 
-    // Find the closest lane boundary points ahead of the testing vehicle
-    result = get_ahead_lane_boundaries_ahead(INIT_LANE_TEST, tpx, tpy, tvx, tvy, &l, &r);
+    // Compute required acceleration using kinematic equation
+    ax = 2.0 * (target.x - tpx - tvx * P) / (P * P);
+    ay = 2.0 * (target.y - tpy - tvy * P) / (P * P);
 
-    //printf("(%f,%f,%f,%f)\n",l.x,l.y,r.x,r.y);
+    // Compute per-axis scaling factors
+    if (ax > AMAXX) scaleX = AMAXX / ax;
+    else if (ax < AMINX && ax != 0.0) scaleX = AMINX / ax;
 
-    if (result) {
-        // Compute center line point
-        cx = (l.x + r.x) / 2.0;
-        cy = (l.y + r.y) / 2.0;
+    if (ay > AMAXY) scaleY = AMAXY / ay;
+    else if (ay < AMINY && ay != 0.0) scaleY = AMINY / ay;
 
-        // Compute required acceleration using kinematic equation
-        ax = 2.0 * (cx - tpx - tvx * P) / (P * P);
-        ay = 2.0 * (cy - tpy - tvy * P) / (P * P);
+    // Use the smaller scaling factor to preserve direction
+    scale = (fabs(scaleX) < fabs(scaleY)) ? scaleX : scaleY;
 
-        // Compute per-axis scaling factors
-        if (ax > AMAXX) scaleX = AMAXX / ax;
-        else if (ax < AMINX && ax != 0.0) scaleX = AMINX / ax;
+    // Apply scaling
+    *tax = ax * scale;
+    *tay = ay * scale;
 
-        if (ay > AMAXY) scaleY = AMAXY / ay;
-        else if (ay < AMINY && ay != 0.0) scaleY = AMINY / ay;
-
-        // Use the smaller scaling factor to preserve direction
-        scale = (fabs(scaleX) < fabs(scaleY)) ? scaleX : scaleY;
-
-        // Apply scaling
-        *tax = ax * scale;
-        *tay = ay * scale;
-    } else {
-        // If no valid point found, default to zero acceleration
-        *tax = 0.0;
-        *tay = 0.0;
+    // Compute the future velocity on X and Y and regulate accelerations accordingly
+    vx += *tax * P;
+    vy += *tay * P;
+    if(vx >= VMAXX || vx <= VMINX){
+        *tax = 0;
     }
-
-    return result;
+    if(vy >= VMAXY || vy <= VMINY)
+    {
+        *tay = 0;
+    }
 }
 
 bool is_action_ok(double tpx, double tpy, double tvx, double tvy, double tax, double tay,
@@ -344,8 +325,12 @@ bool is_action_ok(double tpx, double tpy, double tvx, double tvy, double tax, do
 
 int main()
 {
+    int waypoint = 0;
     double tpx, tpy, tvx = 0.1, tvy = 0, tax, tay;
     double epx, epy, evx = 0.1, evy = 0, eax = 0, eay = 0;
+    const double P = 0.1;
+    const double AMINX = -1, AMINY = -1, AMAXX = 1, AMAXY = 1;
+    const double VMINX = -5, VMINY = -5, VMAXX = 8, VMAXY = 8;
 
     initialize(&tpx, &tpy, &epx, &epy);
 
@@ -355,18 +340,20 @@ int main()
         return 1;
     }
 
-    for (int i = 0; i < 500; i++) {
-        if(get_action(tpx, tpy, tvx, tvy, &tax, &tay,epx, epy, evx, evy, eax, eay, 0.1, -1, -1, 1, 1)){
-            // Euler integration to update target's velocity and position
-            tvx += tax * 0.1;
-            tvy += tay * 0.1;
-            tpx += tvx * 0.1;
-            tpy += tvy * 0.1;
+    //printf("start!\n");
 
-            // Write to file every 10 iterations
-            if (i % 10 == 0) {
-                fprintf(fp, "%d %f %f %f %f %f %f\n", i / 10, tpx, tpy, tvx, tvy, tax, tay);
-            }
+    for (int i = 0; i < 500; i++) {
+        get_action(tpx, tpy, tvx, tvy, &tax, &tay,epx, epy, evx, evy, eax, eay, P, 
+            AMINX, AMINY, AMAXX, AMAXY, VMINX, VMINY, VMAXX, VMAXY, &waypoint);
+        // Euler integration to update target's velocity and position
+        tvx += tax * 0.1;
+        tvy += tay * 0.1;
+        tpx += tvx * 0.1;
+        tpy += tvy * 0.1;
+
+        // Write to file every 10 iterations
+        if (i % 10 == 0) {
+            fprintf(fp, "%d %f %f %f %f %f %f\n", i / 10, tpx, tpy, tvx, tvy, tax, tay);
         }
     }
 
