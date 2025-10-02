@@ -24,8 +24,8 @@ typedef int uint8_t;
 #define MAXPRE 1         // Maximum number of predecessor lanes
 #define MAXSUC 1         // Maximum number of successor lanes
 #define MAXL 3           // Maximum number of lanes in the lane network
-#define INIT_LANE_EGO 30626   // Initial lane ID for the ego vehicle
-#define INIT_LANE_TEST 30624  // Initial lane ID for the testing vehicle
+//#define INIT_LANE_EGO 30626   // Initial lane ID for the ego vehicle
+//#define INIT_LANE_TEST 30624  // Initial lane ID for the testing vehicle
 /**capture define end*/
 
 // Structure representing a 2D point with double precision
@@ -173,36 +173,7 @@ double get_distance(ST_DPOINT p1, ST_DPOINT p2) {
     return sqrt(dx * dx + dy * dy);
 }
 
-/**
- * @brief Initializes the positions of the test and ego vehicles.
- * 
- * This function searches through the lane network to find the lanes
- * with IDs matching INIT_LANE_TEST and INIT_LANE_EGO. For each, it computes
- * the midpoint between the first left and right boundary points and stores
- * the result in the provided pointers.
- * 
- * @param tpx Pointer to store the x-coordinate of the test vehicle's initial position
- * @param tpy Pointer to store the y-coordinate of the test vehicle's initial position
- * @param epx Pointer to store the x-coordinate of the ego vehicle's initial position
- * @param epy Pointer to store the y-coordinate of the ego vehicle's initial position
- */
-void initialize(double *tpx, double *tpy, double *epx, double *epy){
-    int i = 0;
-    ST_DPOINT right, left;
-
-    for(i = 0; i < MAXL; i++){  // Loop through all lanes in the lane network
-        if(laneNet[i].ID == INIT_LANE_TEST){
-            (*tpx) = laneNet[i].center.points[0].x;
-            (*tpy) = laneNet[i].center.points[0].y;
-        }
-        if(laneNet[i].ID == INIT_LANE_EGO){
-            (*epx) = laneNet[i].center.points[0].x;
-            (*epy) = laneNet[i].center.points[0].y;
-        }
-    }
-}
-
-int find_lane_index_by_id(id_t lane_id){
+int find_lane_index_by_id(const id_t lane_id){
     for (int i = 0; i < MAXL; i++) {
         if(laneNet[i].ID == lane_id){
             return i;
@@ -211,8 +182,29 @@ int find_lane_index_by_id(id_t lane_id){
     return -1;
 }
 
-void update_target(id_t lane_id, ST_DPOINT current, double speed, double period, ST_DPOINT *target, int *waypoint){
-    int i = 0, lane_index = find_lane_index_by_id(INIT_LANE_TEST);
+/**
+ * @brief Initializes the positions of a vehicle.
+ * 
+ * @param px Pointer to store the x-coordinate of the vehicle's initial position
+ * @param py Pointer to store the y-coordinate of the vehicle's initial position
+ */
+void initialize(double *px, double *py, int lane_id, int *temp){
+    ST_DPOINT right, left;
+    int i = find_lane_index_by_id(lane_id);
+
+    (*temp) = lane_id;
+
+    if(i != -1){
+        (*px) = laneNet[i].center.points[0].x;
+        (*py) = laneNet[i].center.points[0].y;
+    }else{
+        (*px) = 12345;
+        (*py) = 54321;
+    }
+}
+
+void update_target(ST_DPOINT current, double speed, double period, ST_DPOINT *target, const id_t lane_id, int *waypoint){
+    int i = 0, lane_index = find_lane_index_by_id(lane_id);
     double distance = 0;
 
     if((*waypoint) < MAXP){
@@ -267,8 +259,8 @@ void update_target(id_t lane_id, ST_DPOINT current, double speed, double period,
 void get_action(double tpx, double tpy, double tvx, double tvy, double *tax, double *tay,
                 double epx, double epy, double evx, double evy, double eax, double eay,
                 double P, double AMINX, double AMINY, double AMAXX, double AMAXY, 
-                double VMINX, double VMINY, double VMAXX, double VMAXY, int* waypoint) {
-    int i = 0, lane_index = find_lane_index_by_id(INIT_LANE_TEST), minIndex = 0;
+                double VMINX, double VMINY, double VMAXX, double VMAXY, int lane_id, int* waypoint) {
+    int i = 0, lane_index = find_lane_index_by_id(lane_id), minIndex = 0;
     ST_DPOINT start, end, current, target;
     double distance, minDis = DBL_MAX;
     double ax, ay, vx = tvx, vy = tvy;
@@ -276,7 +268,7 @@ void get_action(double tpx, double tpy, double tvx, double tvy, double *tax, dou
     
     current.x = tpx;
     current.y = tpy;
-    update_target(INIT_LANE_TEST, current, sqrt(tvx*tvx+tvy*tvy), P, &target, waypoint);
+    update_target(current, sqrt(tvx*tvx+tvy*tvy), P, &target, lane_id, waypoint);
 
     // Compute required acceleration using kinematic equation
     ax = 2.0 * (target.x - tpx - tvx * P) / (P * P);
@@ -308,17 +300,88 @@ void get_action(double tpx, double tpy, double tvx, double tvy, double *tax, dou
     }
 }
 
-bool is_action_ok(double tpx, double tpy, double tvx, double tvy, double tax, double tay,
-                double epx, double epy, double evx, double evy, double eax, double eay){
-    /* test code */
-    if(tpx == 0.0 && tpx == 0.0 && tvx == 0.0 && tvx == 0.0){
-        if(tax == 1.0 && tay == -0.5){
-            return true;
-        }
-        else{
-            return false;
-        }
+/**
+ * @brief Compute and update vehicle acceleration for lane keeping
+ *
+ * This function calculates the required x and y accelerations for a vehicle
+ * to follow the center line of its lane over a planning horizon of P seconds.
+ * The target position is determined based on the current position, velocity,
+ * and lane geometry. The computed accelerations are scaled to ensure they
+ * remain within the specified bounds (AMINX/Y to AMAXX/Y).
+ *
+ * Additionally, the function ensures that the resulting future velocities
+ * (after applying acceleration over time P) do not exceed the specified
+ * velocity limits (VMINX/Y to VMAXX/Y). If they do, the corresponding
+ * acceleration is set to zero to prevent violation.
+ *
+ * @param px      Current x position of the vehicle
+ * @param py      Current y position of the vehicle
+ * @param vx      Current x velocity of the vehicle
+ * @param vy      Current y velocity of the vehicle
+ * @param ax      Pointer to x acceleration (output)
+ * @param ay      Pointer to y acceleration (output)
+ * @param P       Planning time horizon (in seconds)
+ * @param AMINX   Minimum allowed x-axis acceleration
+ * @param AMINY   Minimum allowed y-axis acceleration
+ * @param AMAXX   Maximum allowed x-axis acceleration
+ * @param AMAXY   Maximum allowed y-axis acceleration
+ * @param VMINX   Minimum allowed x-axis velocity
+ * @param VMINY   Minimum allowed y-axis velocity
+ * @param VMAXX   Maximum allowed x-axis velocity
+ * @param VMAXY   Maximum allowed y-axis velocity
+ * @param lane_id Lane ID
+ * @param waypoint Pointer to the current waypoint index (used for target update)
+ */
+void open_loop_LK(double px, double py, double vx, double vy, double *ax, double *ay,
+                double P, double AMINX, double AMINY, double AMAXX, double AMAXY, 
+                double VMINX, double VMINY, double VMAXX, double VMAXY, 
+                int lane_id, int* waypoint){
+   int i = 0, lane_index = find_lane_index_by_id(lane_id), minIndex = 0;
+    ST_DPOINT start, end, current, target;
+    double distance, minDis = DBL_MAX;
+    double lax, lay, lvx = vx, lvy = vy;
+    double scaleX = 1.0, scaleY = 1.0, scale = 0;
+    
+    current.x = px;
+    current.y = py;
+    update_target(current, sqrt(vx*vx+vy*vy), P, &target, lane_id, waypoint);
+
+    // Compute required acceleration using kinematic equation
+    lax = 2.0 * (target.x - px - vx * P) / (P * P);
+    lay = 2.0 * (target.y - py - vy * P) / (P * P);
+
+    // Compute per-axis scaling factors
+    if (lax > AMAXX) scaleX = AMAXX / lax;
+    else if (lax < AMINX && lax != 0.0) scaleX = AMINX / lax;
+
+    if (lay > AMAXY) scaleY = AMAXY / lay;
+    else if (lay < AMINY && lay != 0.0) scaleY = AMINY / lay;
+
+    // Use the smaller scaling factor to preserve direction
+    scale = (fabs(scaleX) < fabs(scaleY)) ? scaleX : scaleY;
+
+    // Apply scaling
+    *ax = lax * scale;
+    *ay = lay * scale;
+
+    // Compute the future velocity on X and Y and regulate accelerations accordingly
+    lvx += *ax * P;
+    lvy += *ay * P;
+    if(vx >= VMAXX || vx <= VMINX){
+        *ax = 0;
     }
+    if(vy >= VMAXY || vy <= VMINY)
+    {
+        *ay = 0;
+    }
+}
+
+bool is_action_ok(double tpx, double tpy, double tvx, double tvy, double tax, double tay,
+                 double epx, double epy, double evx, double evy, double eax, double eay,
+                 double P, double AMINX, double AMINY, double AMAXX, double AMAXY, 
+                 double VMINX, double VMINY, double VMAXX, double VMAXY, int waypoint){
+    //get_action(tpx, tpy, tvx, tvy, tax, tay, epx, epy, evx, evy, eax, eay, P, AMINX, AMINY, 
+    //           AMAXX, AMAXY, VMINX, VMINY, VMAXX, VMAXY, waypoint);
 
     return false;
 }
@@ -331,8 +394,11 @@ int main()
     const double P = 0.1;
     const double AMINX = -1, AMINY = -1, AMAXX = 1, AMAXY = 1;
     const double VMINX = -5, VMINY = -5, VMAXX = 8, VMAXY = 8;
+    const id_t INIT_LANE_EGO = 30626;
+    const id_t INIT_LANE_TEST = 30624;
 
-    initialize(&tpx, &tpy, &epx, &epy);
+    //initialize(&tpx, &tpy, INIT_LANE_TEST);
+    //initialize(&epx, &epy, INIT_LANE_EGO);
 
     FILE *fp = fopen("/home/rong/Github/AutoScene/sampling.log", "w");
     if (fp == NULL) {
@@ -344,7 +410,7 @@ int main()
 
     for (int i = 0; i < 500; i++) {
         get_action(tpx, tpy, tvx, tvy, &tax, &tay,epx, epy, evx, evy, eax, eay, P, 
-            AMINX, AMINY, AMAXX, AMAXY, VMINX, VMINY, VMAXX, VMAXY, &waypoint);
+            AMINX, AMINY, AMAXX, AMAXY, VMINX, VMINY, VMAXX, VMAXY, INIT_LANE_TEST, &waypoint);
         // Euler integration to update target's velocity and position
         tvx += tax * 0.1;
         tvy += tay * 0.1;

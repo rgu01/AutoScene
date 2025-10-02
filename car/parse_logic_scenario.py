@@ -30,4 +30,4 @@ if __name__ == '__main__':
     c_builder.write_c_file()
     c_builder.compile_c_file()
 
-    cutin.simulate("car/shield/linux_simulate.sh", f"car/scenarios/{scenario_id}.xml", "sampling.log")
+    cutin.simulate(scenario)

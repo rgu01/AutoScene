@@ -46,7 +46,7 @@ logic_params:
   safe_margin_lat: 0.0   # Lateral safety margin (m)
 
 # =========================
-# Logic index mapping
+# Logic index mapping - target state variables in a concrete scenario
 # =========================
 logic_index:
   i_ego_v_lon: 0         # Index for ego longitudinal velocity

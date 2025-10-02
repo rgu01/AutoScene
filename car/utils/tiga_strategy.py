@@ -1,7 +1,7 @@
 import re
-import subprocess
 from collections import defaultdict
-import car.utils.simulation as simulate
+from commonroad.scenario.scenario import Scenario
+from car.utils.simulation import Simulation
 
 class Transition:
     def __init__(self, model_from, loc_from, model_to, loc_to, details, condition):
@@ -149,9 +149,7 @@ class TiGaStrategy:
             return self.data[start_index:].strip()
         return None
     
-    def simulate(self, script_path:str, scenario_path:str, sampling_path:str):
-        try:
-            subprocess.run(["bash", script_path], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            simulate.generate(scenario_path, sampling_path, False)
-        except subprocess.CalledProcessError as e:
-            print("Error:\n", e.stderr)
+    def simulate(self, scenario:Scenario):
+        sim = Simulation(scenario)
+        sim.generate(True)
+        
